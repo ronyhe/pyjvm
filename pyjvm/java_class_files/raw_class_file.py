@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pyjvm.java_class_files.bytes_parser import BytesParser, FROM_BYTES_PARSER_METHOD_NAME
 from pyjvm.java_class_files.raw_attributes import parse_raw_attributes
-from pyjvm.java_class_files.raw_constant_pool import ConstantPoolEntry, parse_constant_pool
+from pyjvm.java_class_files.raw_constant_pool_entries import _ConstantPoolEntry, parse_constant_pool
 from pyjvm.utils import add_class_method
 
 _DATA_FIELDS = 'minor_version, major_version, constant_pool, access_flags, this_class, ' \
@@ -87,7 +87,7 @@ class _Parser(BytesParser):
 
     def parse_constant_pool_entry(self):
         # noinspection PyUnresolvedReferences
-        return ConstantPoolEntry.from_bytes_parser(self)
+        return _ConstantPoolEntry.from_bytes_parser(self)
 
     def parse_constant_pool_index(self):
         return self.u2()

@@ -1,5 +1,5 @@
 import enum
-from collections import namedtuple, OrderedDict
+from collections import namedtuple
 
 from pyjvm.java_class_files.bytes_class_factories import single_index_class, multiple_indices_class, \
     single_value_class, class_and_name_and_type_indexes_class, INDEX, DEFAULT_VALUE_NAME
@@ -109,7 +109,7 @@ class RawUtf8Info(namedtuple('RawUtf8Info', DEFAULT_VALUE_NAME)):
         return cls(value)
 
 
-class ConstantPoolEntry(namedtuple('ConstantPoolEntry', 'tag, info')):
+class _ConstantPoolEntry(namedtuple('ConstantPoolEntry', 'tag, info')):
     @classmethod
     def from_bytes_parser(cls, parser):
         raw_tag = parser.u1()
@@ -125,7 +125,7 @@ def parse_constant_pool(parser: BytesParser, length):
     pool = ConstantPool()
     while not remaining == 0:
         # noinspection PyUnresolvedReferences
-        entry = ConstantPoolEntry.from_bytes_parser(parser)
+        entry = _ConstantPoolEntry.from_bytes_parser(parser)
         if entry.tag in TAGS_THAT_TAKE_TWO_INDICES:
             indices = 2
         else:
