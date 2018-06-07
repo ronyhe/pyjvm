@@ -4,6 +4,7 @@ from collections import namedtuple, OrderedDict
 from pyjvm.java_class_files.bytes_class_factories import single_index_class, multiple_indices_class, \
     single_value_class, class_and_name_and_type_indexes_class, INDEX, DEFAULT_VALUE_NAME
 from pyjvm.java_class_files.bytes_parser import bytes_class, DOUBLE, U4, FLOAT, U1, LONG, BytesParser
+from pyjvm.java_class_files.constant_pool import ConstantPool
 from pyjvm.java_class_files.tag_registry import TagRegistry
 
 
@@ -121,58 +122,16 @@ class ConstantPoolEntry(namedtuple('ConstantPoolEntry', 'tag, info')):
 
 def parse_constant_pool(parser: BytesParser, length):
     remaining = length - 1
-    entries = []
+    pool = ConstantPool()
     while not remaining == 0:
         # noinspection PyUnresolvedReferences
         entry = ConstantPoolEntry.from_bytes_parser(parser)
         if entry.tag in TAGS_THAT_TAKE_TWO_INDICES:
-            remaining -= 2
+            indices = 2
         else:
-            remaining -= 1
+            indices = 1
 
-        entries.append(entry)
+        remaining -= indices
+        pool.add(entry.info, indices=indices)
 
-    return RawConstantPool(entries)
-
-
-class RawConstantPool:
-    MISSING_INDEX = object()
-
-    def __init__(self, entries):
-        self._dict = self._create_dict(entries)
-
-    def _create_dict(self, entries):
-        _dict = OrderedDict()
-        index = 1
-        for entry in entries:
-            _dict[index] = entry.info
-            index += 1
-            if entry.tag in TAGS_THAT_TAKE_TWO_INDICES:
-                _dict[index] = self.MISSING_INDEX
-                index += 1
-
-        return _dict
-
-    def at_dumb_java_index(self, index):
-        try:
-            entry = self._dict[index]
-        except LookupError:
-            raise IndexError(f'No entry at index {index}. Are you out of bounds?')
-        else:
-            if entry is self.MISSING_INDEX:
-                raise IndexError(f'There is no entry atr {index}. The previous entry holds two indices')
-            return entry
-
-    def __iter__(self):
-        for entry in self._dict.values():
-            yield entry
-
-    def _string_helper(self, content):
-        return f'{self.__class__.__name__}({content})'
-
-    def __repr__(self):
-        return str(self)
-
-    def __str__(self):
-        content = ',\n'.join(str(item) for item in self._dict.items())
-        return self._string_helper(content)
+    return pool
