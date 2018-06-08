@@ -1,4 +1,7 @@
 # noinspection SpellCheckingInspection
+from collections import namedtuple
+
+
 def unzip(pairs):
     the_as, the_bs = [], []
     for a, b in pairs:

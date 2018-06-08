@@ -2,7 +2,7 @@ from collections import namedtuple
 from struct import Struct
 
 from pyjvm.java_class_files.modified_utf_8 import decode_modified_utf8
-from pyjvm.utils import unzip, add_class_method
+from pyjvm.utils.utils import unzip, add_class_method
 
 
 def _format(format_string) -> Struct:
