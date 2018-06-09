@@ -6,18 +6,12 @@ from pyjvm.java_class_files.raw_attributes import parse_raw_attributes
 from pyjvm.java_class_files.raw_constant_pool_entries import parse_constant_pool
 from pyjvm.utils.utils import add_class_method
 
-_DATA_FIELDS = 'minor_version, major_version, constant_pool, access_flags, this_class, ' \
-              'super_class, interfaces, fields, methods, attributes'
-
-
-RawJavaClass = namedtuple('RawJavaClass', _DATA_FIELDS)
-
 
 _JAVA_MAGIC_TEXT = '0xCAFEBABE'
 _JAVA_MAGIC_NUMBER = int(_JAVA_MAGIC_TEXT, 16)
 
 
-def _compound_info_class(name):
+def _member_class(name):
     the_class = namedtuple(name, 'access_flags, name_index, descriptor_index, attributes')
 
     def from_bytes_parser(cls, parser: BytesParser, constant_pool):
@@ -29,13 +23,26 @@ def _compound_info_class(name):
     return the_class
 
 
-RawFieldInfo = _compound_info_class('RawFieldInfo')
-RawMethodInfo = _compound_info_class('RawMethodInfo')
+RawJavaClass = namedtuple('RawJavaClass', 'minor_version, major_version, constant_pool, access_flags, this_class, '
+                                          'super_class, interfaces, fields, methods, attributes')
+RawFieldInfo = _member_class('RawFieldInfo')
+RawMethodInfo = _member_class('RawMethodInfo')
 
 
 class IllegalClassFileData(BaseException):
     def __init__(self, message):
         super().__init__(message)
+
+
+def parse_bytes(the_bytes):
+    parser = _Parser(the_bytes)
+    return parser.parse()
+
+
+def parse_file(file_path):
+    path = Path(file_path)
+    with path.open(mode='rb') as file:
+        return parse_bytes(file.read())
 
 
 class _Parser(BytesParser):
@@ -50,8 +57,11 @@ class _Parser(BytesParser):
     def _parse(self):
         self.magic_number()
         minor_version, major_version, constant_pool_count = self.indices(3)
+
         constant_pool = self.parse_constant_pool(constant_pool_count)
+
         access_flags, this_class, super_class, interfaces_count = self.indices(4)
+
         interfaces = tuple(self.indices(interfaces_count))
 
         field_count = self.u2()
@@ -108,15 +118,3 @@ class _Parser(BytesParser):
     def assertion(condition, message):
         if not condition:
             raise IllegalClassFileData(message)
-
-
-def parse_bytes(the_bytes):
-    parser = _Parser(the_bytes)
-    return parser.parse()
-
-
-def parse_file(file_path):
-    path = Path(file_path)
-    with path.open(mode='rb') as file:
-        parser = _Parser(file.read())
-        return parser.parse()
