@@ -1,7 +1,7 @@
 from collections import namedtuple
 from pathlib import Path
 
-from pyjvm.java_class_files.bytes_parser import BytesParser, FROM_BYTES_PARSER_METHOD_NAME
+from pyjvm.bytes_parsing.bytes_parser import BytesParser, FROM_BYTES_PARSER_METHOD_NAME
 from pyjvm.java_class_files.raw_attributes import parse_raw_attributes
 from pyjvm.java_class_files.raw_constant_pool_entries import parse_constant_pool
 from pyjvm.utils.utils import add_class_method

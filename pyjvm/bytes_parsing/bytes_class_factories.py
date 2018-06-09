@@ -1,4 +1,4 @@
-from pyjvm.java_class_files.bytes_parser import bytes_class, U2
+from pyjvm.bytes_parsing.bytes_parser import bytes_class, U2
 
 DEFAULT_VALUE_NAME = 'value'
 

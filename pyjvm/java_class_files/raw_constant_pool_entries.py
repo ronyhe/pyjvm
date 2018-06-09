@@ -1,9 +1,9 @@
 import enum
 from collections import namedtuple
 
-from pyjvm.java_class_files.bytes_class_factories import single_index_class, multiple_indices_class, \
+from pyjvm.bytes_parsing.bytes_class_factories import single_index_class, multiple_indices_class, \
     single_value_class, class_and_name_and_type_indexes_class, INDEX, DEFAULT_VALUE_NAME
-from pyjvm.java_class_files.bytes_parser import bytes_class, DOUBLE, U4, FLOAT, U1, LONG, BytesParser
+from pyjvm.bytes_parsing.bytes_parser import bytes_class, DOUBLE, U4, FLOAT, U1, LONG, BytesParser
 from pyjvm.java_class_files.constant_pool import ConstantPool
 from pyjvm.java_class_files.tag_registry import TagRegistry
 

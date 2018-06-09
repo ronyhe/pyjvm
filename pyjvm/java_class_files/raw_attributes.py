@@ -1,7 +1,7 @@
 from collections.__init__ import namedtuple
 
-from pyjvm.java_class_files.bytes_class_factories import single_index_class, multiple_indices_class
-from pyjvm.java_class_files.bytes_parser import BytesParser
+from pyjvm.bytes_parsing.bytes_class_factories import single_index_class, multiple_indices_class
+from pyjvm.bytes_parsing.bytes_parser import BytesParser
 from pyjvm.java_class_files.raw_constant_pool_entries import RawUtf8Info
 
 CONSTANT_VALUE_NAME = 'ConstantValue'
