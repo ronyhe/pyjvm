@@ -6,8 +6,8 @@ from jawa.methods import Method
 from jawa.util.bytecode import Instruction
 
 from pyjvm.execution.execution import execute_instruction
-from pyjvm.values import Value, Locals
 from pyjvm.stack import Stack
+from pyjvm.values import Value, Locals
 
 
 class Frame:

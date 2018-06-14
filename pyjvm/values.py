@@ -1,13 +1,16 @@
-import enum
 from collections import namedtuple
-
 # noinspection SpellCheckingInspection
+from types import SimpleNamespace
+from typing import Any
+
+import attr
+
 DESCRIPTOR_BASE_TYPES_THAT_ARE_ACTUALLY_INTEGERS = 'BCSIZ'
 
 ImpType = namedtuple('ImpType', 'name, letter, double_index')
 
 
-class ImpTypes(enum.Enum):
+class ImpTypes(SimpleNamespace):
     Integer = ImpType('Integer', 'I', double_index=False)
     Float = ImpType('Float', 'F', double_index=False)
     Double = ImpType('Double', 'D', double_index=True)
@@ -15,28 +18,33 @@ class ImpTypes(enum.Enum):
     Reference = ImpType('Reference', 'L', double_index=False)
 
     @classmethod
+    def as_tuple(cls):
+        return [cls.Integer, cls.Float, cls.Double, cls.Long, cls.Reference]
+
+    @classmethod
     def from_letter(cls, letter):
         letter = letter.upper()
         if letter in DESCRIPTOR_BASE_TYPES_THAT_ARE_ACTUALLY_INTEGERS:
             return cls.Integer
         else:
-            for imp in cls:
+            for imp in cls.as_list():
                 if imp.letter == letter:
                     return imp
 
             raise ValueError(f'No implementation type for {letter}')
 
 
-_Value = namedtuple('Value', 'imp_type, value')
+@attr.s(frozen=True)
+class Value:
+    imp_type = attr.ib(type=ImpType)
+    value = attr.ib(type=Any)
+    is_null = attr.ib(init=False)
 
-
-class Value(_Value):
-    def __init__(self, imp_type, value):
-        super(Value, self).__init__(imp_type, value)
-        is_null = value == _NULL_INSTANCE
-        if is_null and not imp_type == ImpTypes.Reference:
+    def __attrs_post_init__(self):
+        is_null = self.value == _NULL_INSTANCE
+        if is_null and not self.imp_type == ImpTypes.Reference:
             raise TypeError('NULL values must be references')
-        self.is_null = is_null
+        object.__setattr__(self, 'is_null', is_null)
 
 
 class _NullClass:
