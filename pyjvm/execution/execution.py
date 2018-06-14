@@ -1,18 +1,9 @@
-registry = dict()
+from pyjvm.execution import _execution
+# noinspection PyUnresolvedReferences
+from pyjvm.execution import loads
 
+Executor = _execution.Executor
 
-class Executor:
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        registry[cls.__name__] = cls()
+execute_instruction = _execution.execute_instruction
 
-    def execute(self, instruction, machine):
-        raise NotImplementedError()
-
-    def collect_tests(self):
-        return [value for name, value in self.__dict__ if name.startwith('test') and callable(value)]
-
-
-def execute_instruction(instruction, machine):
-    executor = registry[instruction.mnemonic]
-    return executor.execute(instruction, machine)
+collect_all_tests = _execution.collect_all_tests
