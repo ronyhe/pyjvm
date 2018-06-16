@@ -5,7 +5,7 @@ from jawa.constants import ConstantPool
 from jawa.methods import Method
 from jawa.util.bytecode import Instruction
 
-from pyjvm.execution.execution import execute_instruction
+from pyjvm.execution.execution import execute_instruction, collect_all_tests
 from pyjvm.stack import Stack
 from pyjvm.values import Value, Locals
 
@@ -65,3 +65,24 @@ class Machine:
 
     def current_constants(self) -> ConstantPool:
         return self.current_class.constants
+
+
+def blank_test_machine():
+    frame = Frame(Locals(5), Stack(), [], 0)
+    frames = Stack()
+    frames.push(frame)
+    # noinspection PyTypeChecker
+    return Machine(ClassFile.create('TestClass'), frames, None)
+
+
+def run_all_tests():
+    count = 0
+    for test in collect_all_tests():
+        test(blank_test_machine())
+        count += 1
+
+    print(f'Ran {count} tests')
+
+
+if __name__ == '__main__':
+    run_all_tests()
