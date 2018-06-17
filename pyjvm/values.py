@@ -1,5 +1,4 @@
 import enum
-# noinspection SpellCheckingInspection
 from typing import Any
 
 import attr
@@ -33,7 +32,7 @@ class ImpType:
         return self.base in (BaseType.Double, BaseType.Long)
 
     def is_reference_type(self):
-        return self.base == BaseType.Reference or self.is_array()
+        return self.base == BaseType.Reference
 
     def is_value_type(self):
         return not self.is_reference_type()
