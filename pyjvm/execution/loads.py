@@ -2,23 +2,28 @@ from jawa import constants
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.execution.execution import Executor
-from pyjvm.values import ImpTypes, Value
+from pyjvm.values import Value, BaseType, ImpType
 
 
-def _load_from_locals(machine, index_in_locals, imp_type=None):
+def _load_from_locals(machine, index_in_locals, base_type=None):
     local = machine.current_locals().load(index_in_locals)
 
-    if imp_type is not None and not local.imp_type == imp_type:
+    if base_type is not None and not local.imp_type.base == base_type:
         raise TypeError()
 
     machine.current_op_stack().push(local)
 
 
+def _load_integer_from_locals(machine, index_in_locals):
+    return _load_from_locals(machine, index_in_locals, base_type=BaseType.Integer)
+
+
 class iload(Executor):
     """Load int from local variable"""
+
     def execute(self, instruction, machine):
         index_of_int_in_locals = self._get_index_of_int_in_locals(instruction, machine)
-        _load_from_locals(machine, index_of_int_in_locals, ImpTypes.Integer)
+        _load_integer_from_locals(machine, index_of_int_in_locals)
 
     def _get_index_of_int_in_locals(self, instruction, machine):
         constant_index = instruction.operands[0].value
@@ -36,28 +41,28 @@ class iload(Executor):
         index_constant = machine.current_class.constants.create_integer(local_index)
         instruction = Instruction.create('iload', [Operand(OperandTypes.CONSTANT_INDEX, index_constant.index)])
 
-        machine.current_locals().store(local_index, Value(ImpTypes.Integer, integer_value))
+        machine.current_locals().store(local_index, Value(ImpType.integer(), integer_value))
         machine.instruction = instruction
         machine.step()
 
-        assert machine.current_op_stack().peek() == Value(ImpTypes.Integer, integer_value)
+        assert machine.current_op_stack().peek() == Value(ImpType.integer(), integer_value)
 
 
 class iload_0(Executor):
     def execute(self, instruction, machine):
-        _load_from_locals(machine, 0, ImpTypes.Integer)
+        _load_integer_from_locals(machine, 0)
 
 
 class iload_1(Executor):
     def execute(self, instruction, machine):
-        _load_from_locals(machine, 1, ImpTypes.Integer)
+        _load_integer_from_locals(machine, 1)
 
 
 class iload_2(Executor):
     def execute(self, instruction, machine):
-        _load_from_locals(machine, 2, ImpTypes.Integer)
+        _load_integer_from_locals(machine, 2)
 
 
 class iload_3(Executor):
     def execute(self, instruction, machine):
-        _load_from_locals(machine, 3, ImpTypes.Integer)
+        _load_integer_from_locals(machine, 3)

@@ -1,37 +1,83 @@
-from collections import namedtuple
+import enum
 # noinspection SpellCheckingInspection
-from types import SimpleNamespace
 from typing import Any
 
 import attr
+from jawa.util.descriptor import JVMType
 
-DESCRIPTOR_BASE_TYPES_THAT_ARE_ACTUALLY_INTEGERS = 'BCSIZ'
+# noinspection PyArgumentList
+BaseType = enum.Enum('BaseType', 'Integer, Float, Double, Long, Reference')
 
-ImpType = namedtuple('ImpType', 'name, letter, double_index')
+_JAWA_BASES = {
+    'D': BaseType.Double,
+    'F': BaseType.Float,
+    'J': BaseType.Long,
+    'R': BaseType.Reference,
+    'B': BaseType.Integer,
+    'C': BaseType.Integer,
+    'I': BaseType.Integer,
+    'Z': BaseType.Integer,
+}
 
 
-class ImpTypes(SimpleNamespace):
-    Integer = ImpType('Integer', 'I', double_index=False)
-    Float = ImpType('Float', 'F', double_index=False)
-    Double = ImpType('Double', 'D', double_index=True)
-    Long = ImpType('Long', 'J', double_index=True)
-    Reference = ImpType('Reference', 'L', double_index=False)
+@attr.s(frozen=True)
+class ImpType:
+    base = attr.ib(type=BaseType)
+    dimensions = attr.ib(type=int)
+    name = attr.ib(type=str, default=None)
+
+    def is_array(self):
+        return self.dimensions > 0
+
+    def needs_two_slots(self):
+        return self.base in (BaseType.Double, BaseType.Long)
+
+    def is_reference_type(self):
+        return self.base == BaseType.Reference or self.is_array()
+
+    def is_value_type(self):
+        return not self.is_reference_type()
 
     @classmethod
-    def as_tuple(cls):
-        return [cls.Integer, cls.Float, cls.Double, cls.Long, cls.Reference]
-
-    @classmethod
-    def from_letter(cls, letter):
-        letter = letter.upper()
-        if letter in DESCRIPTOR_BASE_TYPES_THAT_ARE_ACTUALLY_INTEGERS:
-            return cls.Integer
+    def from_jawa(cls, jawa_type: JVMType):
+        base = _JAWA_BASES[jawa_type.base_type]
+        if not base == BaseType.Reference:
+            name = None
         else:
-            for imp in cls.as_list():
-                if imp.letter == letter:
-                    return imp
+            name = jawa_type.name
 
-            raise ValueError(f'No implementation type for {letter}')
+        # noinspection PyArgumentList
+        return cls(base, jawa_type.dimensions, name)
+
+    @classmethod
+    def integer(cls):
+        # noinspection PyArgumentList
+        return cls(BaseType.Integer, 0, None)
+
+    @classmethod
+    def float(cls):
+        # noinspection PyArgumentList
+        return cls(BaseType.Float, 0, None)
+
+    @classmethod
+    def long(cls):
+        # noinspection PyArgumentList
+        return cls(BaseType.Long, 0, None)
+
+    @classmethod
+    def double(cls):
+        # noinspection PyArgumentList
+        return cls(BaseType.Double, 0, None)
+
+    @classmethod
+    def reference(cls, name):
+        # noinspection PyArgumentList
+        return cls(BaseType.Reference, 0, name)
+
+    @classmethod
+    def array(cls, original_type, dimensions=1):
+        # noinspection PyArgumentList
+        return cls(original_type.base, dimensions, original_type.name)
 
 
 @attr.s(frozen=True)
@@ -41,8 +87,8 @@ class Value:
     is_null = attr.ib(init=False)
 
     def __attrs_post_init__(self):
-        is_null = self.value == _NULL_INSTANCE
-        if is_null and not self.imp_type == ImpTypes.Reference:
+        is_null = self.value == NULL
+        if is_null and not self.imp_type.is_reference():
             raise TypeError('NULL values must be references')
         object.__setattr__(self, 'is_null', is_null)
 
@@ -55,9 +101,7 @@ class _NullClass:
         return str(self)
 
 
-_NULL_INSTANCE = _NullClass()
-
-NULL = Value(ImpTypes.Reference, _NULL_INSTANCE)
+NULL = _NullClass()
 
 
 class Locals:
@@ -73,7 +117,7 @@ class Locals:
         if value is None:
             raise ValueError('Cannot store None in locals')
         self._locals[index] = value
-        if value.imp_type.double_index:
+        if value.imp_type.needs_two_slots():
             # noinspection PyTypeChecker
             self._locals[index + 1] = self.MISSING
 
@@ -91,5 +135,5 @@ class Locals:
         for p in parameters:
             self.store(index, p)
             index += 1
-            if p.imp_type.double_index:
+            if p.imp_type.needs_two_slots():
                 index += 1
