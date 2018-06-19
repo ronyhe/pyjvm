@@ -47,6 +47,7 @@ class IntLoadTest(MachineTest):
         self.machine.current_locals().store(self.local_index, Value(ImpType.integer(), self.integer_value))
 
     def create_instruction(self):
+        # noinspection SpellCheckingInspection
         return Instruction.create('iload_0')
 
     def make_assertions(self):
@@ -63,6 +64,7 @@ class IntLoadWithIndexTest(IntLoadTest):
         self.index_constant = self.machine.current_class.constants.create_integer(self.local_index)
 
     def create_instruction(self):
+        # noinspection SpellCheckingInspection
         return Instruction.create('iload', [Operand(OperandTypes.CONSTANT_INDEX, self.index_constant.index)])
 
 
