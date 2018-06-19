@@ -1,3 +1,4 @@
 *.pyc
 .idea/
 scratchpad/
+pytest_cache/
