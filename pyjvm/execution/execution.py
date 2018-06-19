@@ -9,16 +9,6 @@ class Executor:
     def execute(self, instruction, machine):
         raise NotImplementedError()
 
-    def collect_tests(self):
-        tests = []
-        for name in dir(self):
-            if name.startswith('test'):
-                value = getattr(self, name)
-                if callable(value):
-                    tests.append(value)
-
-        return tests
-
 
 def execute_instruction(instruction, machine):
     executor = registry[instruction.mnemonic]

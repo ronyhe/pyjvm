@@ -1,8 +1,7 @@
 from jawa import constants
-from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.execution.execution import Executor
-from pyjvm.values import Value, BaseType, ImpType
+from pyjvm.values import BaseType
 
 
 def _load_from_locals(machine, index_in_locals, base_type=None):
@@ -33,20 +32,6 @@ class iload(Executor):
             raise TypeError()
 
         return constant.value
-
-    def test(self, machine):
-        integer_value = 6
-        local_index = 0
-
-        index_constant = machine.current_class.constants.create_integer(local_index)
-        instruction = Instruction.create('iload', [Operand(OperandTypes.CONSTANT_INDEX, index_constant.index)])
-
-        machine.current_locals().store(local_index, Value(ImpType.integer(), integer_value))
-        machine.instruction = instruction
-        machine.step()
-
-        assert machine.current_op_stack().peek() == Value(ImpType.integer(), integer_value)
-
 
 class iload_0(Executor):
     def execute(self, instruction, machine):
