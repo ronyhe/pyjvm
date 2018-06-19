@@ -1,7 +1,8 @@
 import enum
-from typing import Any
+from typing import Any, Mapping
 
 import attr
+from jawa.cf import ClassFile
 from jawa.util.descriptor import JVMType
 
 # noinspection PyArgumentList
@@ -101,6 +102,38 @@ class _NullClass:
 
 
 NULL = _NullClass()
+
+_DEFAULT_VALUES = {
+    BaseType.Integer: 0,
+    BaseType.Long: 0,
+    BaseType.Float: 0.0,
+    BaseType.Double: 0.0,
+    BaseType.Reference: NULL
+}
+
+
+def default_value(imp_type: ImpType):
+    if imp_type.is_array():
+        return NULL
+    else:
+        return _DEFAULT_VALUES[imp_type.base]
+
+
+class JVMObject:
+    @classmethod
+    def from_class_file(cls, cf: ClassFile):
+        fields = []
+        for field in cf.fields:
+            imp_type = ImpType.from_jawa(field.type)
+            value = default_value(imp_type)
+            name = field.name.value
+            pair = name, Value(imp_type, value)
+            fields.append(pair)
+
+        return fields
+
+    def __init__(self, fields: Mapping[str, Value]):
+        self.fields = fields
 
 
 class Locals:
