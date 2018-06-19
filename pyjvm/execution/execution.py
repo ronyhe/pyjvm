@@ -1,23 +1,22 @@
-registry = dict()
+from pyjvm.class_registry import ClassRegistry
+
+_registry = ClassRegistry()
+
+bytecode = _registry.decorator
 
 
 class Executor:
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        registry[cls.__name__] = cls()
+    def __init__(self, instruction, machine):
+        self.instruction = instruction
+        self.machine = machine
 
-    def execute(self, instruction, machine):
+    def execute(self):
         raise NotImplementedError()
 
 
 def execute_instruction(instruction, machine):
-    executor = registry[instruction.mnemonic]
-    return executor.execute(instruction, machine)
-
-
-def collect_all_tests():
-    for instance in registry.values():
-        yield from instance.collect_tests()
+    executor = _registry.get(instruction.mnemonic, instruction, machine)
+    return executor.execute()
 
 
 # noinspection PyUnresolvedReferences

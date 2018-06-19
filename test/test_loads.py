@@ -14,15 +14,61 @@ def blank_test_machine():
     return Machine(ClassFile.create('TestClass'), frames, None)
 
 
-def test_iload():
-    integer_value = 6
-    local_index = 0
-    machine = blank_test_machine()
-    index_constant = machine.current_class.constants.create_integer(local_index)
-    instruction = Instruction.create('iload', [Operand(OperandTypes.CONSTANT_INDEX, index_constant.index)])
+class MachineTest:
+    def __init__(self):
+        self.machine = blank_test_machine()
 
-    machine.current_locals().store(local_index, Value(ImpType.integer(), integer_value))
-    machine.instruction = instruction
-    machine.step()
+    def set_up(self):
+        pass
 
-    assert machine.current_op_stack().peek() == Value(ImpType.integer(), integer_value)
+    def create_instruction(self):
+        raise NotImplementedError()
+
+    def make_assertions(self):
+        raise NotImplementedError()
+
+    def run_test(self):
+        self.set_up()
+        self.machine.instruction = self.create_instruction()
+        self.machine.step()
+        self.make_assertions()
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__}>'
+
+
+class IntLoadTest(MachineTest):
+    def __init__(self):
+        super().__init__()
+        self.integer_value = 6
+        self.local_index = 0
+
+    def set_up(self):
+        self.machine.current_locals().store(self.local_index, Value(ImpType.integer(), self.integer_value))
+
+    def create_instruction(self):
+        return Instruction.create('iload_0')
+
+    def make_assertions(self):
+        assert self.machine.current_op_stack().peek() == Value(ImpType.integer(), self.integer_value)
+
+
+class IntLoadWithIndexTest(IntLoadTest):
+    def __init__(self):
+        super().__init__()
+        self.index_constant = None
+
+    def set_up(self):
+        super().set_up()
+        self.index_constant = self.machine.current_class.constants.create_integer(self.local_index)
+
+    def create_instruction(self):
+        return Instruction.create('iload', [Operand(OperandTypes.CONSTANT_INDEX, self.index_constant.index)])
+
+
+def test_classes():
+    for test_class in [
+        IntLoadTest,
+        IntLoadWithIndexTest
+    ]:
+        test_class().run_test()
