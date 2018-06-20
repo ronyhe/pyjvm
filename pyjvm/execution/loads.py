@@ -1,7 +1,7 @@
 from jawa import constants
 
 from pyjvm.execution.execution import Executor, bytecode
-from pyjvm.values import BaseType
+from pyjvm.values import BaseTypes
 
 
 def _load_from_locals(machine, index_in_locals, base_type=None):
@@ -27,7 +27,7 @@ class IntLoad(Executor):
         if self.index is None:
             self.index = self._get_index_of_int_in_locals()
 
-        _load_from_locals(self.machine, self.index, base_type=BaseType.Integer)
+        _load_from_locals(self.machine, self.index, base_type=BaseTypes.Integer)
 
     def _get_index_of_int_in_locals(self):
         constant_index = self.instruction.operands[0].value
@@ -40,4 +40,4 @@ class IntLoad(Executor):
 
 
 def _load_integer_from_locals(machine, index_in_locals):
-    return _load_from_locals(machine, index_in_locals, base_type=BaseType.Integer)
+    return _load_from_locals(machine, index_in_locals, base_type=BaseTypes.Integer)

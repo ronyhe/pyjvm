@@ -5,24 +5,30 @@ import attr
 from jawa.cf import ClassFile
 from jawa.util.descriptor import JVMType
 
-# noinspection PyArgumentList
-BaseType = enum.Enum('BaseType', 'Integer, Float, Double, Long, Reference')
+
+class BaseTypes(enum.Enum):
+    Reference = enum.auto()
+    Integer = enum.auto()
+    Float = enum.auto()
+    Long = enum.auto()
+    Double = enum.auto()
+
 
 _JAWA_BASES = {
-    'D': BaseType.Double,
-    'F': BaseType.Float,
-    'J': BaseType.Long,
-    'R': BaseType.Reference,
-    'B': BaseType.Integer,
-    'C': BaseType.Integer,
-    'I': BaseType.Integer,
-    'Z': BaseType.Integer,
+    'D': BaseTypes.Double,
+    'F': BaseTypes.Float,
+    'J': BaseTypes.Long,
+    'R': BaseTypes.Reference,
+    'B': BaseTypes.Integer,
+    'C': BaseTypes.Integer,
+    'I': BaseTypes.Integer,
+    'Z': BaseTypes.Integer,
 }
 
 
 @attr.s(frozen=True)
 class ImpType:
-    base = attr.ib(type=BaseType)
+    base = attr.ib(type=BaseTypes)
     dimensions = attr.ib(type=int)
     name = attr.ib(type=str, default=None)
 
@@ -30,10 +36,10 @@ class ImpType:
         return self.dimensions > 0
 
     def needs_two_slots(self):
-        return self.base in (BaseType.Double, BaseType.Long)
+        return self.base in (BaseTypes.Double, BaseTypes.Long)
 
     def is_reference_type(self):
-        return self.base == BaseType.Reference
+        return self.base == BaseTypes.Reference
 
     def is_value_type(self):
         return not self.is_reference_type()
@@ -41,7 +47,7 @@ class ImpType:
     @classmethod
     def from_jawa(cls, jawa_type: JVMType):
         base = _JAWA_BASES[jawa_type.base_type]
-        if not base == BaseType.Reference:
+        if not base == BaseTypes.Reference:
             name = None
         else:
             name = jawa_type.name
@@ -52,27 +58,27 @@ class ImpType:
     @classmethod
     def integer(cls):
         # noinspection PyArgumentList
-        return cls(BaseType.Integer, 0, None)
+        return cls(BaseTypes.Integer, 0, None)
 
     @classmethod
     def float(cls):
         # noinspection PyArgumentList
-        return cls(BaseType.Float, 0, None)
+        return cls(BaseTypes.Float, 0, None)
 
     @classmethod
     def long(cls):
         # noinspection PyArgumentList
-        return cls(BaseType.Long, 0, None)
+        return cls(BaseTypes.Long, 0, None)
 
     @classmethod
     def double(cls):
         # noinspection PyArgumentList
-        return cls(BaseType.Double, 0, None)
+        return cls(BaseTypes.Double, 0, None)
 
     @classmethod
     def reference(cls, name):
         # noinspection PyArgumentList
-        return cls(BaseType.Reference, 0, name)
+        return cls(BaseTypes.Reference, 0, name)
 
     @classmethod
     def array(cls, original_type, dimensions=1):
@@ -104,11 +110,11 @@ class _NullClass:
 NULL = _NullClass()
 
 _DEFAULT_VALUES = {
-    BaseType.Integer: 0,
-    BaseType.Long: 0,
-    BaseType.Float: 0.0,
-    BaseType.Double: 0.0,
-    BaseType.Reference: NULL
+    BaseTypes.Integer: 0,
+    BaseTypes.Long: 0,
+    BaseTypes.Float: 0.0,
+    BaseTypes.Double: 0.0,
+    BaseTypes.Reference: NULL
 }
 
 
