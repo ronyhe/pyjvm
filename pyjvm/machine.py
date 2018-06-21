@@ -1,25 +1,25 @@
 from typing import Iterable
 
-from jawa.cf import ClassFile
 from jawa.constants import ConstantPool
-from jawa.methods import Method
 from jawa.util.bytecode import Instruction
 
 from pyjvm.execution.execution import execute_instruction
+from pyjvm.frame_locals import Locals
+from pyjvm.jvm_class import BytecodeMethod, JvmValue, JvmClass
 from pyjvm.stack import Stack
-from pyjvm.values import Value, Locals
 
 
 class Frame:
     @classmethod
-    def from_method(cls, method: Method):
-        code = method.code
-        _locals = Locals(code.max_locals)
-        op_stack = Stack(code.max_stack)
-        instructions = code.disassemble()
-        return cls(_locals, op_stack, instructions, 0)
+    def from_method(cls, method: BytecodeMethod):
+        return cls(
+            Locals(method.max_locals),
+            Stack(method.max_stack),
+            method.instructions,
+            0
+        )
 
-    def __init__(self, _locals: Locals, op_stack: Stack[Value], instructions: Iterable[Instruction], position: int):
+    def __init__(self, _locals: Locals, op_stack: Stack[JvmValue], instructions: Iterable[Instruction], position: int):
         self.locals = _locals
         self.op_stack = op_stack
         self.instructions = tuple(instructions)
@@ -35,14 +35,14 @@ class Frame:
 
 class Machine:
     @classmethod
-    def from_class_and_method(cls, the_class: ClassFile, method: Method):
+    def from_class_and_method(cls, the_class: JvmClass, method: BytecodeMethod):
         frame = Frame.from_method(method)
         frames = Stack()
         frames.push(frame)
         instruction = frame.next_instruction()
         return cls(the_class, frames, instruction)
 
-    def __init__(self, current_class: ClassFile, frames: Stack[Frame], instruction: Instruction):
+    def __init__(self, current_class: JvmClass, frames: Stack[Frame], instruction: Instruction):
         self.current_class = current_class
         self.frames = frames
         self.instruction = instruction

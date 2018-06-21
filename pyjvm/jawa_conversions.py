@@ -2,7 +2,7 @@ import jawa.methods
 import jawa.util.descriptor
 from jawa.cf import ClassFile
 
-from pyjvm.jvm_class import JvmClass, Method, BytecodeMethod, Type, Integer, \
+from pyjvm.jvm_class import JvmClass, BytecodeMethod, Type, Integer, \
     Double, Float, Long, ObjectReferenceType, ArrayReferenceType
 
 _LETTERS_MAP = {
@@ -27,7 +27,7 @@ def convert_class_file(cf: ClassFile) -> JvmClass:
     )
 
 
-def convert_method(method: jawa.methods.Method) -> Method:
+def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
     return BytecodeMethod(
         method.code.max_locals,
         method.code.max_stack,

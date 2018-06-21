@@ -1,9 +1,10 @@
-from jawa.cf import ClassFile
+from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
+from pyjvm.frame_locals import Locals
+from pyjvm.jvm_class import JvmClass, Integer, JvmValue
 from pyjvm.machine import Frame, Machine
 from pyjvm.stack import Stack
-from pyjvm.values import Locals, Value, ImpType
 
 
 def blank_test_machine():
@@ -11,7 +12,7 @@ def blank_test_machine():
     frames = Stack()
     frames.push(frame)
     # noinspection PyTypeChecker
-    return Machine(ClassFile.create('TestClass'), frames, None)
+    return Machine(JvmClass('SomeClass', 'SomeBase', ConstantPool()), frames, None)
 
 
 class MachineTest:
@@ -44,14 +45,14 @@ class IntLoadTest(MachineTest):
         self.local_index = 0
 
     def set_up(self):
-        self.machine.current_locals().store(self.local_index, Value(ImpType.integer(), self.integer_value))
+        self.machine.current_locals().store(self.local_index, JvmValue(Integer, self.integer_value))
 
     def create_instruction(self):
         # noinspection SpellCheckingInspection
         return Instruction.create('iload_0')
 
     def make_assertions(self):
-        assert self.machine.current_op_stack().peek() == Value(ImpType.integer(), self.integer_value)
+        assert self.machine.current_op_stack().peek() == JvmValue(Integer, self.integer_value)
 
 
 class IntLoadWithIndexTest(IntLoadTest):

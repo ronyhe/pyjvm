@@ -12,15 +12,15 @@ class BytecodeMethod:
 
 
 class Type:
-    def __init__(self, name, *, default_value, refers_to=None, needs_two_slots=False):
+    def __init__(self, name, *, default_value, refers_to=None, needs_two_slots=False, is_array_reference=False):
         self.name: str = str(name)
         self.is_reference: bool = refers_to is not None
         self.is_value = not self.is_reference
         self.needs_two_slots: bool = bool(needs_two_slots)
         self.referenced_type = refers_to
         self.default_value = default_value
-        self.is_reference_to_class = isinstance(refers_to, str)
-        self.is_array_reference = isinstance(self, ArrayReferenceType)
+        self.is_reference_to_class: bool = isinstance(refers_to, str)
+        self.is_array_reference: bool = is_array_reference
         self.validate()
 
     def validate(self):
@@ -57,13 +57,13 @@ NULL = _NullClass()
 
 
 class _ReferenceType(Type):
-    def __init__(self, name, refers_to):
-        super().__init__(name, refers_to=refers_to, default_value=NULL)
+    def __init__(self, name, refers_to, is_array_reference=False):
+        super().__init__(name, refers_to=refers_to, default_value=NULL, is_array_reference=is_array_reference)
 
 
 class ArrayReferenceType(_ReferenceType):
     def __init__(self, refers_to):
-        super().__init__('<Array>', refers_to=refers_to)
+        super().__init__('<Array>', refers_to=refers_to, is_array_reference=True)
 
 
 class ObjectReferenceType(_ReferenceType):
@@ -78,13 +78,22 @@ class JvmClass:
         self.constants: ConstantPool = constants
         self.interface: Tuple[str] = tuple(names_of_interfaces)
         self.fields: Dict[str, Type] = dict(fields)
-        self.methods: Dict[str, Method] = dict(methods)
+        self.methods: Dict[str, BytecodeMethod] = dict(methods)
 
 
 class JvmValue:
     def __init__(self, type_, value):
         self.type: Type = type_
         self.value = value
+
+    def __eq__(self, other):
+        try:
+            return self.type == other.type and self.value == other.value
+        except AttributeError:
+            return False
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({repr(self.type)}, {repr(self.value)})'
 
 
 class JvmObject:
