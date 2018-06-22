@@ -1,7 +1,6 @@
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.types import Integer, RootObjectType, ArrayReferenceType
-from pyjvm.values import JvmValue, NULL_VALUE
+from pyjvm.types import Integer, RootObjectType, ArrayReferenceType, JvmValue, NULL_VALUE
 from test.test_utils import MachineTest
 
 

@@ -1,5 +1,5 @@
 from pyjvm.execution.execution import bytecode, Executor
-from pyjvm.values import NULL_VALUE
+from pyjvm.types import NULL_VALUE
 
 
 @bytecode('nop')

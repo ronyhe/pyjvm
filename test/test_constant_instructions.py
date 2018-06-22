@@ -1,6 +1,6 @@
 from jawa.util.bytecode import Instruction
 
-from pyjvm.values import NULL_VALUE
+from pyjvm.types import NULL_VALUE
 from test.test_utils import blank_test_machine
 
 

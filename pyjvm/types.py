@@ -1,6 +1,3 @@
-from pyjvm.values import NULL_OBJECT
-
-
 class Type:
     def __init__(self, name, *, default_value, refers_to=None, needs_two_slots=False, is_array_reference=False):
         self.name: str = str(name)
@@ -44,19 +41,44 @@ Long = Type('<Long>', default_value=0, needs_two_slots=True)
 Double = Type('<Double>', default_value=0.0, needs_two_slots=True)
 
 
-class ObjectReferenceType(_ReferenceType):
-    def __init__(self, refers_to):
-        super().__init__('<Object>', refers_to=refers_to)
-
-
-RootObjectType = ObjectReferenceType('java/lang/Object')
-
-
 class _ReferenceType(Type):
     def __init__(self, name, refers_to, is_array_reference=False):
         super().__init__(name, refers_to=refers_to, default_value=NULL_OBJECT, is_array_reference=is_array_reference)
 
 
+class ObjectReferenceType(_ReferenceType):
+    def __init__(self, refers_to):
+        super().__init__('<Object>', refers_to=refers_to)
+
+
 class ArrayReferenceType(_ReferenceType):
     def __init__(self, refers_to):
         super().__init__('<Array>', refers_to=refers_to, is_array_reference=True)
+
+
+class JvmValue:
+    def __init__(self, type_, value):
+        self.type: Type = type_
+        self.value = value
+        self.is_null = value == NULL_OBJECT
+        if self.is_null and not self.type.is_reference:
+            raise TypeError('Only reference types can have NULL values')
+
+    def __eq__(self, other):
+        try:
+            return self.type == other.type and self.value == other.value
+        except AttributeError:
+            return False
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({repr(self.type)}, {repr(self.value)})'
+
+
+class _NullClass:
+    def __repr__(self):
+        return '<NULL>'
+
+
+NULL_OBJECT = _NullClass()
+RootObjectType = ObjectReferenceType('java/lang/Object')
+NULL_VALUE = JvmValue(RootObjectType, NULL_OBJECT)
