@@ -18,3 +18,6 @@ class Stack(Generic[T]):
 
     def peek(self) -> T:
         return self._values[0]
+
+    def size(self) -> int:
+        return len(self._values)

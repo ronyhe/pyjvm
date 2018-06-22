@@ -2,7 +2,7 @@ from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.frame_locals import Locals
-from pyjvm.jvm_class import JvmClass, Integer, JvmValue
+from pyjvm.jvm_class import JvmClass, Integer, JvmValue, ArrayReferenceType, ObjectReferenceType, NULL
 from pyjvm.machine import Frame, Machine
 from pyjvm.stack import Stack
 
@@ -69,9 +69,32 @@ class IntLoadWithIndexTest(IntLoadTest):
         return Instruction.create('iload', [Operand(OperandTypes.CONSTANT_INDEX, self.index_constant.index)])
 
 
+class LoadReferenceFromArrayTest(MachineTest):
+    object_type = ObjectReferenceType(refers_to='java/lang/Object')
+    null_value = JvmValue(object_type, NULL)
+
+    def set_up(self):
+        super().set_up()
+        array_type = ArrayReferenceType(refers_to=self.object_type)
+        array = JvmValue(array_type, [self.null_value])
+
+        stack = self.machine.current_op_stack()
+        stack.push(array)
+        stack.push(JvmValue(Integer, 0))
+
+    def create_instruction(self):
+        return Instruction.create('aaload')
+
+    def make_assertions(self):
+        stack = self.machine.current_op_stack()
+        assert stack.size() == 1
+        assert stack.peek() == self.null_value
+
+
 def test_classes():
     for test_class in [
         IntLoadTest,
-        IntLoadWithIndexTest
+        IntLoadWithIndexTest,
+        LoadReferenceFromArrayTest
     ]:
         test_class().run_test()

@@ -60,7 +60,7 @@ class Machine:
     def current_locals(self) -> Locals:
         return self.current_frame().locals
 
-    def current_op_stack(self):
+    def current_op_stack(self) -> Stack[JvmValue]:
         return self.current_frame().op_stack
 
     def current_constants(self) -> ConstantPool:

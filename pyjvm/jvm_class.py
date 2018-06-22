@@ -28,6 +28,12 @@ class Type:
             raise ValueError('Types must have default values')
         if self.is_reference and self.referenced_type is None:
             raise ValueError('Reference types must specify a referred type')
+        if self.is_array_reference and not self.is_reference:
+            raise ValueError('How can an array reference not be a reference?')
+        if self.is_reference_to_class and not self.is_reference:
+            raise ValueError('How can a reference to a class not be a reference?')
+        if self.is_value and any((self.is_reference, self.is_reference_to_class, self.is_array_reference)):
+            raise ValueError('Types cannot be value types and reference types at the same time')
 
     def __repr__(self):
         fields = 'default_value', 'refers_to', 'needs_two_slots'
@@ -85,6 +91,9 @@ class JvmValue:
     def __init__(self, type_, value):
         self.type: Type = type_
         self.value = value
+        self.is_null = value == NULL
+        if self.is_null and not self.type.is_reference:
+            raise TypeError('Only reference types can have NULL values')
 
     def __eq__(self, other):
         try:
