@@ -1,7 +1,7 @@
 from jawa import constants
 
 from pyjvm.execution.execution import Executor, bytecode
-from pyjvm.jvm_class import Integer
+from pyjvm.types import Integer
 
 
 @bytecode('iload')

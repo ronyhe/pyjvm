@@ -1,6 +1,6 @@
 from jawa.util.bytecode import Instruction
 
-from pyjvm.jvm_class import NullReference
+from pyjvm.values import NULL_VALUE
 from test.test_utils import blank_test_machine
 
 
@@ -9,4 +9,4 @@ def test_a_const_null():
     # noinspection SpellCheckingInspection
     machine.instruction = Instruction.create('aconst_null')
     machine.step()
-    assert machine.current_op_stack().peek() == NullReference
+    assert machine.current_op_stack().peek() == NULL_VALUE

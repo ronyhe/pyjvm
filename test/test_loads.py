@@ -1,6 +1,7 @@
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.jvm_class import Integer, JvmValue, ArrayReferenceType, RootObjectType, NullReference
+from pyjvm.types import Integer, RootObjectType, ArrayReferenceType
+from pyjvm.values import JvmValue, NULL_VALUE
 from test.test_utils import MachineTest
 
 
@@ -39,7 +40,7 @@ class LoadReferenceFromArrayTest(MachineTest):
     def set_up(self):
         super().set_up()
         array_type = ArrayReferenceType(refers_to=RootObjectType)
-        array = JvmValue(array_type, [NullReference])
+        array = JvmValue(array_type, [NULL_VALUE])
 
         stack = self.machine.current_op_stack()
         stack.push(array)
@@ -52,4 +53,4 @@ class LoadReferenceFromArrayTest(MachineTest):
     def make_assertions(self):
         stack = self.machine.current_op_stack()
         assert stack.size() == 1
-        assert stack.peek() == NullReference
+        assert stack.peek() == NULL_VALUE

@@ -2,8 +2,8 @@ import jawa.methods
 import jawa.util.descriptor
 from jawa.cf import ClassFile
 
-from pyjvm.jvm_class import JvmClass, BytecodeMethod, Type, Integer, \
-    Double, Float, Long, ObjectReferenceType, ArrayReferenceType
+from pyjvm.jvm_class import JvmClass, BytecodeMethod
+from pyjvm.types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType
 
 _LETTERS_MAP = {
     'D': Double,

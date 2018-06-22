@@ -5,8 +5,9 @@ from jawa.util.bytecode import Instruction
 
 from pyjvm.execution.execution import execute_instruction
 from pyjvm.frame_locals import Locals
-from pyjvm.jvm_class import BytecodeMethod, JvmValue, JvmClass
+from pyjvm.jvm_class import BytecodeMethod, JvmClass
 from pyjvm.stack import Stack
+from pyjvm.values import JvmValue
 
 
 class Frame:
