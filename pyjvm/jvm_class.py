@@ -114,3 +114,7 @@ class JvmObject:
 
     def __init__(self, fields):
         self.fields: Dict[str, JvmValue] = dict(fields)
+
+
+RootObjectType = ObjectReferenceType('java/lang/Object')
+NullReference = JvmValue(RootObjectType, NULL)

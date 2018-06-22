@@ -1,41 +1,7 @@
-from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.frame_locals import Locals
-from pyjvm.jvm_class import JvmClass, Integer, JvmValue, ArrayReferenceType, ObjectReferenceType, NULL
-from pyjvm.machine import Frame, Machine
-from pyjvm.stack import Stack
-
-
-def blank_test_machine():
-    frame = Frame(Locals(5), Stack(), [], 0)
-    frames = Stack()
-    frames.push(frame)
-    # noinspection PyTypeChecker
-    return Machine(JvmClass('SomeClass', 'SomeBase', ConstantPool()), frames, None)
-
-
-class MachineTest:
-    def __init__(self):
-        self.machine = blank_test_machine()
-
-    def set_up(self):
-        pass
-
-    def create_instruction(self):
-        raise NotImplementedError()
-
-    def make_assertions(self):
-        raise NotImplementedError()
-
-    def run_test(self):
-        self.set_up()
-        self.machine.instruction = self.create_instruction()
-        self.machine.step()
-        self.make_assertions()
-
-    def __repr__(self):
-        return f'<{self.__class__.__name__}>'
+from pyjvm.jvm_class import Integer, JvmValue, ArrayReferenceType, RootObjectType, NullReference
+from test.test_utils import MachineTest
 
 
 class IntLoadTest(MachineTest):
@@ -70,31 +36,20 @@ class IntLoadWithIndexTest(IntLoadTest):
 
 
 class LoadReferenceFromArrayTest(MachineTest):
-    object_type = ObjectReferenceType(refers_to='java/lang/Object')
-    null_value = JvmValue(object_type, NULL)
-
     def set_up(self):
         super().set_up()
-        array_type = ArrayReferenceType(refers_to=self.object_type)
-        array = JvmValue(array_type, [self.null_value])
+        array_type = ArrayReferenceType(refers_to=RootObjectType)
+        array = JvmValue(array_type, [NullReference])
 
         stack = self.machine.current_op_stack()
         stack.push(array)
         stack.push(JvmValue(Integer, 0))
 
     def create_instruction(self):
+        # noinspection SpellCheckingInspection
         return Instruction.create('aaload')
 
     def make_assertions(self):
         stack = self.machine.current_op_stack()
         assert stack.size() == 1
-        assert stack.peek() == self.null_value
-
-
-def test_classes():
-    for test_class in [
-        IntLoadTest,
-        IntLoadWithIndexTest,
-        LoadReferenceFromArrayTest
-    ]:
-        test_class().run_test()
+        assert stack.peek() == NullReference
