@@ -1,24 +1,24 @@
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.types import Integer, RootObjectType, ArrayReferenceType, JvmValue, NULL_VALUE
+from pyjvm.types import Integer, RootObjectType, ArrayReferenceType, NULL_VALUE
 from test.test_utils import MachineTest
 
 
 class IntLoadTest(MachineTest):
     def __init__(self):
         super().__init__()
-        self.integer_value = 6
+        self.integer_value = Integer.create_instance(6)
         self.local_index = 0
 
     def set_up(self):
-        self.machine.current_locals().store(self.local_index, JvmValue(Integer, self.integer_value))
+        self.machine.current_locals().store(self.local_index, self.integer_value)
 
     def create_instruction(self):
         # noinspection SpellCheckingInspection
         return Instruction.create('iload_0')
 
     def make_assertions(self):
-        assert self.machine.current_op_stack().peek() == JvmValue(Integer, self.integer_value)
+        assert self.machine.current_op_stack().peek() == self.integer_value
 
 
 class IntLoadWithIndexTest(IntLoadTest):
@@ -39,11 +39,11 @@ class LoadReferenceFromArrayTest(MachineTest):
     def set_up(self):
         super().set_up()
         array_type = ArrayReferenceType(refers_to=RootObjectType)
-        array = JvmValue(array_type, [NULL_VALUE])
+        array = array_type.create_instance([NULL_VALUE])
 
         stack = self.machine.current_op_stack()
         stack.push(array)
-        stack.push(JvmValue(Integer, 0))
+        stack.push(Integer.create_instance(0))
 
     def create_instruction(self):
         # noinspection SpellCheckingInspection

@@ -22,6 +22,9 @@ class Type:
         if self.is_value and any((self.is_reference, self.is_reference_to_class, self.is_array_reference)):
             raise ValueError('Types cannot be value types and reference types at the same time')
 
+    def create_instance(self, value):
+        return JvmValue(self, value)
+
     def __repr__(self):
         fields = 'default_value', 'refers_to', 'needs_two_slots'
         mapping = [(name, getattr(self, name)) for name in fields]
@@ -39,6 +42,14 @@ Integer = Type('<Integer>', default_value=0)
 Float = Type('<Float>', default_value=0.0)
 Long = Type('<Long>', default_value=0, needs_two_slots=True)
 Double = Type('<Double>', default_value=0.0, needs_two_slots=True)
+
+
+class _NullClass:
+    def __repr__(self):
+        return '<NULL>'
+
+
+NULL_OBJECT = _NullClass()
 
 
 class _ReferenceType(Type):
@@ -74,11 +85,5 @@ class JvmValue:
         return f'{self.__class__.__name__}({repr(self.type)}, {repr(self.value)})'
 
 
-class _NullClass:
-    def __repr__(self):
-        return '<NULL>'
-
-
-NULL_OBJECT = _NullClass()
 RootObjectType = ObjectReferenceType('java/lang/Object')
-NULL_VALUE = JvmValue(RootObjectType, NULL_OBJECT)
+NULL_VALUE = RootObjectType.create_instance(NULL_OBJECT)
