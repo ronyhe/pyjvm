@@ -4,9 +4,12 @@ T = TypeVar('T')
 
 
 class Stack(Generic[T]):
-    def __init__(self, max_depth=None):
-        self._values = []
+    def __init__(self, values=None, max_depth=None):
         self.max_depth = max_depth
+        self._values = []
+        if values is not None:
+            for value in values:
+                self.push(value)
 
     def pop(self) -> T:
         return self._values.pop(0)
