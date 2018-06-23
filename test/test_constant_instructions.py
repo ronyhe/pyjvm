@@ -1,4 +1,3 @@
-import struct
 from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.types import NULL_VALUE, Integer, Double
