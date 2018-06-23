@@ -1,4 +1,6 @@
 from pyjvm.execution.execution import Executor, bytecode
+from pyjvm.execution.verifiers import verify_long, verify_float, verify_double, verify_integer, verify_reference, \
+    verifier_by_type
 from pyjvm.types import Integer, Long, Float, Double
 
 
@@ -11,20 +13,21 @@ def _simple_store_decorator(the_class):
     )
 
     for type_, prefix in specs:
-        null_func = bytecode(prefix + 'store', ensure_type=type_)
+        verifier = verifier_by_type(type_)
+        null_func = bytecode(prefix + 'store', verifier)
         the_class = null_func(the_class)
 
         for i in range(3 + 1):  # 0-3, inclusive
-            arg_func = bytecode(prefix + 'store_' + str(i), index_into_locals=i, ensure_type=type_)
+            arg_func = bytecode(prefix + 'store_' + str(i), verifier, index_into_locals=i)
             the_class = arg_func(the_class)
 
     return the_class
 
 
-@bytecode('astore')
+@bytecode('astore', verify_reference)
 @_simple_store_decorator
 class StoreToLocalVariable(Executor):
-    def __init__(self, instruction, machine, index_into_locals=None, ensure_type=None):
+    def __init__(self, instruction, machine, ensure_type, index_into_locals=None):
         super().__init__(instruction, machine)
         self.ensure_type = ensure_type
         if index_into_locals is None:
@@ -34,26 +37,20 @@ class StoreToLocalVariable(Executor):
 
     def execute(self):
         value = self.machine.current_op_stack().pop()
-        if self.ensure_type is not None and not self.ensure_type == value.type:
-            self.raise_type_error(value.type)
+        self.ensure_type(value)
         self.machine.current_locals().store(self.index_into_locals, value)
 
-    def raise_type_error(self, type_):
-        message = f'Instruction {self.instruction.name} expects ' \
-                  f'top-of-stack to have value of type {self.ensure_type}, but TOS has {type_}'
-        raise TypeError(message)
 
-
-@bytecode('lastore', Long)
-@bytecode('fastore', Float)
-@bytecode('dastore', Double)
-@bytecode('iastore', Integer)
-@bytecode('bastore', Integer)
-@bytecode('castore', Integer)
-@bytecode('sastore', Integer)
-@bytecode('aastore')
+@bytecode('lastore', verify_long)
+@bytecode('fastore', verify_float)
+@bytecode('dastore', verify_double)
+@bytecode('iastore', verify_integer)
+@bytecode('bastore', verify_integer)
+@bytecode('castore', verify_integer)
+@bytecode('sastore', verify_integer)
+@bytecode('aastore', verify_reference)
 class StoreValueIntoArray(Executor):
-    def __init__(self, instruction, machine, ensure_type=None):
+    def __init__(self, instruction, machine, ensure_type):
         super().__init__(instruction, machine)
         self.ensure_type = ensure_type
 
@@ -67,8 +64,8 @@ class StoreValueIntoArray(Executor):
             raise TypeError()
         if not index.type == Integer:
             raise TypeError()
-        if self.ensure_type is not None and not self.ensure_type == value.type:
-            raise TypeError()
+
+        self.ensure_type(value)
 
         try:
             array_ref.value[index.value] = value

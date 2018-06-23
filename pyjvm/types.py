@@ -6,7 +6,7 @@ class Type:
         self.needs_two_slots: bool = bool(needs_two_slots)
         self.refers_to = refers_to
         self.default_value = default_value
-        self.is_reference_to_class: bool = isinstance(refers_to, str)
+        self.is_class_reference: bool = isinstance(refers_to, str)
         self.is_array_reference: bool = is_array_reference
         self.validate()
 
@@ -17,9 +17,9 @@ class Type:
             raise ValueError('Reference types must specify a referred type')
         if self.is_array_reference and not self.is_reference:
             raise ValueError('How can an array reference not be a reference?')
-        if self.is_reference_to_class and not self.is_reference:
+        if self.is_class_reference and not self.is_reference:
             raise ValueError('How can a reference to a class not be a reference?')
-        if self.is_value and any((self.is_reference, self.is_reference_to_class, self.is_array_reference)):
+        if self.is_value and any((self.is_reference, self.is_class_reference, self.is_array_reference)):
             raise ValueError('Types cannot be value types and reference types at the same time')
 
     def create_instance(self, value):
