@@ -19,7 +19,7 @@ def _simple_store_decorator(the_class):
 
     return the_class
 
-
+@bytecode('astore')
 @_simple_store_decorator
 class StoreToLocalVariable(Executor):
     def __init__(self, instruction, machine, index_into_locals=None, ensure_type=None):
