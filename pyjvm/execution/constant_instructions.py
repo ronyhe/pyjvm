@@ -8,13 +8,27 @@ class NoOp(Executor):
         pass
 
 
-@bytecode('aconst_null', NULL_VALUE)
-@bytecode('iconst_0', Integer.create_instance(0))
-@bytecode('iconst_1', Integer.create_instance(1))
-@bytecode('iconst_2', Integer.create_instance(2))
-@bytecode('iconst_3', Integer.create_instance(3))
-@bytecode('iconst_4', Integer.create_instance(4))
-@bytecode('iconst_5', Integer.create_instance(5))
+def _create_constant_dict():
+    d = {
+        'aconst_null': NULL_VALUE,
+        'iconst_m1': Integer.create_instance(-1)
+    }
+
+    for i in range(6):
+        d['iconst_' + str(i)] = Integer.create_instance(i)
+
+    return d
+
+
+def constants_decorator(the_class):
+    for name, value in _create_constant_dict().items():
+        func = bytecode(name, value)
+        the_class = func(the_class)
+
+    return the_class
+
+
+@constants_decorator
 class Push(Executor):
     def __init__(self, instruction, machine, value):
         super().__init__(instruction, machine)
