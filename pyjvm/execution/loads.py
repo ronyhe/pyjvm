@@ -65,7 +65,7 @@ class LoadFromArray(Executor):
             raise NotImplementedError()  # NullReferenceException
 
         try:
-            value = array_ref.value[index]
+            value = array_ref.value[index.value]
         except IndexError:
             raise NotImplementedError()  # ArrayIndexOutOfBoundException
         else:
