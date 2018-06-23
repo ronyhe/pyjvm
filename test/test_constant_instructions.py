@@ -1,3 +1,4 @@
+import struct
 from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.types import NULL_VALUE, Integer, Double
@@ -25,6 +26,14 @@ def test_double_const_0():
 
 def test_byte_push():
     machine = BlankTestMachine()
-    machine.step_instruction('bipush', [Operand(OperandTypes.LITERAL, 2)])
-    assert machine.current_op_stack().peek() == Integer.create_instance(2)
+    value = 2
+    machine.step_instruction('bipush', [Operand(OperandTypes.LITERAL, value)])
+    assert machine.current_op_stack().peek() == Integer.create_instance(value)
 
+
+def test_short_push():
+    machine = BlankTestMachine()
+    value = -78
+    op = Operand(OperandTypes.LITERAL, value)
+    machine.step_instruction('sipush', [op])
+    assert machine.current_op_stack().peek() == Integer.create_instance(value)

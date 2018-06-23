@@ -49,7 +49,8 @@ class Push(Executor):
 
 
 @bytecode('bipush')
-class BiPush(Executor):
+@bytecode('sipush')
+class PushOperand(Executor):
     def execute(self):
         operand = self.instruction.operands[0].value
         value = Integer.create_instance(int(operand))
