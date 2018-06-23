@@ -43,7 +43,14 @@ class StoreToLocalVariable(Executor):
         raise TypeError(message)
 
 
+@bytecode('lastore', Long)
+@bytecode('fastore', Float)
+@bytecode('dastore', Double)
 @bytecode('iastore', Integer)
+@bytecode('bastore', Integer)
+@bytecode('castore', Integer)
+@bytecode('sastore', Integer)
+@bytecode('aastore')
 class StoreValueIntoArray(Executor):
     def __init__(self, instruction, machine, ensure_type=None):
         super().__init__(instruction, machine)
