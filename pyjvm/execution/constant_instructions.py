@@ -1,5 +1,5 @@
 from pyjvm.execution.execution import bytecode, Executor
-from pyjvm.types import NULL_VALUE, Integer
+from pyjvm.types import NULL_VALUE, Integer, Long, Float, Double
 
 
 @bytecode('nop')
@@ -14,8 +14,17 @@ def _create_constant_dict():
         'iconst_m1': Integer.create_instance(-1)
     }
 
-    for i in range(6):
-        d['iconst_' + str(i)] = Integer.create_instance(i)
+    for int_value in range(6):
+        d['iconst_' + str(int_value)] = Integer.create_instance(int_value)
+
+    for long_value in range(2):
+        d['lconst_' + str(long_value)] = Long.create_instance(long_value)
+
+    for float_value in range(2):
+        d['lfloat_' + str(float_value)] = Float.create_instance(float_value)
+
+    for double_value in range(2):
+        d['dconst_' + str(double_value)] = Double.create_instance(double_value)
 
     return d
 

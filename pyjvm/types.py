@@ -38,10 +38,15 @@ class Type:
         return isinstance(other, Type) and other.name == self.name
 
 
+class _FloatingPointType(Type):
+    def create_instance(self, value):
+        return super().create_instance(float(value))
+
+
 Integer = Type('<Integer>', default_value=0)
-Float = Type('<Float>', default_value=0.0)
+Float = _FloatingPointType('<Float>', default_value=0.0)
 Long = Type('<Long>', default_value=0, needs_two_slots=True)
-Double = Type('<Double>', default_value=0.0, needs_two_slots=True)
+Double = _FloatingPointType('<Double>', default_value=0.0, needs_two_slots=True)
 
 
 class _NullClass:
