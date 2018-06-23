@@ -1,6 +1,6 @@
 from pyjvm.execution.execution import Executor, bytecode
-from pyjvm.execution.verifiers import verify_integer, verify_long, verify_double, verify_float, verify_reference
-from pyjvm.types import Integer
+from pyjvm.execution.verifiers import verify_integer, verify_long, verify_double, verify_float, verify_reference, \
+    verify_array_reference
 
 
 def _load_from_locals_decorator(the_class):
@@ -40,38 +40,34 @@ class LoadFromLocals(Executor):
         self.machine.current_op_stack().push(value)
 
 
-@bytecode('aaload')
-class AALoad(Executor):
+@bytecode('laload', verify_long)
+@bytecode('faload', verify_float)
+@bytecode('daload', verify_double)
+@bytecode('iaload', verify_integer)
+@bytecode('baload', verify_integer)
+@bytecode('caload', verify_integer)
+@bytecode('saload', verify_integer)
+@bytecode('aaload', verify_reference)
+class LoadFromArray(Executor):
+    def __init__(self, instruction, machine, ensure_type):
+        super().__init__(instruction, machine)
+        self.ensure_type = ensure_type
+
     def execute(self):
         stack = self.machine.current_op_stack()
         index = stack.pop()
         array_ref = stack.pop()
 
-        if not index.type == Integer:
-            raise TypeError()
-
-        if not array_ref.type.is_array_reference:
-            raise TypeError()
+        verify_integer(index)
+        verify_array_reference(array_ref)
 
         if array_ref.is_null:
-            raise NotImplementedError()  # NullPointerException
+            raise NotImplementedError()  # NullReferenceException
 
         try:
-            value = array_ref.value[index.value]
+            value = array_ref.value[index]
         except IndexError:
-            raise NotImplementedError()  # ArrayIndexOutOfBoundsException
+            raise NotImplementedError()  # ArrayIndexOutOfBoundException
         else:
+            self.ensure_type(value)
             stack.push(value)
-
-
-def _load_from_locals(machine, index_in_locals, ensure_type=None):
-    local = machine.current_locals().load(index_in_locals)
-
-    if ensure_type is not None and not local.type == ensure_type:
-        raise TypeError()
-
-    machine.current_op_stack().push(local)
-
-
-def _load_integer_from_locals(machine, index_in_locals):
-    return _load_from_locals(machine, index_in_locals, ensure_type=Integer)
