@@ -24,4 +24,6 @@ def execute_instruction(instruction, machine):
 # noinspection PyUnresolvedReferences
 from pyjvm.execution import loads
 # noinspection PyUnresolvedReferences
+from pyjvm.execution import stores
+# noinspection PyUnresolvedReferences
 from pyjvm.execution import constant_instructions
