@@ -4,7 +4,7 @@ class Type:
         self.is_reference: bool = refers_to is not None
         self.is_value = not self.is_reference
         self.needs_two_slots: bool = bool(needs_two_slots)
-        self.referenced_type = refers_to
+        self.refers_to = refers_to
         self.default_value = default_value
         self.is_reference_to_class: bool = isinstance(refers_to, str)
         self.is_array_reference: bool = is_array_reference
@@ -13,7 +13,7 @@ class Type:
     def validate(self):
         if self.default_value is None:
             raise ValueError('Types must have default values')
-        if self.is_reference and self.referenced_type is None:
+        if self.is_reference and self.refers_to is None:
             raise ValueError('Reference types must specify a referred type')
         if self.is_array_reference and not self.is_reference:
             raise ValueError('How can an array reference not be a reference?')

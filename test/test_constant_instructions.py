@@ -1,3 +1,5 @@
+from jawa.util.bytecode import Operand, OperandTypes
+
 from pyjvm.types import NULL_VALUE, Integer, Double
 from test.test_utils import BlankTestMachine
 
@@ -15,7 +17,14 @@ def test_int_consts():
         assert machine.current_op_stack().peek() == Integer.create_instance(i)
 
 
-def test_double_consts():
+def test_double_const_0():
     machine = BlankTestMachine()
     machine.step_instruction('dconst_0')
     assert machine.current_op_stack().peek() == Double.create_instance(0.0)
+
+
+def test_byte_push():
+    machine = BlankTestMachine()
+    machine.step_instruction('bipush', [Operand(OperandTypes.LITERAL, 2)])
+    assert machine.current_op_stack().peek() == Integer.create_instance(2)
+

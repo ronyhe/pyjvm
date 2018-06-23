@@ -46,3 +46,11 @@ class Push(Executor):
 
     def execute(self):
         self.machine.current_op_stack().push(self.value)
+
+
+@bytecode('bipush')
+class BiPush(Executor):
+    def execute(self):
+        operand = self.instruction.operands[0].value
+        value = Integer.create_instance(int(operand))
+        self.machine.current_op_stack().push(value)
