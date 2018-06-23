@@ -1,3 +1,5 @@
+from jawa.util.bytecode import Operand, OperandTypes
+
 from pyjvm.types import Integer, RootObjectType, ArrayReferenceType, NULL_VALUE
 from test.test_utils import BlankTestMachine
 
@@ -9,6 +11,24 @@ def test_int_load():
     machine.current_locals().store(local_index, integer_value)
     machine.step_instruction('iload_0')
     assert machine.current_op_stack().peek() == integer_value
+
+
+def test_ref_load():
+    machine = BlankTestMachine()
+    value = NULL_VALUE
+    local_index = 2
+    machine.current_locals().store(local_index, value)
+    machine.step_instruction('aload_2')
+    assert machine.current_op_stack().peek() == value
+
+
+def test_ref_load_with_index():
+    machine = BlankTestMachine()
+    value = NULL_VALUE
+    local_index = 2
+    machine.current_locals().store(local_index, value)
+    machine.step_instruction('aload', [Operand(OperandTypes.LITERAL, 2)])
+    assert machine.current_op_stack().peek() == value
 
 
 def test_load_ref_from_array():

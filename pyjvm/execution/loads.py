@@ -1,33 +1,43 @@
-from jawa import constants
-
 from pyjvm.execution.execution import Executor, bytecode
+from pyjvm.execution.verifiers import verify_integer, verify_long, verify_double, verify_float, verify_reference
 from pyjvm.types import Integer
 
 
-@bytecode('iload')
-@bytecode('iload_0', 0)
-@bytecode('iload_1', 1)
-@bytecode('iload_2', 2)
-@bytecode('iload_3', 3)
-class IntLoad(Executor):
-    def __init__(self, instruction, machine, index=None):
+def _load_from_locals_decorator(the_class):
+    specs = (
+        ('i', verify_integer),
+        ('l', verify_long),
+        ('d', verify_double),
+        ('f', verify_float),
+        ('a', verify_reference)
+    )
+
+    for letter, verifier in specs:
+        no_index_name = letter + 'load'
+        the_class = bytecode(no_index_name, verifier)(the_class)
+        for i in range(3 + 1):
+            name = letter + 'load_' + str(i)
+            the_class = bytecode(name, verifier, i)(the_class)
+
+    return the_class
+
+
+@_load_from_locals_decorator
+class LoadFromLocals(Executor):
+    def __init__(self, instruction, machine, ensure_type, index_in_locals=None):
         super().__init__(instruction, machine)
-        self.index = index
+        self.ensure_type = ensure_type
+        self.index_in_locals = index_in_locals
 
     def execute(self):
-        if self.index is None:
-            self.index = self._get_index_of_int_in_locals()
+        if self.index_in_locals is None:
+            index = int(self.instruction.operands[0].value)
+        else:
+            index = self.index_in_locals
 
-        _load_from_locals(self.machine, self.index, ensure_type=Integer)
-
-    def _get_index_of_int_in_locals(self):
-        constant_index = self.instruction.operands[0].value
-        constant = self.machine.current_constants()[constant_index]
-
-        if not isinstance(constant, constants.Integer):
-            raise TypeError()
-
-        return constant.value
+        value = self.machine.current_locals().load(index)
+        self.ensure_type(value)
+        self.machine.current_op_stack().push(value)
 
 
 @bytecode('aaload')
