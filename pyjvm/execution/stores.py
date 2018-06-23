@@ -4,16 +4,17 @@ from pyjvm.types import Integer, Long, Float, Double
 
 def _simple_store_decorator(the_class):
     specs = (
-        (Integer, 'i', 3),
-        (Long, 'l', 3),
-        (Float, 'f', 3),
-        (Double, 'd', 3)
+        (Integer, 'i'),
+        (Long, 'l'),
+        (Float, 'f'),
+        (Double, 'd')
     )
 
-    for type_, prefix, max_index in specs:
+    for type_, prefix in specs:
         null_func = bytecode(prefix + 'store', ensure_type=type_)
         the_class = null_func(the_class)
-        for i in range(max_index + 1):
+
+        for i in range(3 + 1):  # 0-3, inclusive
             arg_func = bytecode(prefix + 'store_' + str(i), index_into_locals=i, ensure_type=type_)
             the_class = arg_func(the_class)
 
