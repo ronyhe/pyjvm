@@ -41,3 +41,28 @@ class StoreToLocalVariable(Executor):
         message = f'Instruction {self.instruction.name} expects ' \
                   f'top-of-stack to have value of type {self.ensure_type}, but TOS has {type_}'
         raise TypeError(message)
+
+
+@bytecode('iastore', Integer)
+class StoreValueIntoArray(Executor):
+    def __init__(self, instruction, machine, ensure_type=None):
+        super().__init__(instruction, machine)
+        self.ensure_type = ensure_type
+
+    def execute(self):
+        pop = self.machine.current_op_stack().pop
+        value = pop()
+        index = pop()
+        array_ref = pop()
+
+        if not array_ref.type.is_array_reference:
+            raise TypeError()
+        if not index.type == Integer:
+            raise TypeError()
+        if self.ensure_type is not None and not self.ensure_type == value.type:
+            raise TypeError()
+
+        try:
+            array_ref.value[index.value] = value
+        except IndexError:
+            raise NotImplementedError()  # ArrayIndexOutOfBoundsException
