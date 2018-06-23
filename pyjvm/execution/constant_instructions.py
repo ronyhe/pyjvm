@@ -14,17 +14,18 @@ def _create_constant_dict():
         'iconst_m1': Integer.create_instance(-1)
     }
 
-    for int_value in range(6):
-        d['iconst_' + str(int_value)] = Integer.create_instance(int_value)
+    specs = (
+        (Integer, 'i', 5),
+        (Long, 'l', 1),
+        (Float, 'f', 1),
+        (Double, 'd', 1),
+    )
 
-    for long_value in range(2):
-        d['lconst_' + str(long_value)] = Long.create_instance(long_value)
-
-    for float_value in range(2):
-        d['lfloat_' + str(float_value)] = Float.create_instance(float_value)
-
-    for double_value in range(2):
-        d['dconst_' + str(double_value)] = Double.create_instance(double_value)
+    for type_, prefix, max_index in specs:
+        for i in range(max_index + 1):
+            mnemonic = f'{prefix}const_{i}'
+            value = type_.create_instance(i)
+            d[mnemonic] = value
 
     return d
 
