@@ -31,5 +31,10 @@ class Stack(Generic[T]):
     def peek(self) -> T:
         return self._values[0]
 
+    def peek_many(self, amount):
+        if amount < 0:
+            raise ValueError('Peek amount muse be >= 0')
+        return self._values[:amount]
+
     def size(self) -> int:
         return len(self._values)

@@ -1,5 +1,6 @@
 class Type:
-    def __init__(self, name, *, default_value, refers_to=None, needs_two_slots=False, is_array_reference=False):
+    def __init__(self, name, *, default_value, refers_to=None,
+                 needs_two_slots=False, is_array_reference=False, is_type_two_computational_type=False):
         self.name: str = str(name)
         self.is_reference: bool = refers_to is not None
         self.is_value = not self.is_reference
@@ -8,6 +9,7 @@ class Type:
         self.default_value = default_value
         self.is_class_reference: bool = isinstance(refers_to, str)
         self.is_array_reference: bool = is_array_reference
+        self.is_type_two_computational_type: bool = is_type_two_computational_type
         self.validate()
 
     def validate(self):
@@ -21,12 +23,14 @@ class Type:
             raise ValueError('How can a reference to a class not be a reference?')
         if self.is_value and any((self.is_reference, self.is_class_reference, self.is_array_reference)):
             raise ValueError('Types cannot be value types and reference types at the same time')
+        if self.is_type_two_computational_type and not self.is_value:
+            raise ValueError('Only value types can hold is_type_two_computational_type=True')
 
     def create_instance(self, value):
         return JvmValue(self, value)
 
     def __repr__(self):
-        fields = 'default_value', 'refers_to', 'needs_two_slots'
+        fields = 'default_value', 'refers_to', 'needs_two_slots', 'is_type_two_computational_type'
         mapping = [(name, getattr(self, name)) for name in fields]
         values_text = ', '.join(f'{name}={value}' for name, value in mapping)
         return f'{self.__class__.__name__}({self.name}, {values_text})'
@@ -45,8 +49,8 @@ class _FloatingPointType(Type):
 
 Integer = Type('<Integer>', default_value=0)
 Float = _FloatingPointType('<Float>', default_value=0.0)
-Long = Type('<Long>', default_value=0, needs_two_slots=True)
-Double = _FloatingPointType('<Double>', default_value=0.0, needs_two_slots=True)
+Long = Type('<Long>', default_value=0, needs_two_slots=True, is_type_two_computational_type=True)
+Double = _FloatingPointType('<Double>', default_value=0.0, needs_two_slots=True, is_type_two_computational_type=True)
 
 
 class _NullClass:
