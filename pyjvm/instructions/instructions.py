@@ -31,3 +31,5 @@ from pyjvm.instructions import loads
 from pyjvm.instructions import stores
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import constant_instructions
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import stack_instructions
