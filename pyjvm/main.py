@@ -22,4 +22,3 @@ cli.add_command(instruction_report)
 
 def main():
     cli()
-
