@@ -1,19 +1,18 @@
 from pyjvm.execution.execution import Executor, bytecode
-from pyjvm.execution.verifiers import verify_long, verify_float, verify_double, verify_integer, verify_reference, \
-    verifier_by_type
-from pyjvm.jvm_types import Integer, Long, Float, Double
+from pyjvm.execution.verifiers import verify_long, verify_float, verify_double, verify_integer, verify_reference
+from pyjvm.jvm_types import Integer
 
 
 def _simple_store_decorator(the_class):
     specs = (
-        (Integer, 'i'),
-        (Long, 'l'),
-        (Float, 'f'),
-        (Double, 'd')
+        ('i', verify_integer),
+        ('l', verify_long),
+        ('f', verify_float),
+        ('d', verify_double),
+        ('a', verify_reference)
     )
 
-    for type_, prefix in specs:
-        verifier = verifier_by_type(type_)
+    for prefix, verifier in specs:
         null_func = bytecode(prefix + 'store', verifier)
         the_class = null_func(the_class)
 
@@ -24,7 +23,6 @@ def _simple_store_decorator(the_class):
     return the_class
 
 
-@bytecode('astore', verify_reference)
 @_simple_store_decorator
 class StoreToLocalVariable(Executor):
     def __init__(self, instruction, machine, ensure_type, index_into_locals=None):
