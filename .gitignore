@@ -2,3 +2,4 @@
 .idea/
 scratchpad/
 .pytest_cache/
+venv/
