@@ -89,6 +89,9 @@ class JvmValue:
     def __repr__(self):
         return f'{self.__class__.__name__}({repr(self.type)}, {repr(self.value)})'
 
+    def duplicate(self):
+        return self.__class__(self.type, self.value)
+
 
 RootObjectType = ObjectReferenceType('java/lang/Object')
 NULL_VALUE = RootObjectType.create_instance(NULL_OBJECT)
