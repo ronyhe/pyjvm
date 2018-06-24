@@ -3,7 +3,7 @@ from typing import Tuple, Dict
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
-from pyjvm.types import Type, JvmValue
+from pyjvm.jvm_types import Type, JvmValue
 
 
 class BytecodeMethod:

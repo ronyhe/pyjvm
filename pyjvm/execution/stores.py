@@ -1,7 +1,7 @@
 from pyjvm.execution.execution import Executor, bytecode
 from pyjvm.execution.verifiers import verify_long, verify_float, verify_double, verify_integer, verify_reference, \
     verifier_by_type
-from pyjvm.types import Integer, Long, Float, Double
+from pyjvm.jvm_types import Integer, Long, Float, Double
 
 
 def _simple_store_decorator(the_class):

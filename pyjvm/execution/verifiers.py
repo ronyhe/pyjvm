@@ -1,6 +1,6 @@
 import functools
 
-from pyjvm.types import Integer, Float, Long, Double
+from pyjvm.jvm_types import Integer, Float, Long, Double
 
 _VALUE_MESSAGE = 'Value {value} was expected to have type {expected}, instead it has type {actual}'
 _EXPECTED_MESSAGE = 'Value {value} was expected to be a {description}, instead it has type {actual}'

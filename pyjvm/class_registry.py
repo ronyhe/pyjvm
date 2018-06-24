@@ -29,3 +29,6 @@ class ClassRegistry:
             return a_class
 
         return wrapper
+
+    def keys(self):
+        return self._mapping.keys()

@@ -1,6 +1,6 @@
 from jawa.util.bytecode import Operand, OperandTypes
 
-from pyjvm.types import NULL_VALUE, Integer, Double
+from pyjvm.jvm_types import NULL_VALUE, Integer, Double
 from test.test_utils import BlankTestMachine
 
 

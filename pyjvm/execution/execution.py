@@ -21,6 +21,10 @@ def execute_instruction(instruction, machine):
     return executor.execute()
 
 
+def get_implemented_instructions():
+    return _registry.keys()
+
+
 # noinspection PyUnresolvedReferences
 from pyjvm.execution import loads
 # noinspection PyUnresolvedReferences
