@@ -1,53 +1,65 @@
 from pyjvm.jvm_types import Integer, Long
 from test.test_utils import BlankTestMachine
 
+ONE, TWO, THREE = (Integer.create_instance(i) for i in range(1, 4))
+LONG_ONE = Long.create_instance(1)
 
-def test_pop():
+
+def stack_test(before, instruction, after):
     machine = BlankTestMachine()
     stack = machine.current_op_stack()
-    stack.push(Integer.create_instance(1))
-    machine.step_instruction('pop')
-    assert stack.size() == 0
+    for item in reversed(before):
+        stack.push(item)
+    machine.step_instruction(instruction)
+
+    size = len(after)
+    assert stack.size() == size
+    assert list(after) == list(stack.peek_many(size))
+
+
+def test_pop():
+    stack_test(
+        [ONE],
+        'pop',
+        []
+    )
 
 
 def test_dup():
-    machine = BlankTestMachine()
-    stack = machine.current_op_stack()
-    stack.push(Integer.create_instance(1))
-    machine.step_instruction('dup')
-    assert stack.size() == 2
-    assert stack.pop() == stack.pop()
+    stack_test(
+        [ONE],
+        'dup',
+        [ONE, ONE]
+    )
 
 
 def test_dup_x_1():
-    machine = BlankTestMachine()
-    stack = machine.current_op_stack()
-    stack.push(Integer.create_instance(1))
-    stack.push(Integer.create_instance(2))
-    machine.step_instruction('dup_x1')
-    assert stack.size() == 3
-    first, _, third = (stack.pop() for _ in range(3))
-    assert first == third
+    stack_test(
+        [ONE, TWO],
+        'dup_x1',
+        [ONE, TWO, ONE]
+    )
 
 
 def test_dup_x_2_form_one():
-    machine = BlankTestMachine()
-    stack = machine.current_op_stack()
-    stack.push(Integer.create_instance(1))
-    stack.push(Integer.create_instance(2))
-    stack.push(Integer.create_instance(3))
-    machine.step_instruction('dup_x2')
-    assert stack.size() == 4
-    first, _, _, fourth = (stack.pop() for _ in range(4))
-    assert first == fourth
+    stack_test(
+        [ONE, TWO, THREE],
+        'dup_x2',
+        [ONE, TWO, THREE, ONE]
+    )
 
 
 def test_dup_x_2_form_two():
-    machine = BlankTestMachine()
-    stack = machine.current_op_stack()
-    stack.push(Long.create_instance(1))
-    stack.push(Integer.create_instance(2))
-    machine.step_instruction('dup_x2')
-    assert stack.size() == 3
-    first, _, third = (stack.pop() for _ in range(3))
-    assert first == third
+    stack_test(
+        [ONE, LONG_ONE],
+        'dup_x2',
+        [ONE, LONG_ONE, ONE]
+    )
+
+
+def test_dup_x_2_form_two_with_three_stack_elements():
+    stack_test(
+        [ONE, LONG_ONE, TWO],
+        'dup_x2',
+        [ONE, LONG_ONE, ONE, TWO]
+    )
