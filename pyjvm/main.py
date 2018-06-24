@@ -3,6 +3,11 @@ import click
 from pyjvm.execution.execution import get_implemented_instructions
 
 
+@click.group()
+def cli():
+    pass
+
+
 @click.command()
 def instruction_report():
     keys = sorted(get_implemented_instructions())
@@ -12,5 +17,9 @@ def instruction_report():
     click.echo(f'{len(keys)} implemented')
 
 
-if __name__ == '__main__':
-    instruction_report()
+cli.add_command(instruction_report)
+
+
+def main():
+    cli()
+

@@ -3,3 +3,4 @@
 scratchpad/
 .pytest_cache/
 venv/
+pyjvm.egg-info/
