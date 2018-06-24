@@ -17,7 +17,7 @@ def _create_constant_dict():
     specs = (
         (Integer, 'i', 5),
         (Long, 'l', 1),
-        (Float, 'f', 1),
+        (Float, 'f', 2),
         (Double, 'd', 1),
     )
 
