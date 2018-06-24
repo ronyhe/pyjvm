@@ -1,6 +1,6 @@
 import click
 
-from pyjvm.execution.execution import get_implemented_instructions
+from pyjvm.instructions.instructions import get_implemented_instructions
 
 
 @click.group()

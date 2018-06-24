@@ -1,4 +1,4 @@
-from pyjvm.execution.execution import bytecode, Executor
+from pyjvm.instructions.instructions import bytecode, Executor
 from pyjvm.jvm_types import NULL_VALUE, Integer, Long, Float, Double
 
 

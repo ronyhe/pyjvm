@@ -26,8 +26,8 @@ def get_implemented_instructions():
 
 
 # noinspection PyUnresolvedReferences
-from pyjvm.execution import loads
+from pyjvm.instructions import loads
 # noinspection PyUnresolvedReferences
-from pyjvm.execution import stores
+from pyjvm.instructions import stores
 # noinspection PyUnresolvedReferences
-from pyjvm.execution import constant_instructions
+from pyjvm.instructions import constant_instructions

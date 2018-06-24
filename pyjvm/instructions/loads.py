@@ -1,5 +1,5 @@
-from pyjvm.execution.execution import Executor, bytecode
-from pyjvm.execution.verifiers import verify_integer, verify_long, verify_double, verify_float, verify_reference, \
+from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.instructions.verifiers import verify_integer, verify_long, verify_double, verify_float, verify_reference, \
     verify_array_reference
 
 

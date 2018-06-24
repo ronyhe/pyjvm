@@ -3,8 +3,8 @@ from typing import Iterable
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
-from pyjvm.execution.execution import execute_instruction
 from pyjvm.frame_locals import Locals
+from pyjvm.instructions.instructions import execute_instruction
 from pyjvm.jvm_class import BytecodeMethod, JvmClass
 from pyjvm.jvm_types import JvmValue
 from pyjvm.stack import Stack
