@@ -1,9 +1,8 @@
 from pyjvm.jvm_types import Integer, Long
-from pyjvm.stack import Stack
 from test.test_utils import BlankTestMachine
 
-ONE, TWO, THREE = (Integer.create_instance(i) for i in range(1, 4))
-LONG_ONE = Long.create_instance(1)
+ONE, TWO, THREE, FOUR = (Integer.create_instance(i) for i in range(1, 5))
+LONG_ONE, LONG_TWO = (Long.create_instance(i) for i in range(1, 3))
 
 
 def stack_test(before, instruction, after):
@@ -97,16 +96,23 @@ def test_dup_2_x_1_second_form():
         [LONG_ONE, TWO, LONG_ONE, THREE]
     )
 
-
-def test_stack_offset():
-    stack = Stack([1, 2])
-    stack.insert_at_offset(3, 3)
-    assert list(stack.peek_many(3)) == [1, 2, 3]
-
-
-def test_stack_offset_many():
-    stack = Stack([1, 2])
-    stack.insert_at_offset(1, 5)
-    assert list(stack.peek_many(3)) == [1, 5, 2]
-    stack.insert_at_offset(1, 6)
-    assert list(stack.peek_many(4)) == [1, 6, 5, 2]
+# def test_dup_2_x_2():
+#     case_one = (
+#         [ONE, TWO, THREE, FOUR],
+#         [ONE, TWO, THREE, FOUR, ONE, TWO]
+#     )
+#     case_two = (
+#         [LONG_ONE, TWO, THREE],
+#         [LONG_ONE, TWO, THREE, LONG_ONE]
+#     )
+#     case_three = (
+#         [ONE, TWO, LONG_ONE],
+#         [ONE, TWO, LONG_ONE, ONE, TWO]
+#     )
+#     case_four = (
+#         [LONG_ONE, LONG_TWO],
+#         [LONG_ONE, LONG_TWO, LONG_ONE, LONG_TWO]
+#     )
+#     cases = case_one, case_two, case_three, case_four
+#     for before, after in cases:
+#         stack_test(before, 'dup2_x2', after)

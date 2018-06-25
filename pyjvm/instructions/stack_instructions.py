@@ -2,6 +2,15 @@ from pyjvm.instructions.instructions import Executor, bytecode
 from pyjvm.jvm_types import CompType
 
 
+def _comp_types(actual, *expected_numbers):
+    for ex, actual in zip(expected_numbers, actual):
+        num = 1 if CompType(actual).is_one else 2
+        if not num == ex:
+            return False
+
+    return True
+
+
 @bytecode('pop', 1)
 @bytecode('pop2', 2)
 class Pop(Executor):
@@ -31,13 +40,10 @@ class DuplicateX2(Executor):
     def execute(self):
         stack = self.machine.current_op_stack()
         peek = stack.peek_many(3)
-        found = len(peek)
-        if found < 2:
-            raise ValueError('Stack must have at least two values to perform the dup_x2 instruction')
         first, second = peek[:2]
 
-        first_form = found == 3 and all(CompType(item).is_one for item in peek)
-        second_form = (CompType(first).is_one and CompType(second).is_two)
+        first_form = _comp_types(peek, 1, 1, 1)
+        second_form = _comp_types(peek, 1, 2)
 
         if first_form:
             offset = 3
@@ -53,17 +59,16 @@ class DuplicateX2(Executor):
 class Duplicate2(Executor):
     def execute(self):
         stack = self.machine.current_op_stack()
+        peek = stack.peek_many(2)
         top = stack.peek()
-        if CompType(top).is_two:
+
+        if _comp_types(peek, 2):
             stack.push(top.duplicate())
-        else:
-            peek = stack.peek_many(2)
-            enough_values = len(peek) == 2
-            right_types = all(CompType(item).is_one for item in peek)
-            if not (enough_values and right_types):
-                raise TypeError(f'Conditions for dup2 were not met. Values on top-of-stack were {peek}')
+        elif _comp_types(peek, 1, 1):
             for item in reversed(peek):
                 stack.push(item.duplicate())
+        else:
+            raise TypeError(f'Conditions for dup2 were not met. Values on top-of-stack were {peek}')
 
 
 @bytecode('dup2_x1')
@@ -71,11 +76,9 @@ class Duplicate2X1(Executor):
     def execute(self):
         stack = self.machine.current_op_stack()
         peek = stack.peek_many(3)
-        comp_types = [CompType(item) for item in peek]
-        found = len(peek)
 
-        first_form = found == 3 and all(item.is_one for item in comp_types)
-        second_form = found >= 2 and comp_types[0].is_two and comp_types[1].is_one
+        first_form = _comp_types(peek, 1, 1, 1)
+        second_form = _comp_types(peek, 2, 1)
 
         first, second, _ = peek
         if first_form:
@@ -85,3 +88,13 @@ class Duplicate2X1(Executor):
             stack.insert_at_offset(2, first.duplicate())
         else:
             raise TypeError(f'Conditions for dup2_x1 were not met. Values on top-of-stack were {peek}')
+
+# class Duplicate2X2(Executor):
+#     def execute(self):
+#         stack = self.machine.current_op_stack()
+#         peek = stack.peek_many(4)
+#         found = len(peek)
+#         comps = [CompType(v) for v in peek]
+#
+#         first_case = found >= 4 and all(comp.is_one for comp in comps)
+#         second_case = found >= 3
