@@ -21,15 +21,15 @@ class Stack(Generic[T]):
 
     def insert_at_offset(self, offset, value):
         if offset < 0:
-            raise ValueError('Offset must >= 0')
+            raise ValueError('Offset must be >= 0')
         current_size = self.size()
         if current_size < offset - 1:
             raise IndexError(f'Cannot insert to stack at offset {offset} '
                              f'because the current size of the stack is {current_size}')
         self._values.insert(offset, value)
 
-    def peek(self) -> T:
-        return self._values[0]
+    def peek(self, index=0) -> T:
+        return self._values[index]
 
     def peek_many(self, amount):
         if amount < 0:
@@ -38,3 +38,6 @@ class Stack(Generic[T]):
 
     def size(self) -> int:
         return len(self._values)
+
+    def __iter__(self):
+        return iter(self._values)

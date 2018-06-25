@@ -11,6 +11,33 @@ def _comp_types(actual, *expected_numbers):
     return True
 
 
+class _Form:
+    def __init__(self, comp_types, offset, indexes):
+        self.comp_types = [int(i) for i in comp_types]
+        self.offset = offset
+        try:
+            self.indexes = list(indexes)
+        except TypeError:
+            self.indexes = [indexes]
+
+    def matches(self, stack):
+        return _comp_types(iter(stack), *self.comp_types)
+
+    def execute(self, stack):
+        values = [stack.peek(index) for index in self.indexes]
+        for value in reversed(values):
+            stack.insert_at_offset(self.offset, value.duplicate())
+
+
+def _comp_type_forms(instruction_name, stack, *forms):
+    for form in forms:
+        if form.matches(stack):
+            form.execute(stack)
+            return
+
+    raise TypeError(f'Conditions were no met for instruction {instruction_name}')
+
+
 @bytecode('pop', 1)
 @bytecode('pop2', 2)
 class Pop(Executor):
@@ -38,86 +65,84 @@ class Duplicate(Executor):
 @bytecode('dup_x2')
 class DuplicateX2(Executor):
     def execute(self):
-        stack = self.machine.current_op_stack()
-        peek = stack.peek_many(3)
-        first, second = peek[:2]
-
-        first_form = _comp_types(peek, 1, 1, 1)
-        second_form = _comp_types(peek, 1, 2)
-
-        if first_form:
-            offset = 3
-        elif second_form:
-            offset = 2
-        else:
-            raise TypeError(f'Conditions for dup_x2 instruction were not met. Values on top-of-stack were {peek}')
-
-        stack.insert_at_offset(offset, first.duplicate())
+        _comp_type_forms(
+            'dup_x2',
+            self.machine.current_op_stack(),
+            _Form(
+                comp_types='111',
+                offset=3,
+                indexes=0
+            ),
+            _Form(
+                comp_types='12',
+                offset=2,
+                indexes=0
+            )
+        )
 
 
 @bytecode('dup2')
 class Duplicate2(Executor):
     def execute(self):
-        stack = self.machine.current_op_stack()
-        peek = stack.peek_many(2)
-        top = stack.peek()
-
-        first_form = _comp_types(peek, 2)
-        second_form = _comp_types(peek, 1, 1)
-
-        if first_form:
-            stack.push(top.duplicate())
-        elif second_form:
-            for item in reversed(peek):
-                stack.push(item.duplicate())
-        else:
-            raise TypeError(f'Conditions for dup2 were not met. Values on top-of-stack were {peek}')
+        _comp_type_forms(
+            'dup2',
+            self.machine.current_op_stack(),
+            _Form(
+                comp_types='11',
+                offset=0,
+                indexes=(0, 1)
+            ),
+            _Form(
+                comp_types='2',
+                offset=0,
+                indexes=0
+            ),
+        )
 
 
 @bytecode('dup2_x1')
 class Duplicate2X1(Executor):
     def execute(self):
-        stack = self.machine.current_op_stack()
-        peek = stack.peek_many(3)
-
-        first_form = _comp_types(peek, 1, 1, 1)
-        second_form = _comp_types(peek, 2, 1)
-
-        first, second, _ = peek
-        if first_form:
-            stack.insert_at_offset(4, first.duplicate())
-            stack.insert_at_offset(4, second.duplicate())
-        elif second_form:
-            stack.insert_at_offset(2, first.duplicate())
-        else:
-            raise TypeError(f'Conditions for dup2_x1 were not met. Values on top-of-stack were {peek}')
+        _comp_type_forms(
+            'dup2_x1',
+            self.machine.current_op_stack(),
+            _Form(
+                comp_types='111',
+                offset=3,
+                indexes=(0, 1)
+            ),
+            _Form(
+                comp_types='21',
+                offset=2,
+                indexes=0
+            )
+        )
 
 
 @bytecode('dup2_x2')
 class Duplicate2X2(Executor):
     def execute(self):
-        stack = self.machine.current_op_stack()
-        peek = stack.peek_many(4)
-
-        first_case = _comp_types(peek, 1, 1, 1, 1)
-        second_case = _comp_types(peek, 2, 1, 1)
-        third_case = _comp_types(peek, 1, 1, 2)
-        fourth_case = _comp_types(peek, 2, 2)
-
-        if first_case:
-            items = 0, 1
-            offset = 5
-        elif second_case:
-            items = (0,)
-            offset = 4
-        elif third_case:
-            items = 0, 1
-            offset = 4
-        elif fourth_case:
-            items = (0,)
-            offset = 3
-        else:
-            raise TypeError(f'Conditions for dup2_x2 were not met. Values on top-of-stack were {peek}')
-
-        for index in items:
-            stack.insert_at_offset(offset, peek[index].duplicate())
+        _comp_type_forms(
+            'dup2_x2',
+            self.machine.current_op_stack(),
+            _Form(
+                comp_types='1111',
+                offset=4,
+                indexes=(0, 1)
+            ),
+            _Form(
+                comp_types='211',
+                offset=4,
+                indexes=0
+            ),
+            _Form(
+                comp_types='112',
+                offset=3,
+                indexes=(0, 1),
+            ),
+            _Form(
+                comp_types='22',
+                offset=3,
+                indexes=0
+            )
+        )
