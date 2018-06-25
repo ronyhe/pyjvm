@@ -40,6 +40,7 @@ class LoadFromLocals(Executor):
         self.machine.current_op_stack().push(value)
 
 
+# noinspection SpellCheckingInspection
 @bytecode('laload', verify_long)
 @bytecode('faload', verify_float)
 @bytecode('daload', verify_double)

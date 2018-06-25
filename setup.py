@@ -1,5 +1,6 @@
 from setuptools import setup
 
+# noinspection SpellCheckingInspection
 setup(
     name='pyjvm',
     version='0.0.1',
