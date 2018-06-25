@@ -46,3 +46,16 @@ class DuplicateX2(Executor):
             raise TypeError(f'Conditions for dup_x2 instruction were not met. Values on top-of-stack were {peek}')
 
         stack.insert_at_offset(offset, first.duplicate())
+
+
+@bytecode('dup2')
+class Duplicate2(Executor):
+    def execute(self):
+        stack = self.machine.current_op_stack()
+        top = stack.peek()
+        if top.type.is_type_two_computational_type:
+            stack.push(top.duplicate())
+        else:
+            first, second = stack.peek_many(2)
+            stack.push(second.duplicate())
+            stack.push(first.duplicate())
