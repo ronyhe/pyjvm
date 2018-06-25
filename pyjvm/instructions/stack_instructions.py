@@ -62,9 +62,12 @@ class Duplicate2(Executor):
         peek = stack.peek_many(2)
         top = stack.peek()
 
-        if _comp_types(peek, 2):
+        first_form = _comp_types(peek, 2)
+        second_form = _comp_types(peek, 1, 1)
+
+        if first_form:
             stack.push(top.duplicate())
-        elif _comp_types(peek, 1, 1):
+        elif second_form:
             for item in reversed(peek):
                 stack.push(item.duplicate())
         else:
@@ -105,13 +108,13 @@ class Duplicate2X2(Executor):
             items = 0, 1
             offset = 5
         elif second_case:
-            items = (0, )
+            items = (0,)
             offset = 4
         elif third_case:
             items = 0, 1
             offset = 4
         elif fourth_case:
-            items = (0, )
+            items = (0,)
             offset = 3
         else:
             raise TypeError(f'Conditions for dup2_x2 were not met. Values on top-of-stack were {peek}')
