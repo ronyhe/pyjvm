@@ -89,12 +89,32 @@ class Duplicate2X1(Executor):
         else:
             raise TypeError(f'Conditions for dup2_x1 were not met. Values on top-of-stack were {peek}')
 
-# class Duplicate2X2(Executor):
-#     def execute(self):
-#         stack = self.machine.current_op_stack()
-#         peek = stack.peek_many(4)
-#         found = len(peek)
-#         comps = [CompType(v) for v in peek]
-#
-#         first_case = found >= 4 and all(comp.is_one for comp in comps)
-#         second_case = found >= 3
+
+@bytecode('dup2_x2')
+class Duplicate2X2(Executor):
+    def execute(self):
+        stack = self.machine.current_op_stack()
+        peek = stack.peek_many(4)
+
+        first_case = _comp_types(peek, 1, 1, 1, 1)
+        second_case = _comp_types(peek, 2, 1, 1)
+        third_case = _comp_types(peek, 1, 1, 2)
+        fourth_case = _comp_types(peek, 2, 2)
+
+        if first_case:
+            items = 0, 1
+            offset = 5
+        elif second_case:
+            items = (0, )
+            offset = 4
+        elif third_case:
+            items = 0, 1
+            offset = 4
+        elif fourth_case:
+            items = (0, )
+            offset = 3
+        else:
+            raise TypeError(f'Conditions for dup2_x2 were not met. Values on top-of-stack were {peek}')
+
+        for index in items:
+            stack.insert_at_offset(offset, peek[index].duplicate())

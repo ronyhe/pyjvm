@@ -96,23 +96,24 @@ def test_dup_2_x_1_second_form():
         [LONG_ONE, TWO, LONG_ONE, THREE]
     )
 
-# def test_dup_2_x_2():
-#     case_one = (
-#         [ONE, TWO, THREE, FOUR],
-#         [ONE, TWO, THREE, FOUR, ONE, TWO]
-#     )
-#     case_two = (
-#         [LONG_ONE, TWO, THREE],
-#         [LONG_ONE, TWO, THREE, LONG_ONE]
-#     )
-#     case_three = (
-#         [ONE, TWO, LONG_ONE],
-#         [ONE, TWO, LONG_ONE, ONE, TWO]
-#     )
-#     case_four = (
-#         [LONG_ONE, LONG_TWO],
-#         [LONG_ONE, LONG_TWO, LONG_ONE, LONG_TWO]
-#     )
-#     cases = case_one, case_two, case_three, case_four
-#     for before, after in cases:
-#         stack_test(before, 'dup2_x2', after)
+
+def test_dup_2_x_2():
+    case_one = (
+        [ONE, TWO, THREE, FOUR],
+        [ONE, TWO, THREE, FOUR, ONE, TWO]
+    )
+    case_two = (
+        [LONG_ONE, TWO, THREE],
+        [LONG_ONE, TWO, THREE, LONG_ONE]
+    )
+    case_three = (
+        [ONE, TWO, LONG_ONE],
+        [ONE, TWO, LONG_ONE, ONE, TWO]
+    )
+    case_four = (
+        [LONG_ONE, LONG_TWO],
+        [LONG_ONE, LONG_TWO, LONG_ONE]
+    )
+    cases = case_one, case_two, case_three, case_four
+    for before, after in cases:
+        stack_test(before, 'dup2_x2', after)
