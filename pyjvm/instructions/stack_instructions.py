@@ -1,4 +1,5 @@
 from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.jvm_types import CompType
 
 
 @bytecode('pop', 1)
@@ -35,8 +36,8 @@ class DuplicateX2(Executor):
             raise ValueError('Stack must have at least two values to perform the dup_x2 instruction')
         first, second = peek[:2]
 
-        first_form = found == 3 and all(not item.type.is_type_two_computational_type for item in peek)
-        second_form = (not first.type.is_type_two_computational_type) and second.type.is_type_two_computational_type
+        first_form = found == 3 and all(CompType(item).is_one for item in peek)
+        second_form = (CompType(first).is_one and CompType(second).is_two)
 
         if first_form:
             offset = 3
@@ -53,9 +54,13 @@ class Duplicate2(Executor):
     def execute(self):
         stack = self.machine.current_op_stack()
         top = stack.peek()
-        if top.type.is_type_two_computational_type:
+        if CompType(top).is_two:
             stack.push(top.duplicate())
         else:
-            first, second = stack.peek_many(2)
-            stack.push(second.duplicate())
-            stack.push(first.duplicate())
+            peek = stack.peek_many(2)
+            enough_values = len(peek) == 2
+            right_types = all(CompType(item).is_one for item in peek)
+            if not (enough_values and right_types):
+                raise TypeError(f'Conditions for dup2 were not met. Values on top-of-stack were {peek}')
+            for item in reversed(peek):
+                stack.push(item)

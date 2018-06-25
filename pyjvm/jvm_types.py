@@ -1,6 +1,6 @@
 class Type:
     def __init__(self, name, *, default_value, refers_to=None,
-                 needs_two_slots=False, is_array_reference=False, is_type_two_computational_type=False):
+                 needs_two_slots=False, is_array_reference=False):
         self.name: str = str(name)
         self.is_reference: bool = refers_to is not None
         self.is_value = not self.is_reference
@@ -9,7 +9,6 @@ class Type:
         self.default_value = default_value
         self.is_class_reference: bool = isinstance(refers_to, str)
         self.is_array_reference: bool = is_array_reference
-        self.is_type_two_computational_type: bool = is_type_two_computational_type
         self.validate()
 
     def validate(self):
@@ -23,8 +22,6 @@ class Type:
             raise ValueError('How can a reference to a class not be a reference?')
         if self.is_value and any((self.is_reference, self.is_class_reference, self.is_array_reference)):
             raise ValueError('Types cannot be value types and reference types at the same time')
-        if self.is_type_two_computational_type and not self.is_value:
-            raise ValueError('Only value types can hold is_type_two_computational_type=True')
 
     def create_instance(self, value):
         return JvmValue(self, value)
@@ -49,8 +46,8 @@ class _FloatingPointType(Type):
 
 Integer = Type('<Integer>', default_value=0)
 Float = _FloatingPointType('<Float>', default_value=0.0)
-Long = Type('<Long>', default_value=0, needs_two_slots=True, is_type_two_computational_type=True)
-Double = _FloatingPointType('<Double>', default_value=0.0, needs_two_slots=True, is_type_two_computational_type=True)
+Long = Type('<Long>', default_value=0, needs_two_slots=True)
+Double = _FloatingPointType('<Double>', default_value=0.0, needs_two_slots=True)
 
 
 class _NullClass:
@@ -95,6 +92,19 @@ class JvmValue:
 
     def duplicate(self):
         return self.__class__(self.type, self.value)
+
+
+class CompType:
+    def __init__(self, type_or_value):
+        if not isinstance(type_or_value, Type):
+            type_ = type_or_value.type
+        else:
+            type_ = type_or_value
+
+        if not type_.is_value:
+            raise TypeError(f'Only value types can be computational. The supplied type was {type_}')
+        self.is_two = type_ in (Long, Double)
+        self.is_one = not self.is_two
 
 
 RootObjectType = ObjectReferenceType('java/lang/Object')

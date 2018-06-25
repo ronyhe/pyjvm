@@ -79,3 +79,19 @@ def test_dup_2_second_form():
         'dup2',
         [LONG_ONE, LONG_ONE, TWO]
     )
+#
+#
+# def test_dup_2_x_1_first_form():
+#     stack_test(
+#         [ONE, TWO, THREE],
+#         'dup2_x1',
+#         [ONE, TWO, THREE, ONE, TWO]
+#     )
+#
+#
+# def test_dup_2_x_1_second_form():
+#     stack_test(
+#         [LONG_ONE, TWO, THREE],
+#         'dup2_x1',
+#         [LONG_ONE, TWO, LONG_ONE, THREE]
+#     )
