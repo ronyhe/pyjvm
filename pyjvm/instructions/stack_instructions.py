@@ -146,3 +146,17 @@ class Duplicate2X2(Executor):
                 indexes=0
             )
         )
+
+
+@bytecode('swap')
+class Swap(Executor):
+    def execute(self):
+        stack = self.machine.current_op_stack()
+        if not _comp_types(stack, 1, 1):
+            raise TypeError('Top-of-stack must have two type-one-computational values for swap instruction. '
+                            f'Actual values were {stack.peek_many(2)}')
+
+        first = stack.pop()
+        second = stack.pop()
+        stack.push(first)
+        stack.push(second)

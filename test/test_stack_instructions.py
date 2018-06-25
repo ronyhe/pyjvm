@@ -117,3 +117,11 @@ def test_dup_2_x_2():
     cases = case_one, case_two, case_three, case_four
     for before, after in cases:
         stack_test(before, 'dup2_x2', after)
+
+
+def test_swap():
+    stack_test(
+        [ONE, TWO],
+        'swap',
+        [TWO, ONE]
+    )
