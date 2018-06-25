@@ -1,4 +1,5 @@
 from pyjvm.jvm_types import Integer, Long
+from pyjvm.stack import Stack
 from test.test_utils import BlankTestMachine
 
 ONE, TWO, THREE = (Integer.create_instance(i) for i in range(1, 4))
@@ -79,19 +80,33 @@ def test_dup_2_second_form():
         'dup2',
         [LONG_ONE, LONG_ONE, TWO]
     )
-#
-#
-# def test_dup_2_x_1_first_form():
-#     stack_test(
-#         [ONE, TWO, THREE],
-#         'dup2_x1',
-#         [ONE, TWO, THREE, ONE, TWO]
-#     )
-#
-#
-# def test_dup_2_x_1_second_form():
-#     stack_test(
-#         [LONG_ONE, TWO, THREE],
-#         'dup2_x1',
-#         [LONG_ONE, TWO, LONG_ONE, THREE]
-#     )
+
+
+def test_dup_2_x_1_first_form():
+    stack_test(
+        [ONE, TWO, THREE],
+        'dup2_x1',
+        [ONE, TWO, THREE, ONE, TWO]
+    )
+
+
+def test_dup_2_x_1_second_form():
+    stack_test(
+        [LONG_ONE, TWO, THREE],
+        'dup2_x1',
+        [LONG_ONE, TWO, LONG_ONE, THREE]
+    )
+
+
+def test_stack_offset():
+    stack = Stack([1, 2])
+    stack.insert_at_offset(3, 3)
+    assert list(stack.peek_many(3)) == [1, 2, 3]
+
+
+def test_stack_offset_many():
+    stack = Stack([1, 2])
+    stack.insert_at_offset(1, 5)
+    assert list(stack.peek_many(3)) == [1, 5, 2]
+    stack.insert_at_offset(1, 6)
+    assert list(stack.peek_many(4)) == [1, 6, 5, 2]

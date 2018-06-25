@@ -8,7 +8,7 @@ class Stack(Generic[T]):
         self.max_depth = max_depth
         self._values = []
         if values is not None:
-            for value in values:
+            for value in reversed(values):
                 self.push(value)
 
     def pop(self) -> T:
