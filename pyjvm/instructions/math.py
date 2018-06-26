@@ -64,6 +64,12 @@ def _binary_decorator(the_class):
     return the_class
 
 
+def _validate_range(type_, raw_value):
+    min_, max_ = min_max_by_type(type_)
+    if raw_value < min_ or raw_value > max_:
+        raise OverflowError('Non-JVM-compliant error. Result of math instruction out of range')
+
+
 @_binary_decorator
 class BinOp(Executor):
     def __init__(self, instruction, machine, type_, operator_):
@@ -79,8 +85,22 @@ class BinOp(Executor):
             verifier(op)
         values = [op.value for op in operands]
         raw_result = self.operator(*values)
-        min_, max_ = min_max_by_type(self.type)
-        if raw_result < min_ or raw_result > max_:
-            raise OverflowError('Non-JVM-compliant error. Result of math instruction out of range')
+        _validate_range(self.type, raw_result)
         result = self.type.create_instance(raw_result)
         stack.push(result)
+
+
+@bytecode('iinc')
+class IncrementLocal(Executor):
+    def execute(self):
+        ops = self.instruction.operands
+        index_in_locals, value_to_add = (int(op.value) for op in ops)
+
+        locals_ = self.machine.current_locals()
+        local = locals_.load(index_in_locals)
+
+        new_value = local.value + value_to_add
+        _validate_range(Integer, new_value)
+        new_local = Integer.create_instance(new_value)
+
+        locals_.store(index_in_locals, new_local)
