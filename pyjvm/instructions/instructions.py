@@ -33,3 +33,5 @@ from pyjvm.instructions import stores
 from pyjvm.instructions import constant_instructions
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import stack_instructions
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import math
