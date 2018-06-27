@@ -100,7 +100,8 @@ class Machine:
 
     def load_class(self, class_name):
         the_class = self.class_loader.get_by_name(class_name)
-        field_dict = {name: type_.create_instance(type_.default_value) for name, type_ in the_class.static_fields.items()}
+        field_dict = {name: type_.create_instance(type_.default_value) for name, type_ in
+                      the_class.static_fields.items()}
         self.statics[class_name] = field_dict
         self.run_class_init(the_class)
 
