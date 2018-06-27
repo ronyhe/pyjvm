@@ -3,7 +3,8 @@ from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.class_loaders import FixedClassLoader
 from pyjvm.jawa_conversions import convert_class_file
-from pyjvm.jvm_types import Integer
+from pyjvm.jvm_class import JvmObject
+from pyjvm.jvm_types import Integer, ObjectReferenceType
 from test.test_utils import BlankTestMachine
 
 
@@ -26,7 +27,13 @@ def test_get_static():
 
 
 def test_new():
-    pass
+    class_name = 'ClassName'
+    the_class = ClassFile.create(class_name)
+    machine = BlankTestMachine()
+    class_ref = machine.current_constants().create_class(class_name)
+    machine.class_loader = FixedClassLoader({class_name: convert_class_file(the_class)})
+    machine.step_instruction('new', [Operand(OperandTypes.CONSTANT_INDEX, class_ref.index)])
+    assert machine.current_op_stack().peek() == ObjectReferenceType(class_name).create_instance(JvmObject(dict()))
 
 
 def test_new_inits_fields_to_defaults():

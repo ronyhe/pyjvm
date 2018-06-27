@@ -21,3 +21,13 @@ class GetStatic(Executor):
         field_name = field_ref.name_and_type.name.value
         value = self.machine.get_static_field(class_name, field_name)
         self.machine.current_op_stack().push(value)
+
+
+@bytecode('new')
+class New(Executor):
+    def execute(self):
+        class_ref_index = int(self.instruction.operands[0].value)
+        class_ref = self.machine.current_constants()[class_ref_index]
+        class_name = class_ref.name.value
+        value = self.machine.create_new_class_instance(class_name)
+        self.machine.current_op_stack().push(value)

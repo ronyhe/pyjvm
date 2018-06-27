@@ -6,8 +6,8 @@ from jawa.util.bytecode import Instruction
 from pyjvm.class_loaders import ClassLoader
 from pyjvm.frame_locals import Locals
 from pyjvm.instructions.instructions import execute_instruction
-from pyjvm.jvm_class import BytecodeMethod, JvmClass
-from pyjvm.jvm_types import JvmValue
+from pyjvm.jvm_class import BytecodeMethod, JvmClass, JvmObject
+from pyjvm.jvm_types import JvmValue, ObjectReferenceType
 from pyjvm.stack import Stack
 
 
@@ -103,6 +103,13 @@ class Machine:
         field_dict = {name: type_.default_value for name, type_ in the_class.static_fields.items()}
         self.statics[class_name] = field_dict
         self.run_class_init(the_class)
+
+    def create_new_class_instance(self, class_name):
+        self.load_class_if_needed(class_name)
+        the_class = self.class_loader.get_by_name(class_name)
+        field_dict = {name: type_.default_value for name, type_ in the_class.fields.items()}
+        obj = ObjectReferenceType(class_name).create_instance(JvmObject(field_dict))
+        return obj
 
     def run_class_init(self, the_class):
         try:

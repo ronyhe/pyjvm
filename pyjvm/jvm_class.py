@@ -33,3 +33,9 @@ class JvmObject:
 
     def __init__(self, fields):
         self.fields: Dict[str, JvmValue] = dict(fields)
+
+    def __eq__(self, other):
+        try:
+            return other.fields == self.fields
+        except AttributeError:
+            return False
