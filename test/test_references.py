@@ -23,3 +23,15 @@ def test_get_static():
     machine.statics[class_name][field_name] = value
     machine.step_instruction('getstatic', [Operand(OperandTypes.CONSTANT_INDEX, field_ref.index)])
     assert machine.current_op_stack().peek() == value
+
+
+def test_new():
+    pass
+
+
+def test_new_inits_fields_to_defaults():
+    pass
+
+
+def test_new_inits_super_field_to_defaults():
+    pass
