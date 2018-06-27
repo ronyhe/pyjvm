@@ -88,9 +88,11 @@ class Machine:
 
     def get_static_field(self, class_name, field_name):
         self.load_class_if_needed(class_name)
-        if class_name not in self.statics:
-            self.load_class(class_name)
         return self.statics[class_name][field_name]
+
+    def put_static_field(self, class_name, field_name, value):
+        self.load_class_if_needed(class_name)
+        self.statics[class_name][field_name] = value
 
     def load_class_if_needed(self, class_name):
         if class_name not in self.statics.keys():

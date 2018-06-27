@@ -22,7 +22,6 @@ def test_class_init():
     init.code.assemble([
         Instruction.create('iconst_5'),
         Instruction.create('putstatic', [Operand(OperandTypes.CONSTANT_INDEX, field_ref_constant.index)]),
-        Instruction.create('return')
     ])
     machine.class_loader = FixedClassLoader({class_name: convert_class_file(the_class)})
     actual = machine.get_static_field(class_name, field_name)

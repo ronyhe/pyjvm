@@ -37,3 +37,5 @@ from pyjvm.instructions import stack_instructions
 from pyjvm.instructions import math
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import conversions
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import references
