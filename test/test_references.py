@@ -37,12 +37,6 @@ _LOADER = FixedClassLoader({
 })
 
 
-def _machine():
-    m = BlankTestMachine()
-    m.class_loader = _LOADER
-    return m
-
-
 class RefTestMachine(BlankTestMachine):
     def __init__(self):
         super().__init__()
@@ -64,12 +58,15 @@ def test_get_static():
     assert machine.current_op_stack().peek() == value
 
 
-# def test_set_static():
-#     machine = _machine()
-#     field_ref = _DUMMY.class_field_ref(machine.current_constants())
-#     machine.load_class(_DUMMY.name)
-#     value = Integer.create_instance(10)
-#     machine.step_instruction('pustatic', )
+def test_set_static():
+    machine = RefTestMachine()
+    field_ref = _DUMMY.class_field_ref(machine.current_constants())
+    machine.load_class(_DUMMY.name)
+    value = Integer.create_instance(10)
+    machine.current_op_stack().push(value)
+    machine.step_constant('putstatic', field_ref)
+    assert machine.current_op_stack().size() == 0
+    assert machine.statics[_DUMMY.name][_DUMMY.class_field.name] == value
 
 
 def test_new():
