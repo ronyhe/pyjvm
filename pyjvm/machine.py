@@ -7,7 +7,7 @@ from pyjvm.class_loaders import ClassLoader
 from pyjvm.frame_locals import Locals
 from pyjvm.instructions.instructions import execute_instruction
 from pyjvm.jvm_class import BytecodeMethod, JvmClass, JvmObject
-from pyjvm.jvm_types import JvmValue, ObjectReferenceType
+from pyjvm.jvm_types import JvmValue, ObjectReferenceType, RootObjectType
 from pyjvm.stack import Stack
 
 
@@ -106,11 +106,20 @@ class Machine:
         self.run_class_init(the_class)
 
     def create_new_class_instance(self, class_name):
-        self.load_class_if_needed(class_name)
-        the_class = self.class_loader.get_by_name(class_name)
-        field_dict = {name: type_.create_instance(type_.default_value) for name, type_ in the_class.fields.items()}
-        obj = ObjectReferenceType(class_name).create_instance(JvmObject(field_dict))
+        fields = self.load_if_needed_and_collect_fields(class_name)
+        obj = ObjectReferenceType(class_name).create_instance(JvmObject.defaults(fields))
         return obj
+
+    def load_if_needed_and_collect_fields(self, class_name):
+        acc = dict()
+        name = class_name
+        while not name == RootObjectType.refers_to:
+            self.load_class_if_needed(name)
+            the_class = self.class_loader.get_by_name(name)
+            acc.update(the_class.fields)
+            name = the_class.name_of_base
+
+        return acc
 
     def run_class_init(self, the_class):
         try:

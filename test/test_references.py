@@ -29,8 +29,12 @@ class _DummyClass:
         return self.create_field_ref(constants, self.class_field)
 
 
+_SUB_CLASS_NAME = 'Sub'
 _DUMMY = _DummyClass()
-_LOADER = FixedClassLoader({_DUMMY.name: convert_class_file(_DUMMY.class_file)})
+_LOADER = FixedClassLoader({
+    _DUMMY.name: convert_class_file(_DUMMY.class_file),
+    _SUB_CLASS_NAME: convert_class_file(ClassFile.create(_SUB_CLASS_NAME, _DUMMY.name))
+})
 
 
 def _machine():
@@ -70,4 +74,8 @@ def test_new_inits_fields_to_defaults():
 
 
 def test_new_inits_super_field_to_defaults():
-    pass
+    machine = _machine()
+    class_ref = machine.current_constants().create_class(_SUB_CLASS_NAME)
+    machine.step_instruction('new', [Operand(OperandTypes.CONSTANT_INDEX, class_ref.index)])
+    tos = machine.current_op_stack().peek()
+    assert tos.value.fields[_DUMMY.instance_field.name.value] == Integer.create_instance(Integer.default_value)

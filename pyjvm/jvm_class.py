@@ -28,7 +28,7 @@ class JvmObject:
     @classmethod
     def defaults(cls, field_specs):
         return cls(
-            (name, type_.default_value) for name, type_ in dict(field_specs).items()
+            (name, type_.create_instance(type_.default_value)) for name, type_ in dict(field_specs).items()
         )
 
     def __init__(self, fields):
