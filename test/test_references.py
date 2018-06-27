@@ -1,5 +1,5 @@
 from jawa.cf import ClassFile
-from jawa.util.bytecode import Operand, OperandTypes
+from jawa.util.bytecode import Operand, OperandTypes, Instruction
 
 from pyjvm.class_loaders import FixedClassLoader
 from pyjvm.jawa_conversions import convert_class_file
@@ -43,30 +43,48 @@ def _machine():
     return m
 
 
+class RefTestMachine(BlankTestMachine):
+    def __init__(self):
+        super().__init__()
+        self.class_loader = _LOADER
+
+    def step_constant(self, name, constant):
+        instruction = Instruction.create(name, [Operand(OperandTypes.CONSTANT_INDEX, constant.index)])
+        self.step_instruction(instruction)
+
+
 def test_get_static():
-    machine = _machine()
+    machine = RefTestMachine()
     field_ref = _DUMMY.class_field_ref(machine.current_constants())
     machine.load_class(_DUMMY.name)
     value = Integer.create_instance(4)
 
     machine.statics[_DUMMY.name][_DUMMY.class_field.name] = value
-    machine.step_instruction('getstatic', [Operand(OperandTypes.CONSTANT_INDEX, field_ref.index)])
+    machine.step_constant('getstatic', field_ref)
     assert machine.current_op_stack().peek() == value
 
 
+# def test_set_static():
+#     machine = _machine()
+#     field_ref = _DUMMY.class_field_ref(machine.current_constants())
+#     machine.load_class(_DUMMY.name)
+#     value = Integer.create_instance(10)
+#     machine.step_instruction('pustatic', )
+
+
 def test_new():
-    machine = _machine()
+    machine = RefTestMachine()
     class_ref = machine.current_constants().create_class(_DUMMY.name)
-    machine.step_instruction('new', [Operand(OperandTypes.CONSTANT_INDEX, class_ref.index)])
+    machine.step_constant('new', class_ref)
     tos = machine.current_op_stack().peek()
     assert tos.type == _DUMMY.type
     assert isinstance(tos.value, JvmObject)
 
 
 def test_new_inits_fields_to_defaults():
-    machine = _machine()
+    machine = RefTestMachine()
     class_ref = machine.current_constants().create_class(_DUMMY.name)
-    machine.step_instruction('new', [Operand(OperandTypes.CONSTANT_INDEX, class_ref.index)])
+    machine.step_constant('new', class_ref)
 
     actual = machine.current_op_stack().peek()
     assert actual.type == _DUMMY.type
@@ -74,8 +92,8 @@ def test_new_inits_fields_to_defaults():
 
 
 def test_new_inits_super_field_to_defaults():
-    machine = _machine()
+    machine = RefTestMachine()
     class_ref = machine.current_constants().create_class(_SUB_CLASS_NAME)
-    machine.step_instruction('new', [Operand(OperandTypes.CONSTANT_INDEX, class_ref.index)])
+    machine.step_constant('new', class_ref)
     tos = machine.current_op_stack().peek()
     assert tos.value.fields[_DUMMY.instance_field.name.value] == Integer.create_instance(Integer.default_value)
