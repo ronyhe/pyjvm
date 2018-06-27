@@ -37,7 +37,21 @@ def test_new():
 
 
 def test_new_inits_fields_to_defaults():
-    pass
+    class_name = 'ClassName'
+    field_name = 'fieldName'
+    the_class = ClassFile.create(class_name)
+    the_class.fields.create(field_name, 'I')
+
+    machine = BlankTestMachine()
+    class_ref = machine.current_constants().create_class(class_name)
+    machine.class_loader = FixedClassLoader({class_name: convert_class_file(the_class)})
+    machine.step_instruction('new', [Operand(OperandTypes.CONSTANT_INDEX, class_ref.index)])
+
+    jvm_object = JvmObject({field_name: Integer.create_instance(0)})
+    expected = ObjectReferenceType(class_name).create_instance(jvm_object)
+
+    actual = machine.current_op_stack().peek()
+    assert actual == expected
 
 
 def test_new_inits_super_field_to_defaults():
