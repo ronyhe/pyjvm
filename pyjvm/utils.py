@@ -17,3 +17,14 @@ def dump_class(path, echo):
         echo()
         for constant in cf.constants:
             echo(constant)
+
+
+def split_by_predicate(iterable, predicate):
+    true, false = [], []
+    for item in iterable:
+        if predicate(item):
+            true.append(item)
+        else:
+            false.append(item)
+
+    return true, false
