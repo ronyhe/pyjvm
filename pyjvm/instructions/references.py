@@ -1,10 +1,10 @@
 from pyjvm import value_array_type_indicators
 from pyjvm.instructions.instructions import Executor, bytecode
 
-# noinspection PyAbstractClass
 from pyjvm.jvm_types import ArrayReferenceType
 
 
+# noinspection PyAbstractClass
 class _ReferenceExecutor(Executor):
     def first_op_as_int(self):
         return int(self.instruction.operands[0].value)
