@@ -1,10 +1,11 @@
 from jawa.cf import ClassFile
 from jawa.util.bytecode import Operand, OperandTypes, Instruction
 
+from pyjvm import value_array_type_indicators
 from pyjvm.class_loaders import FixedClassLoader
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import Integer, ObjectReferenceType
+from pyjvm.jvm_types import Integer, ObjectReferenceType, JvmValue, ArrayReferenceType
 from test.test_utils import BlankTestMachine
 
 _SOME_INT = Integer.create_instance(54)
@@ -123,3 +124,17 @@ def test_get_field():
     machine.step_constant('getfield', field_ref)
     assert stack.size() == 1
     assert stack.peek() == _SOME_INT
+
+
+def test_new_array():
+    machine = RefTestMachine()
+    stack = machine.current_op_stack()
+    stack.push(_SOME_INT)
+    type_indicator = value_array_type_indicators.indicator_by_type(Integer)
+    machine.step_instruction('newarray', [Operand(OperandTypes.LITERAL, type_indicator)])
+    assert stack.size() == 1
+    integers = [Integer.create_instance(Integer.default_value) for _ in range(_SOME_INT.value)]
+    type_ = ArrayReferenceType(Integer)
+    expected_value = type_.create_instance(integers)
+    actual = stack.peek()
+    assert actual == expected_value

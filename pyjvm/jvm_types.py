@@ -38,6 +38,9 @@ class Type:
     def __eq__(self, other):
         return isinstance(other, Type) and other.name == self.name
 
+    def __hash__(self):
+        return hash(self.name)
+
 
 class _FloatingPointType(Type):
     def create_instance(self, value):

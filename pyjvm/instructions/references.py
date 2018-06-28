@@ -1,10 +1,17 @@
+from pyjvm import value_array_type_indicators
 from pyjvm.instructions.instructions import Executor, bytecode
 
 
 # noinspection PyAbstractClass
+from pyjvm.jvm_types import ArrayReferenceType
+
+
 class _ReferenceExecutor(Executor):
+    def first_op_as_int(self):
+        return int(self.instruction.operands[0].value)
+
     def constant_from_index(self):
-        index = int(self.instruction.operands[0].value)
+        index = self.first_op_as_int()
         return self.machine.current_constants()[index]
 
 
@@ -58,4 +65,19 @@ class GetField(_ReferenceExecutor):
         stack = self.machine.current_op_stack()
         instance = stack.pop()
         value = instance.value.fields[field_name]
+        stack.push(value)
+
+
+@bytecode('newarray')
+class NewValueArray(_ReferenceExecutor):
+    def execute(self):
+        indicator = self.first_op_as_int()
+        element_type = value_array_type_indicators.type_by_indicator(indicator)
+
+        stack = self.machine.current_op_stack()
+        length = stack.pop().value
+        elements = [element_type.create_instance(element_type.default_value) for _ in range(length)]
+
+        array_type = ArrayReferenceType(element_type)
+        value = array_type.create_instance(elements)
         stack.push(value)
