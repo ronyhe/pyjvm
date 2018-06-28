@@ -48,3 +48,14 @@ class PutField(_ReferenceExecutor):
         instance = stack.pop()
 
         instance.value.fields[field_name] = value
+
+
+@bytecode('getfield')
+class GetField(_ReferenceExecutor):
+    def execute(self):
+        field_ref = self.constant_from_index()
+        field_name = field_ref.name_and_type.name.value
+        stack = self.machine.current_op_stack()
+        instance = stack.pop()
+        value = instance.value.fields[field_name]
+        stack.push(value)

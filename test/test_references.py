@@ -7,6 +7,8 @@ from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, ObjectReferenceType
 from test.test_utils import BlankTestMachine
 
+_SOME_INT = Integer.create_instance(54)
+
 
 class _DummyClass:
     DESCRIPTOR = 'I'
@@ -109,3 +111,15 @@ def test_put_field():
 
     machine.step_constant('putfield', field_ref)
     assert instance.value.fields[_DUMMY.instance_field.name] == value
+
+
+def test_get_field():
+    machine = RefTestMachine()
+    field_ref = _DUMMY.instance_field_ref(machine.current_constants())
+    instance = machine.create_new_class_instance(_DUMMY.name)
+    instance.value.fields[_DUMMY.instance_field.name] = _SOME_INT
+    stack = machine.current_op_stack()
+    stack.push(instance)
+    machine.step_constant('getfield', field_ref)
+    assert stack.size() == 1
+    assert stack.peek() == _SOME_INT
