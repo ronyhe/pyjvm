@@ -35,3 +35,16 @@ class New(_ReferenceExecutor):
         class_name = class_ref.name.value
         value = self.machine.create_new_class_instance(class_name)
         self.machine.current_op_stack().push(value)
+
+
+@bytecode('putfield')
+class PutField(_ReferenceExecutor):
+    def execute(self):
+        field_ref = self.constant_from_index()
+        field_name = field_ref.name_and_type.name.value
+
+        stack = self.machine.current_op_stack()
+        value = stack.pop()
+        instance = stack.pop()
+
+        instance.value.fields[field_name] = value

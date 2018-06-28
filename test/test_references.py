@@ -94,3 +94,18 @@ def test_new_inits_super_field_to_defaults():
     machine.step_constant('new', class_ref)
     tos = machine.current_op_stack().peek()
     assert tos.value.fields[_DUMMY.instance_field.name.value] == Integer.create_instance(Integer.default_value)
+
+
+def test_put_field():
+    machine = RefTestMachine()
+    stack = machine.current_op_stack()
+
+    field_ref = _DUMMY.instance_field_ref(machine.current_constants())
+    instance = machine.create_new_class_instance(_DUMMY.name)
+    value = Integer.create_instance(15)
+
+    stack.push(instance)
+    stack.push(value)
+
+    machine.step_constant('putfield', field_ref)
+    assert instance.value.fields[_DUMMY.instance_field.name] == value
