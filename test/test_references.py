@@ -5,7 +5,7 @@ from pyjvm import value_array_type_indicators
 from pyjvm.class_loaders import FixedClassLoader
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import Integer, ObjectReferenceType, JvmValue, ArrayReferenceType
+from pyjvm.jvm_types import Integer, ObjectReferenceType, ArrayReferenceType
 from test.test_utils import BlankTestMachine
 
 _SOME_INT = Integer.create_instance(54)

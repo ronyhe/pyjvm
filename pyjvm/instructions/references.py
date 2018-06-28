@@ -1,7 +1,6 @@
 from pyjvm import value_array_type_indicators
 from pyjvm.instructions.instructions import Executor, bytecode
 
-
 # noinspection PyAbstractClass
 from pyjvm.jvm_types import ArrayReferenceType
 
