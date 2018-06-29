@@ -1,7 +1,7 @@
 from pyjvm import value_array_type_indicators
 from pyjvm.instructions.instructions import Executor, bytecode
 
-from pyjvm.jvm_types import ArrayReferenceType, ObjectReferenceType
+from pyjvm.jvm_types import ArrayReferenceType, ObjectReferenceType, Integer
 
 
 # noinspection PyAbstractClass
@@ -93,3 +93,12 @@ class NewReferenceArray(_ReferenceExecutor):
         array_type = ArrayReferenceType(element_type)
         array = array_type.create_instance(elements)
         stack.push(array)
+
+
+@bytecode('arraylength')
+class ArrayLength(Executor):
+    def execute(self):
+        stack = self.machine.current_op_stack()
+        array = stack.pop()
+        value = Integer.create_instance(len(array.value))
+        stack.push(value)

@@ -5,7 +5,7 @@ from pyjvm import value_array_type_indicators
 from pyjvm.class_loaders import FixedClassLoader
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import Integer, ObjectReferenceType, ArrayReferenceType
+from pyjvm.jvm_types import Integer, ObjectReferenceType, ArrayReferenceType, RootObjectType
 from test.test_utils import BlankTestMachine
 
 _SOME_INT = Integer.create_instance(54)
@@ -150,3 +150,13 @@ def test_new_ref_array():
     type_ = _DUMMY.type
     assert tos.type == ArrayReferenceType(type_)
     assert tos.value == [type_.create_instance(type_.default_value) for _ in range(_SOME_INT.value)]
+
+
+def test_array_length():
+    machine = BlankTestMachine()
+    length = 43
+    array = ArrayReferenceType(RootObjectType).create_instance([None] * length)
+    stack = machine.current_op_stack()
+    stack.push(array)
+    machine.step_instruction('arraylength')
+    assert stack.peek() == Integer.create_instance(length)
