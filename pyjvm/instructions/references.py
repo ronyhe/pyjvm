@@ -1,7 +1,7 @@
 from pyjvm import value_array_type_indicators
 from pyjvm.instructions.instructions import Executor, bytecode
 
-from pyjvm.jvm_types import ArrayReferenceType
+from pyjvm.jvm_types import ArrayReferenceType, ObjectReferenceType
 
 
 # noinspection PyAbstractClass
@@ -80,3 +80,16 @@ class NewValueArray(_ReferenceExecutor):
         array_type = ArrayReferenceType(element_type)
         value = array_type.create_instance(elements)
         stack.push(value)
+
+
+@bytecode('anewarray')
+class NewReferenceArray(_ReferenceExecutor):
+    def execute(self):
+        stack = self.machine.current_op_stack()
+        length = int(stack.pop().value)
+        class_name = self.constant_from_index().name.value
+        element_type = ObjectReferenceType(class_name)
+        elements = [element_type.create_instance(element_type.default_value) for _ in range(length)]
+        array_type = ArrayReferenceType(element_type)
+        array = array_type.create_instance(elements)
+        stack.push(array)

@@ -127,7 +127,7 @@ def test_get_field():
 
 
 def test_new_array():
-    machine = RefTestMachine()
+    machine = BlankTestMachine()
     stack = machine.current_op_stack()
     stack.push(_SOME_INT)
     type_indicator = value_array_type_indicators.indicator_by_type(Integer)
@@ -138,3 +138,15 @@ def test_new_array():
     expected_value = type_.create_instance(integers)
     actual = stack.peek()
     assert actual == expected_value
+
+
+def test_new_ref_array():
+    machine = RefTestMachine()
+    class_constant = machine.current_constants().create_class(_DUMMY.name)
+    stack = machine.current_op_stack()
+    stack.push(_SOME_INT)
+    machine.step_constant('anewarray', class_constant)
+    tos = stack.peek()
+    type_ = _DUMMY.type
+    assert tos.type == ArrayReferenceType(type_)
+    assert tos.value == [type_.create_instance(type_.default_value) for _ in range(_SOME_INT.value)]
