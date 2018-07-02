@@ -18,7 +18,7 @@ class JvmClass:
         self.name: str = name
         self.name_of_base: str = name_of_base
         self.constants: ConstantPool = constants
-        self.interface: Tuple[str] = tuple(names_of_interfaces)
+        self.interfaces: Tuple[str] = tuple(names_of_interfaces)
         self.fields: Dict[str, Type] = dict(fields)
         self.methods: Dict[str, BytecodeMethod] = dict(methods)
         self.static_fields: Dict[str, Type] = dict(static_fields)

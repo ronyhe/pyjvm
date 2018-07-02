@@ -1,13 +1,15 @@
-from typing import Iterable
+from typing import Iterable, Set
 
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
+from jawa.util.descriptor import field_descriptor
 
 from pyjvm.class_loaders import ClassLoader
 from pyjvm.frame_locals import Locals
 from pyjvm.instructions.instructions import execute_instruction
+from pyjvm.jawa_conversions import convert_type
 from pyjvm.jvm_class import BytecodeMethod, JvmClass, JvmObject
-from pyjvm.jvm_types import JvmValue, ObjectReferenceType, RootObjectType
+from pyjvm.jvm_types import JvmValue, ObjectReferenceType, RootObjectType, Type
 from pyjvm.stack import Stack
 
 
@@ -129,3 +131,35 @@ class Machine:
 
         self.push_frame(Frame.from_class_and_method(the_class, method))
         self.run_frame()
+
+    def is_reference_an_instance_of(self, reference: JvmValue, descriptor: str) -> bool:
+        type_, value = reference.type, reference.value
+        if reference.is_null:
+            raise ValueError('Cannot instance_of check null value')
+        if type_.is_value:
+            raise ValueError('Cannot instance_of check value types. Only references')
+        descriptor_type = convert_type(field_descriptor(descriptor))
+        if not descriptor_type.is_reference:
+            return False
+        if type_.is_array_reference and descriptor_type.is_array_reference:
+            return _is_array_ref_an_instance_of(type_, descriptor_type)
+        elif type_.is_class_reference and descriptor_type.is_class_reference:
+            self.load_class_if_needed(type_.refers_to)
+            type_class = self.class_loader.get_by_name(type_.refers_to)
+            roots = [type_.refers_to] + list(type_class.interfaces)
+            return any(descriptor_type.refers_to in self._get_ancestors(root) for root in roots)
+        else:
+            raise ValueError('Unexpected execution path')
+
+    def _get_ancestors(self, name: str) -> Set[str]:
+        acc = set()
+        acc.add(name)
+        curr = name
+        while not curr == RootObjectType.refers_to:
+            self.load_class_if_needed(curr)
+            the_class = self.class_loader.get_by_name(curr)
+            next_name = the_class.name_of_base
+            acc.add(next_name)
+            curr = next_name
+
+        return acc

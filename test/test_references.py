@@ -34,6 +34,7 @@ class _DummyClass:
 
 _SUB_CLASS_NAME = 'Sub'
 _DUMMY = _DummyClass()
+
 _LOADER = FixedClassLoader({
     _DUMMY.name: convert_class_file(_DUMMY.class_file),
     _SUB_CLASS_NAME: convert_class_file(ClassFile.create(_SUB_CLASS_NAME, _DUMMY.name))
@@ -160,3 +161,31 @@ def test_array_length():
     stack.push(array)
     machine.step_instruction('arraylength')
     assert stack.peek() == Integer.create_instance(length)
+
+
+def instance_test(type_, descriptor):
+    machine = RefTestMachine()
+    return machine.is_reference_an_instance_of(
+        type_.create_instance(JvmObject(dict())),
+        descriptor
+    )
+
+
+def test_simple_instance_of():
+    assert instance_test(_DUMMY.type, 'L' + _DUMMY.name + ';')
+
+
+def test_parent_not_instance_of_child():
+    assert not instance_test(_DUMMY.type, 'L' + _SUB_CLASS_NAME + ';')
+
+
+def test_child_is_instance_of_parent():
+    assert instance_test(ObjectReferenceType(_SUB_CLASS_NAME), 'L' + _DUMMY.name + ';')
+
+
+def test_instance_of_interface():
+    pass
+
+
+def test_instance_of_array():
+    pass
