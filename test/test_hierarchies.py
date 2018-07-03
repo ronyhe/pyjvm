@@ -1,14 +1,10 @@
-from pyjvm.jvm_class import JvmObject
+from pyjvm.hierarchies import is_type_instance_of
 from pyjvm.jvm_types import ObjectReferenceType
-from test.test_utils import BlankTestMachine, dummy_loader, DUMMY_CLASS, DUMMY_SUB_CLASS_NAME
+from test.test_utils import dummy_loader, DUMMY_CLASS, DUMMY_SUB_CLASS_NAME
 
 
 def instance_test(type_, descriptor):
-    machine = BlankTestMachine(dummy_loader())
-    return machine.is_reference_an_instance_of(
-        type_.create_instance(JvmObject(dict())),
-        descriptor
-    )
+    return is_type_instance_of(type_, descriptor, dummy_loader())
 
 
 def test_simple_instance_of():

@@ -1,3 +1,6 @@
+from pyjvm.jvm_types import RootObjectType
+
+
 def _name_and_default_value(pair):
     name, type_ = pair
     return name, type_.create_instance(type_.default_value)
@@ -36,6 +39,18 @@ class ClassLoader:
 
     def get_the_statics(self, name):
         return self[name].statics
+
+    def get_ancestors(self, class_name):
+        acc = set()
+        acc.add(class_name)
+        curr = class_name
+        while not curr == RootObjectType.refers_to:
+            the_class = self.get_the_class(curr)
+            next_name = the_class.name_of_base
+            acc.add(next_name)
+            curr = next_name
+
+        return acc
 
 
 class FixedClassLoader(ClassLoader):
