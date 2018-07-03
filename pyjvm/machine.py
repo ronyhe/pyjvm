@@ -9,7 +9,7 @@ from pyjvm.frame_locals import Locals
 from pyjvm.instructions.instructions import execute_instruction
 from pyjvm.jawa_conversions import convert_type
 from pyjvm.jvm_class import BytecodeMethod, JvmClass, JvmObject
-from pyjvm.jvm_types import JvmValue, ObjectReferenceType, RootObjectType, Type
+from pyjvm.jvm_types import JvmValue, ObjectReferenceType, RootObjectType
 from pyjvm.stack import Stack
 
 
