@@ -2,7 +2,7 @@ from jawa.constants import ConstantPool
 
 from pyjvm.hierarchies import is_type_instance_of
 from pyjvm.jvm_class import JvmClass
-from pyjvm.jvm_types import ObjectReferenceType, RootObjectType
+from pyjvm.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
 from test.test_utils import dummy_loader, DUMMY_CLASS, DUMMY_SUB_CLASS_NAME
 
 
@@ -58,4 +58,5 @@ def test_instance_of_interface():
 
 
 def test_instance_of_array():
-    pass
+    array_of_dummies = ArrayReferenceType(ObjectReferenceType(DUMMY_CLASS.name))
+    assert instance_test(array_of_dummies, '[' + _DUMMY_DESCRIPTOR)

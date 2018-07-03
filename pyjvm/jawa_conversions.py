@@ -54,7 +54,7 @@ def convert_type(type_: jawa.util.descriptor.JVMType) -> Type:
 
 
 def _convert_type(base, dimensions, name):
-    if dimensions > 1:
+    if dimensions > 0:
         return ArrayReferenceType(_convert_type(base, dimensions - 1, name))
     else:
         return _atom_type(base, name)

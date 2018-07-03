@@ -17,6 +17,11 @@ def is_type_instance_of(instance_type: Type, descriptor_for_possible_parent: str
         raise ValueError('Cannot instance_of check value types. Only references')
 
     descriptor_type = convert_type(field_descriptor(descriptor_for_possible_parent))
+    return _is_type_instance_of_type(instance_type, descriptor_type, loader)
+
+
+def _is_type_instance_of_type(instance_type, type_not_descriptor, loader):
+    descriptor_type = type_not_descriptor
     if instance_type.is_array_reference and descriptor_type.is_array_reference:
         return _is_array_instance_of_array(instance_type, descriptor_type, loader)
     elif instance_type.is_class_reference and descriptor_type.is_class_reference:
@@ -26,7 +31,7 @@ def is_type_instance_of(instance_type: Type, descriptor_for_possible_parent: str
 
 
 def _is_array_instance_of_array(instance_type, descriptor_type, loader):
-    raise NotImplementedError()
+    return _is_type_instance_of_type(instance_type.refers_to, descriptor_type.refers_to, loader)
 
 
 def _is_class_instance_of_class(instance_type, descriptor_type, loader):
