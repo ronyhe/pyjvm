@@ -52,6 +52,16 @@ class ClassLoader:
 
         return acc
 
+    def collect_fields_in_ancestors(self, class_name):
+        acc = dict()
+        name = class_name
+        while not name == RootObjectType.refers_to:
+            the_class = self.get_the_class(name)
+            acc.update(the_class.fields)
+            name = the_class.name_of_base
+
+        return acc
+
 
 class FixedClassLoader(ClassLoader):
     def __init__(self, classes):

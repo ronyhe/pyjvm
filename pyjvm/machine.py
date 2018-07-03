@@ -8,7 +8,7 @@ from pyjvm.frame_locals import Locals
 from pyjvm.hierarchies import is_value_instance_of
 from pyjvm.instructions.instructions import execute_instruction
 from pyjvm.jvm_class import BytecodeMethod, JvmClass, JvmObject, NAME_OF_STATIC_CONSTRUCTOR
-from pyjvm.jvm_types import JvmValue, ObjectReferenceType, RootObjectType
+from pyjvm.jvm_types import JvmValue, ObjectReferenceType
 from pyjvm.stack import Stack
 
 
@@ -99,14 +99,7 @@ class Machine:
         return obj
 
     def collect_fields(self, class_name):
-        acc = dict()
-        name = class_name
-        while not name == RootObjectType.refers_to:
-            the_class = self.class_loader.get_the_class(name)
-            acc.update(the_class.fields)
-            name = the_class.name_of_base
-
-        return acc
+        return self.class_loader.collect_fields_in_ancestors(class_name)
 
     def run_class_init(self, the_class):
         try:
