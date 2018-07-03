@@ -31,6 +31,12 @@ class ClassLoader:
 
         return self._map[item]
 
+    def get_the_class(self, name):
+        return self[name].jvm_class
+
+    def get_the_statics(self, name):
+        return self[name].statics
+
 
 class FixedClassLoader(ClassLoader):
     def __init__(self, classes):

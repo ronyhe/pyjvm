@@ -89,10 +89,10 @@ class Machine:
         return self.current_frame().class_.constants
 
     def get_static_field(self, class_name, field_name):
-        return self.class_loader[class_name].statics[field_name]
+        return self.class_loader.get_the_statics(class_name)[field_name]
 
     def put_static_field(self, class_name, field_name, value):
-        self.class_loader[class_name].statics[field_name] = value
+        self.class_loader.get_the_statics(class_name)[field_name] = value
 
     def create_new_class_instance(self, class_name):
         fields = self.collect_fields(class_name)
@@ -103,7 +103,7 @@ class Machine:
         acc = dict()
         name = class_name
         while not name == RootObjectType.refers_to:
-            the_class = self.class_loader[name].jvm_class
+            the_class = self.class_loader.get_the_class(name)
             acc.update(the_class.fields)
             name = the_class.name_of_base
 
@@ -130,7 +130,7 @@ class Machine:
         if type_.is_array_reference and descriptor_type.is_array_reference:
             return _is_array_ref_an_instance_of(type_, descriptor_type)
         elif type_.is_class_reference and descriptor_type.is_class_reference:
-            type_class = self.class_loader[type_.refers_to].jvm_class
+            type_class = self.class_loader.get_the_class(type_.refers_to)
             roots = [type_.refers_to] + list(type_class.interfaces)
             return any(descriptor_type.refers_to in self._get_ancestors(root) for root in roots)
         else:
@@ -141,7 +141,7 @@ class Machine:
         acc.add(name)
         curr = name
         while not curr == RootObjectType.refers_to:
-            the_class = self.class_loader[curr].jvm_class
+            the_class = self.class_loader.get_the_class(curr)
             next_name = the_class.name_of_base
             acc.add(next_name)
             curr = next_name
