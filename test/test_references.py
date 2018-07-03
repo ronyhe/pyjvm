@@ -54,10 +54,9 @@ class RefTestMachine(BlankTestMachine):
 def test_get_static():
     machine = RefTestMachine()
     field_ref = _DUMMY.class_field_ref(machine.current_constants())
-    machine.load_class(_DUMMY.name)
     value = Integer.create_instance(4)
 
-    machine.statics[_DUMMY.name][_DUMMY.class_field.name] = value
+    machine.class_loader[_DUMMY.name].statics[_DUMMY.class_field.name] = value
     machine.step_constant('getstatic', field_ref)
     assert machine.current_op_stack().peek() == value
 
@@ -65,12 +64,11 @@ def test_get_static():
 def test_set_static():
     machine = RefTestMachine()
     field_ref = _DUMMY.class_field_ref(machine.current_constants())
-    machine.load_class(_DUMMY.name)
     value = Integer.create_instance(10)
     machine.current_op_stack().push(value)
     machine.step_constant('putstatic', field_ref)
     assert machine.current_op_stack().size() == 0
-    assert machine.statics[_DUMMY.name][_DUMMY.class_field.name] == value
+    assert machine.class_loader[_DUMMY.name].statics[_DUMMY.class_field.name] == value
 
 
 def test_new():

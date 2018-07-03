@@ -8,7 +8,6 @@ from test.test_utils import BlankTestMachine
 
 
 def test_class_init():
-    machine = BlankTestMachine()
     class_name = 'class_name'
     the_class = ClassFile.create(class_name)
     field_name = 'field_name'
@@ -23,6 +22,6 @@ def test_class_init():
         Instruction.create('iconst_5'),
         Instruction.create('putstatic', [Operand(OperandTypes.CONSTANT_INDEX, field_ref_constant.index)]),
     ])
-    machine.class_loader = FixedClassLoader({class_name: convert_class_file(the_class)})
+    machine = BlankTestMachine(FixedClassLoader({class_name: convert_class_file(the_class)}))
     actual = machine.get_static_field(class_name, field_name)
     assert actual == Integer.create_instance(5)

@@ -9,12 +9,14 @@ from pyjvm.stack import Stack
 
 
 class BlankTestMachine(Machine):
-    def __init__(self):
+    def __init__(self, loader=None):
+        if loader is None:
+            loader = ClassLoader()
         # noinspection PyTypeChecker
         super().__init__(
             Stack([Frame(JvmClass('SomeClass', 'SomeBase', ConstantPool()), Locals(5), Stack(), [], 0)]),
             None,
-            ClassLoader()
+            loader
         )
 
     def step_instruction(self, *args):

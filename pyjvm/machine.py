@@ -60,7 +60,7 @@ class Machine:
         self.frames = frames
         self.instruction = instruction
         self.class_loader = class_loader
-        self.statics = dict()
+        self.class_loader.first_load_function = self.run_class_init
 
     def step(self):
         execute_instruction(self.instruction, self)
@@ -89,35 +89,21 @@ class Machine:
         return self.current_frame().class_.constants
 
     def get_static_field(self, class_name, field_name):
-        self.load_class_if_needed(class_name)
-        return self.statics[class_name][field_name]
+        return self.class_loader[class_name].statics[field_name]
 
     def put_static_field(self, class_name, field_name, value):
-        self.load_class_if_needed(class_name)
-        self.statics[class_name][field_name] = value
-
-    def load_class_if_needed(self, class_name):
-        if class_name not in self.statics.keys():
-            self.load_class(class_name)
-
-    def load_class(self, class_name):
-        the_class = self.class_loader.get_by_name(class_name)
-        field_dict = {name: type_.create_instance(type_.default_value) for name, type_ in
-                      the_class.static_fields.items()}
-        self.statics[class_name] = field_dict
-        self.run_class_init(the_class)
+        self.class_loader[class_name].statics[field_name] = value
 
     def create_new_class_instance(self, class_name):
-        fields = self.load_if_needed_and_collect_fields(class_name)
+        fields = self.collect_fields(class_name)
         obj = ObjectReferenceType(class_name).create_instance(JvmObject.defaults(fields))
         return obj
 
-    def load_if_needed_and_collect_fields(self, class_name):
+    def collect_fields(self, class_name):
         acc = dict()
         name = class_name
         while not name == RootObjectType.refers_to:
-            self.load_class_if_needed(name)
-            the_class = self.class_loader.get_by_name(name)
+            the_class = self.class_loader[name].jvm_class
             acc.update(the_class.fields)
             name = the_class.name_of_base
 
@@ -144,8 +130,7 @@ class Machine:
         if type_.is_array_reference and descriptor_type.is_array_reference:
             return _is_array_ref_an_instance_of(type_, descriptor_type)
         elif type_.is_class_reference and descriptor_type.is_class_reference:
-            self.load_class_if_needed(type_.refers_to)
-            type_class = self.class_loader.get_by_name(type_.refers_to)
+            type_class = self.class_loader[type_.refers_to].jvm_class
             roots = [type_.refers_to] + list(type_class.interfaces)
             return any(descriptor_type.refers_to in self._get_ancestors(root) for root in roots)
         else:
@@ -156,8 +141,7 @@ class Machine:
         acc.add(name)
         curr = name
         while not curr == RootObjectType.refers_to:
-            self.load_class_if_needed(curr)
-            the_class = self.class_loader.get_by_name(curr)
+            the_class = self.class_loader[curr].jvm_class
             next_name = the_class.name_of_base
             acc.add(next_name)
             curr = next_name
