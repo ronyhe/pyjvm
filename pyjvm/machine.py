@@ -8,7 +8,7 @@ from pyjvm.class_loaders import ClassLoader
 from pyjvm.frame_locals import Locals
 from pyjvm.instructions.instructions import execute_instruction
 from pyjvm.jawa_conversions import convert_type
-from pyjvm.jvm_class import BytecodeMethod, JvmClass, JvmObject
+from pyjvm.jvm_class import BytecodeMethod, JvmClass, JvmObject, NAME_OF_STATIC_CONSTRUCTOR
 from pyjvm.jvm_types import JvmValue, ObjectReferenceType, RootObjectType
 from pyjvm.stack import Stack
 
@@ -111,7 +111,7 @@ class Machine:
 
     def run_class_init(self, the_class):
         try:
-            method = the_class.methods['clinit']
+            method = the_class.methods[NAME_OF_STATIC_CONSTRUCTOR]
         except KeyError:
             return
 

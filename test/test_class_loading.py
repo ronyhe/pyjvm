@@ -3,6 +3,7 @@ from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.class_loaders import FixedClassLoader
 from pyjvm.jawa_conversions import convert_class_file
+from pyjvm.jvm_class import NAME_OF_STATIC_CONSTRUCTOR
 from pyjvm.jvm_types import Integer
 from test.test_utils import BlankTestMachine
 
@@ -14,7 +15,7 @@ def test_class_init():
     field = the_class.fields.create(field_name, 'I')
     field.access_flags.set('acc_static', True)
     field_ref_constant = the_class.constants.create_field_ref(class_name, field_name, 'I')
-    init = the_class.methods.create('clinit', '()V', code=True)
+    init = the_class.methods.create(NAME_OF_STATIC_CONSTRUCTOR, '()V', code=True)
     init.access_flags.set('acc_static', True)
     init.code.max_locals = 10
     init.code.max_stack = 10

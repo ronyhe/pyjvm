@@ -5,6 +5,9 @@ from jawa.util.bytecode import Instruction
 
 from pyjvm.jvm_types import Type, JvmValue
 
+# noinspection SpellCheckingInspection
+NAME_OF_STATIC_CONSTRUCTOR = 'clinit'
+
 
 class BytecodeMethod:
     def __init__(self, max_locals, max_stack, instructions):
