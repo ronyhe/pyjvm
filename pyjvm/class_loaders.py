@@ -56,7 +56,7 @@ class ClassLoader:
 class FixedClassLoader(ClassLoader):
     def __init__(self, classes):
         super().__init__()
-        self._classes = dict(classes)
+        self.classes = dict(classes)
 
     def _load_jvm_class(self, name):
-        return self._classes[name]
+        return self.classes[name]
