@@ -119,5 +119,5 @@ class InstanceOf(_ReferenceExecutor):
         stack = self.machine.current_op_stack()
         descriptor = self.constant_from_index().value
         obj = stack.pop()
-        is_instance = self.machine.is_reference_an_instance_of(obj, descriptor)
+        is_instance = (not obj.is_null) and self.machine.is_reference_an_instance_of(obj, descriptor)
         stack.push(_as_boolean_value(is_instance))
