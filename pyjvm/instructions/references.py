@@ -14,6 +14,15 @@ class _ReferenceExecutor(Executor):
         return self.machine.current_constants()[index]
 
 
+def _as_boolean_value(bool_):
+    if bool_:
+        num = 1
+    else:
+        num = 0
+    instance = Integer.create_instance(num)
+    return instance
+
+
 @bytecode('putstatic')
 class PutStatic(_ReferenceExecutor):
     def execute(self):
@@ -102,3 +111,13 @@ class ArrayLength(Executor):
         array = stack.pop()
         value = Integer.create_instance(len(array.value))
         stack.push(value)
+
+
+@bytecode('instanceof')
+class InstanceOf(_ReferenceExecutor):
+    def execute(self):
+        stack = self.machine.current_op_stack()
+        descriptor = self.constant_from_index().value
+        obj = stack.pop()
+        is_instance = self.machine.is_reference_an_instance_of(obj, descriptor)
+        stack.push(_as_boolean_value(is_instance))

@@ -3,15 +3,11 @@ from jawa.constants import ConstantPool
 from pyjvm.hierarchies import is_type_instance_of
 from pyjvm.jvm_class import JvmClass
 from pyjvm.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
+from pyjvm.utils import class_as_descriptor
 from test.test_utils import dummy_loader, DUMMY_CLASS, DUMMY_SUB_CLASS_NAME
 
-
-def _class_as_descriptor(name):
-    return 'L' + name + ';'
-
-
-_DUMMY_DESCRIPTOR = _class_as_descriptor(DUMMY_CLASS.name)
-_DUMMY_SUB_DESCRIPTOR = _class_as_descriptor(DUMMY_SUB_CLASS_NAME)
+_DUMMY_DESCRIPTOR = class_as_descriptor(DUMMY_CLASS.name)
+_DUMMY_SUB_DESCRIPTOR = class_as_descriptor(DUMMY_SUB_CLASS_NAME)
 
 
 def instance_test(type_, descriptor, loader=None):
@@ -54,7 +50,7 @@ def test_instance_of_interface():
     loader.classes[interface_name] = interface
     loader.classes[implementor_name] = implementor
 
-    assert instance_test(ObjectReferenceType(implementor_name), _class_as_descriptor(interface_name), loader)
+    assert instance_test(ObjectReferenceType(implementor_name), class_as_descriptor(interface_name), loader)
 
 
 def test_instance_of_array():

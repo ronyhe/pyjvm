@@ -28,3 +28,7 @@ def split_by_predicate(iterable, predicate):
             false.append(item)
 
     return true, false
+
+
+def class_as_descriptor(name):
+    return 'L' + name + ';'

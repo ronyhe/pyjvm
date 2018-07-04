@@ -3,6 +3,7 @@ from jawa.util.bytecode import Operand, OperandTypes, Instruction
 from pyjvm import value_array_type_indicators
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, ArrayReferenceType, RootObjectType
+from pyjvm.utils import class_as_descriptor
 from test.test_utils import BlankTestMachine, DUMMY_SUB_CLASS_NAME, DUMMY_CLASS, dummy_loader
 
 _SOME_INT = Integer.create_instance(54)
@@ -126,3 +127,17 @@ def test_array_length():
     stack.push(array)
     machine.step_instruction('arraylength')
     assert stack.peek() == Integer.create_instance(length)
+
+
+def test_instance_of():
+    machine = RefTestMachine()
+    descriptor = class_as_descriptor(DUMMY_CLASS.name)
+    descriptor_constant = machine.current_constants().create_utf8(descriptor)
+
+    instance = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
+    stack = machine.current_op_stack()
+    stack.push(instance)
+
+    machine.step_constant('instanceof', descriptor_constant)
+    assert stack.size() == 1
+    assert stack.peek() == Integer.create_instance(1)
