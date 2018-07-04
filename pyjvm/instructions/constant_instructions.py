@@ -3,6 +3,8 @@ from pyjvm.jvm_types import NULL_VALUE, Integer, Long, Float, Double
 
 
 @bytecode('nop')
+@bytecode('monitorenter')
+@bytecode('monitorexit')
 class NoOp(Executor):
     def execute(self):
         pass
