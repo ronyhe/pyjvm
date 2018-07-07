@@ -70,3 +70,8 @@ class FixedClassLoader(ClassLoader):
 
     def _load_jvm_class(self, name):
         return self.classes[name]
+
+
+class EmptyClassLoader(FixedClassLoader):
+    def __init__(self):
+        super().__init__(dict())

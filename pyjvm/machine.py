@@ -19,73 +19,53 @@ class Frame:
             class_,
             Locals(method.max_locals),
             Stack(max_depth=method.max_stack),
-            method.instructions,
-            0
+            method.instructions
         )
 
     def __init__(self,
                  class_: JvmClass,
                  _locals: Locals,
                  op_stack: Stack[JvmValue],
-                 instructions: Iterable[Instruction],
-                 position: int):
+                 instructions: Iterable[Instruction]):
         self.class_ = class_
         self.locals = _locals
         self.op_stack = op_stack
         self.instructions = tuple(instructions)
-        self.position = position
 
-    def next_instruction(self):
+    def execute(self, machine):
+        pc = 0
+        instruction = self.next_instruction(pc)
+        while instruction is not None:
+            execute_instruction(instruction, machine)
+            pc += 1
+            instruction = self.next_instruction(pc)
+
+    def next_instruction(self, pc):
         for ins in self.instructions:
-            if ins.pos >= self.position:
+            if ins.pos >= pc:
                 return ins
 
         return None
 
 
 class Machine:
-    @classmethod
-    def from_class_and_method(cls, the_class: JvmClass, method: BytecodeMethod):
-        frame = Frame.from_class_and_method(the_class, method)
-        frames = Stack()
-        frames.push(frame)
-        instruction = frame.next_instruction()
-        return cls(frames, instruction, ClassLoader())
-
-    def __init__(self,
-                 frames: Stack[Frame],
-                 instruction: Instruction,
-                 class_loader: ClassLoader):
-        self.frames = frames
-        self.instruction = instruction
+    def __init__(self, class_loader: ClassLoader):
+        self.current_frame: Frame = None
         self.class_loader = class_loader
         self.class_loader.first_load_function = self.run_class_init
 
-    def step(self):
-        execute_instruction(self.instruction, self)
-        frame = self.current_frame()
-        frame.position += 1
-        self.instruction = frame.next_instruction()
-
-    def run_frame(self):
-        while self.instruction is not None:
-            self.step()
-
-    def push_frame(self, frame):
-        self.frames.push(frame)
-        self.instruction = frame.next_instruction()
-
-    def current_frame(self) -> Frame:
-        return self.frames.peek()
+    def run_frame(self, frame: Frame):
+        self.current_frame = frame
+        frame.execute(self)
 
     def current_locals(self) -> Locals:
-        return self.current_frame().locals
+        return self.current_frame.locals
 
     def current_op_stack(self) -> Stack[JvmValue]:
-        return self.current_frame().op_stack
+        return self.current_frame.op_stack
 
     def current_constants(self) -> ConstantPool:
-        return self.current_frame().class_.constants
+        return self.current_frame.class_.constants
 
     def get_static_field(self, class_name, field_name):
         return self.class_loader.get_the_statics(class_name)[field_name]
@@ -107,8 +87,7 @@ class Machine:
         except KeyError:
             return
 
-        self.push_frame(Frame.from_class_and_method(the_class, method))
-        self.run_frame()
+        self.run_frame(Frame.from_class_and_method(the_class, method))
 
     def is_reference_an_instance_of(self, reference: JvmValue, descriptor: str) -> bool:
         return is_value_instance_of(reference, descriptor, self.class_loader)
