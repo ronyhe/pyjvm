@@ -1,7 +1,7 @@
 from jawa.constants import ConstantPool
 
 from pyjvm.frame_locals import Locals
-from pyjvm.instructions.instructions import InstructorInputs
+from pyjvm.instructions.instructions import InstructorInputs, execute_instruction
 from pyjvm.stack import Stack
 
 
@@ -23,3 +23,11 @@ class DefaultInputs(InstructorInputs):
 
             actual_args[key] = v
         super().__init__(**actual_args)
+
+
+def assert_instruction(expected=None, **kwargs):
+    if expected is None:
+        expected = []
+    inputs = DefaultInputs(**kwargs)
+    actions = execute_instruction(inputs)
+    assert actions.has(*expected)
