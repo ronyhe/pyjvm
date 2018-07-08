@@ -23,19 +23,3 @@ def execute_instruction(instruction, machine):
 
 def get_implemented_instructions():
     return _registry.keys()
-
-
-# noinspection PyUnresolvedReferences
-from pyjvm.instructions import loads
-# noinspection PyUnresolvedReferences
-from pyjvm.instructions import stores
-# noinspection PyUnresolvedReferences
-from pyjvm.instructions import constant_instructions
-# noinspection PyUnresolvedReferences
-from pyjvm.instructions import stack_instructions
-# noinspection PyUnresolvedReferences
-from pyjvm.instructions import math
-# noinspection PyUnresolvedReferences
-from pyjvm.instructions import conversions
-# noinspection PyUnresolvedReferences
-from pyjvm.instructions import references

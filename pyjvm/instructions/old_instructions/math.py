@@ -1,7 +1,7 @@
 import operator
 
 from pyjvm.instructions.instructions import Executor, bytecode
-from pyjvm.instructions.verifiers import verifier_by_type
+from pyjvm.instructions.old_instructions.verifiers import verifier_by_type
 from pyjvm.jvm_types import min_max_by_type, Integer, Long, Double, Float
 
 
