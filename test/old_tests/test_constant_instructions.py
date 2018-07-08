@@ -1,7 +1,7 @@
 from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.jvm_types import NULL_VALUE, Integer, Double
-from test.test_utils import BlankTestMachine
+from test.old_tests.test_utils import BlankTestMachine
 
 
 def test_a_const_null():

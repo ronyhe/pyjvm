@@ -1,5 +1,5 @@
 from pyjvm.jvm_types import Integer, Long, Float
-from test.test_utils import BlankTestMachine
+from test.old_tests.test_utils import BlankTestMachine
 
 
 def conversion_test(source, instruction, target):

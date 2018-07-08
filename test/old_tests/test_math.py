@@ -1,7 +1,7 @@
 from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.jvm_types import Integer
-from test.test_utils import BlankTestMachine
+from test.old_tests.test_utils import BlankTestMachine
 
 ONE, TWO = [Integer.create_instance(i) for i in range(1, 3)]
 

@@ -1,7 +1,7 @@
 from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
-from test.test_utils import BlankTestMachine
+from test.old_tests.test_utils import BlankTestMachine
 
 
 def test_int_store():

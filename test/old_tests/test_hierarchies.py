@@ -4,7 +4,7 @@ from pyjvm.hierarchies import is_type_instance_of
 from pyjvm.jvm_class import JvmClass
 from pyjvm.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
 from pyjvm.utils import class_as_descriptor
-from test.test_utils import dummy_loader, DUMMY_CLASS, DUMMY_SUB_CLASS_NAME
+from test.old_tests.test_utils import dummy_loader, DUMMY_CLASS, DUMMY_SUB_CLASS_NAME
 
 _DUMMY_DESCRIPTOR = class_as_descriptor(DUMMY_CLASS.name)
 _DUMMY_SUB_DESCRIPTOR = class_as_descriptor(DUMMY_SUB_CLASS_NAME)

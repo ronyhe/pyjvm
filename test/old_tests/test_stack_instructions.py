@@ -1,5 +1,5 @@
 from pyjvm.jvm_types import Integer, Long
-from test.test_utils import BlankTestMachine
+from test.old_tests.test_utils import BlankTestMachine
 
 ONE, TWO, THREE, FOUR = (Integer.create_instance(i) for i in range(1, 5))
 LONG_ONE, LONG_TWO = (Long.create_instance(i) for i in range(1, 3))
