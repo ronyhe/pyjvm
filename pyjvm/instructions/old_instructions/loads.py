@@ -1,5 +1,6 @@
 from pyjvm.instructions.instructions import Instructor, bytecode
-from pyjvm.instructions.old_instructions.verifiers import verify_integer, verify_long, verify_double, verify_float, verify_reference, \
+from pyjvm.instructions.old_instructions.verifiers import verify_integer, verify_long, verify_double, verify_float, \
+    verify_reference, \
     verify_array_reference
 
 

@@ -42,14 +42,19 @@ class Type:
         return hash(self.name)
 
 
-class _FloatingPointType(Type):
+class _SimpleNameType(Type):
+    def __repr__(self):
+        return str(self)
+
+
+class _FloatingPointType(_SimpleNameType):
     def create_instance(self, value):
         return super().create_instance(float(value))
 
 
-Integer = Type('<Integer>', default_value=0)
+Integer = _SimpleNameType('<Integer>', default_value=0)
 Float = _FloatingPointType('<Float>', default_value=0.0)
-Long = Type('<Long>', default_value=0, needs_two_slots=True)
+Long = _SimpleNameType('<Long>', default_value=0, needs_two_slots=True)
 Double = _FloatingPointType('<Double>', default_value=0.0, needs_two_slots=True)
 
 
