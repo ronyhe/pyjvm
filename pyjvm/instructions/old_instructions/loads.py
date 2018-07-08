@@ -1,4 +1,4 @@
-from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode
 from pyjvm.instructions.old_instructions.verifiers import verify_integer, verify_long, verify_double, verify_float, verify_reference, \
     verify_array_reference
 
@@ -23,7 +23,7 @@ def _load_from_locals_decorator(the_class):
 
 
 @_load_from_locals_decorator
-class LoadFromLocals(Executor):
+class LoadFromLocals(Instructor):
     def __init__(self, instruction, machine, ensure_type, index_in_locals=None):
         super().__init__(instruction, machine)
         self.ensure_type = ensure_type
@@ -49,7 +49,7 @@ class LoadFromLocals(Executor):
 @bytecode('caload', verify_integer)
 @bytecode('saload', verify_integer)
 @bytecode('aaload', verify_reference)
-class LoadFromArray(Executor):
+class LoadFromArray(Instructor):
     def __init__(self, instruction, machine, ensure_type):
         super().__init__(instruction, machine)
         self.ensure_type = ensure_type

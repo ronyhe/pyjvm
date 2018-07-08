@@ -1,4 +1,4 @@
-from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode
 from pyjvm.jvm_types import CompType
 
 
@@ -40,7 +40,7 @@ def _comp_type_forms(instruction_name, stack, *forms):
 
 @bytecode('pop', 1)
 @bytecode('pop2', 2)
-class Pop(Executor):
+class Pop(Instructor):
     def __init__(self, instruction, machine, amount):
         super().__init__(instruction, machine)
         self.amount = amount
@@ -52,7 +52,7 @@ class Pop(Executor):
 
 @bytecode('dup', 0)
 @bytecode('dup_x1', 2)
-class Duplicate(Executor):
+class Duplicate(Instructor):
     def __init__(self, instruction, machine, insertion_off_set_from_top):
         super().__init__(instruction, machine)
         self.insertion_off_set_from_top = insertion_off_set_from_top
@@ -63,7 +63,7 @@ class Duplicate(Executor):
 
 
 @bytecode('dup_x2')
-class DuplicateX2(Executor):
+class DuplicateX2(Instructor):
     def execute(self):
         _comp_type_forms(
             'dup_x2',
@@ -82,7 +82,7 @@ class DuplicateX2(Executor):
 
 
 @bytecode('dup2')
-class Duplicate2(Executor):
+class Duplicate2(Instructor):
     def execute(self):
         _comp_type_forms(
             'dup2',
@@ -101,7 +101,7 @@ class Duplicate2(Executor):
 
 
 @bytecode('dup2_x1')
-class Duplicate2X1(Executor):
+class Duplicate2X1(Instructor):
     def execute(self):
         _comp_type_forms(
             'dup2_x1',
@@ -120,7 +120,7 @@ class Duplicate2X1(Executor):
 
 
 @bytecode('dup2_x2')
-class Duplicate2X2(Executor):
+class Duplicate2X2(Instructor):
     def execute(self):
         _comp_type_forms(
             'dup2_x2',
@@ -149,7 +149,7 @@ class Duplicate2X2(Executor):
 
 
 @bytecode('swap')
-class Swap(Executor):
+class Swap(Instructor):
     def execute(self):
         stack = self.machine.current_op_stack()
         if not _comp_types(stack, 1, 1):

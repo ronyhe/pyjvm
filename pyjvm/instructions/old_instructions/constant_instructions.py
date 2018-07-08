@@ -1,11 +1,11 @@
-from pyjvm.instructions.instructions import bytecode, Executor
+from pyjvm.instructions.instructions import bytecode, Instructor
 from pyjvm.jvm_types import NULL_VALUE, Integer, Long, Float, Double
 
 
 @bytecode('nop')
 @bytecode('monitorenter')
 @bytecode('monitorexit')
-class NoOp(Executor):
+class NoOp(Instructor):
     def execute(self):
         pass
 
@@ -41,7 +41,7 @@ def constants_decorator(the_class):
 
 
 @constants_decorator
-class Push(Executor):
+class Push(Instructor):
     def __init__(self, instruction, machine, value):
         super().__init__(instruction, machine)
         self.value = value
@@ -52,7 +52,7 @@ class Push(Executor):
 
 @bytecode('bipush')
 @bytecode('sipush')
-class PushIntegerOperand(Executor):
+class PushIntegerOperand(Instructor):
     def execute(self):
         operand = self.instruction.operands[0].value
         value = Integer.create_instance(int(operand))

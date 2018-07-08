@@ -1,6 +1,6 @@
 import operator
 
-from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode
 from pyjvm.instructions.old_instructions.verifiers import verifier_by_type
 from pyjvm.jvm_types import min_max_by_type, Integer, Long, Double, Float
 
@@ -71,7 +71,7 @@ def _validate_range(type_, raw_value):
 
 
 @_binary_decorator
-class BinOp(Executor):
+class BinOp(Instructor):
     def __init__(self, instruction, machine, type_, operator_):
         super().__init__(instruction, machine)
         self.type = type_
@@ -91,7 +91,7 @@ class BinOp(Executor):
 
 
 @bytecode('iinc')
-class IncrementLocal(Executor):
+class IncrementLocal(Instructor):
     def execute(self):
         ops = self.instruction.operands
         index_in_locals, value_to_add = (int(op.value) for op in ops)

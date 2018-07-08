@@ -1,11 +1,11 @@
 from pyjvm import value_array_type_indicators
-from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode
 
 from pyjvm.jvm_types import ArrayReferenceType, ObjectReferenceType, Integer
 
 
 # noinspection PyAbstractClass
-class _ReferenceExecutor(Executor):
+class _ReferenceInstructor(Instructor):
     def first_op_as_int(self):
         return int(self.instruction.operands[0].value)
 
@@ -24,7 +24,7 @@ def _as_boolean_value(bool_):
 
 
 @bytecode('putstatic')
-class PutStatic(_ReferenceExecutor):
+class PutStatic(_ReferenceInstructor):
     def execute(self):
         field_ref = self.constant_from_index()
         class_name = field_ref.class_.name.value
@@ -34,7 +34,7 @@ class PutStatic(_ReferenceExecutor):
 
 
 @bytecode('getstatic')
-class GetStatic(_ReferenceExecutor):
+class GetStatic(_ReferenceInstructor):
     def execute(self):
         field_ref = self.constant_from_index()
         class_name = field_ref.class_.name.value
@@ -44,7 +44,7 @@ class GetStatic(_ReferenceExecutor):
 
 
 @bytecode('new')
-class New(_ReferenceExecutor):
+class New(_ReferenceInstructor):
     def execute(self):
         class_ref = self.constant_from_index()
         class_name = class_ref.name.value
@@ -53,7 +53,7 @@ class New(_ReferenceExecutor):
 
 
 @bytecode('putfield')
-class PutField(_ReferenceExecutor):
+class PutField(_ReferenceInstructor):
     def execute(self):
         field_ref = self.constant_from_index()
         field_name = field_ref.name_and_type.name.value
@@ -66,7 +66,7 @@ class PutField(_ReferenceExecutor):
 
 
 @bytecode('getfield')
-class GetField(_ReferenceExecutor):
+class GetField(_ReferenceInstructor):
     def execute(self):
         field_ref = self.constant_from_index()
         field_name = field_ref.name_and_type.name.value
@@ -77,7 +77,7 @@ class GetField(_ReferenceExecutor):
 
 
 @bytecode('newarray')
-class NewValueArray(_ReferenceExecutor):
+class NewValueArray(_ReferenceInstructor):
     def execute(self):
         indicator = self.first_op_as_int()
         element_type = value_array_type_indicators.type_by_indicator(indicator)
@@ -92,7 +92,7 @@ class NewValueArray(_ReferenceExecutor):
 
 
 @bytecode('anewarray')
-class NewReferenceArray(_ReferenceExecutor):
+class NewReferenceArray(_ReferenceInstructor):
     def execute(self):
         stack = self.machine.current_op_stack()
         length = int(stack.pop().value)
@@ -105,7 +105,7 @@ class NewReferenceArray(_ReferenceExecutor):
 
 
 @bytecode('arraylength')
-class ArrayLength(Executor):
+class ArrayLength(Instructor):
     def execute(self):
         stack = self.machine.current_op_stack()
         array = stack.pop()
@@ -114,7 +114,7 @@ class ArrayLength(Executor):
 
 
 @bytecode('instanceof')
-class InstanceOf(_ReferenceExecutor):
+class InstanceOf(_ReferenceInstructor):
     def execute(self):
         stack = self.machine.current_op_stack()
         descriptor = self.constant_from_index().value

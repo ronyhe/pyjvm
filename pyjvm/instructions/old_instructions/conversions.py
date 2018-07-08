@@ -1,4 +1,4 @@
-from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode
 from pyjvm.instructions.old_instructions.verifiers import verifier_by_type
 from pyjvm.jvm_types import Long, Integer, Float, Double
 
@@ -27,7 +27,7 @@ def _conversion_decorator(the_class):
 
 
 @_conversion_decorator
-class Convert(Executor):
+class Convert(Instructor):
     def __init__(self, instruction, machine, source_type, target_type):
         super().__init__(instruction, machine)
         self.source_type = source_type

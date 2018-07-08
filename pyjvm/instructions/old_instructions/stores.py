@@ -1,4 +1,4 @@
-from pyjvm.instructions.instructions import Executor, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode
 from pyjvm.instructions.old_instructions.verifiers import verify_long, verify_float, verify_double, verify_integer, verify_reference
 from pyjvm.jvm_types import Integer
 
@@ -24,7 +24,7 @@ def _simple_store_decorator(the_class):
 
 
 @_simple_store_decorator
-class StoreToLocalVariable(Executor):
+class StoreToLocalVariable(Instructor):
     def __init__(self, instruction, machine, ensure_type, index_into_locals=None):
         super().__init__(instruction, machine)
         self.ensure_type = ensure_type
@@ -47,7 +47,7 @@ class StoreToLocalVariable(Executor):
 @bytecode('castore', verify_integer)
 @bytecode('sastore', verify_integer)
 @bytecode('aastore', verify_reference)
-class StoreValueIntoArray(Executor):
+class StoreValueIntoArray(Instructor):
     def __init__(self, instruction, machine, ensure_type):
         super().__init__(instruction, machine)
         self.ensure_type = ensure_type
