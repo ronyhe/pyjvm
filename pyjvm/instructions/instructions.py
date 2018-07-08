@@ -24,6 +24,12 @@ class Instructor:
     def execute(self):
         raise NotImplementedError()
 
+    def operand_as_int(self, index=0):
+        return int(self.instruction.operands[index].value)
+
+    def peek_op_stack(self, *args, **kwargs):
+        return self.op_stack.peek(*args, *kwargs)
+
 
 def execute_instruction(inputs):
     instruction_name = inputs.instruction.mnemonic

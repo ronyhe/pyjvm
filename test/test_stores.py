@@ -1,6 +1,6 @@
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.actions import StoreInLocals, Pop
+from pyjvm.actions import StoreInLocals, Pop, IncrementProgramCounter
 from pyjvm.instructions.instructions import execute_instruction
 from pyjvm.jvm_types import Integer
 from pyjvm.stack import Stack
@@ -17,5 +17,6 @@ def test_int_store():
     actions = execute_instruction(inputs)
     assert actions.has(
         StoreInLocals(value=value, index=index),
-        Pop()
+        Pop(),
+        IncrementProgramCounter
     )

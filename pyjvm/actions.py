@@ -7,7 +7,7 @@ class Actions:
         self.actions = tuple(actions)
 
     def has(self, *actions):
-        types = set(type(ac) for ac in actions)
+        types = self._types()
         return all(self._has_action(ac, types) for ac in actions)
 
     def __contains__(self, item):
@@ -38,6 +38,15 @@ class Actions:
             return action in types
         except TypeError:
             return False
+
+    def _types(self):
+        def get_type(obj):
+            if isinstance(obj, type):
+                return obj
+            else:
+                return type(obj)
+
+        return set(get_type(ac) for ac in self.actions)
 
 
 class IncrementProgramCounter(Action):
