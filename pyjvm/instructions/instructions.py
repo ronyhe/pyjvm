@@ -61,3 +61,5 @@ def get_implemented_instructions():
 
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import loads_and_stores
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import stack_instructions

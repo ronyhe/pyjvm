@@ -33,7 +33,7 @@ class DefaultInputs(InstructorInputs):
 
         # op_stack can be provided as iterable, coerce it to a Stack
         stack_elements = actual_args[_OP_STACK_KEY]
-        actual_args[_OP_STACK_KEY] = Stack(list(stack_elements))
+        actual_args[_OP_STACK_KEY] = Stack(values=list(stack_elements))
 
         super().__init__(**actual_args)
 
