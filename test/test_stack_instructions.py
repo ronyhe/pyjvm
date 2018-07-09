@@ -1,4 +1,4 @@
-from pyjvm.actions import Pop, Push, PushMany
+from pyjvm.actions import Pop, Push, PushMany, DuplicateTop
 from pyjvm.jvm_types import Integer
 from test.utils import assert_incrementing_instruction, SOME_INT
 
@@ -25,12 +25,7 @@ def test_dup_x1():
         instruction='dup_x1',
         op_stack=[SOME_INT, some_other_int],
         expected=[
-            Pop(2),
-            PushMany([
-                SOME_INT,
-                some_other_int,
-                SOME_INT
-            ])
+            DuplicateTop(amount_to_take=1, index_for_insertion=2)
         ]
     )
 
@@ -41,9 +36,6 @@ def test_dup_x2_first_form():
         instruction='dup_x2',
         op_stack=[first, second, third],
         expected=[
-            Pop(3),
-            PushMany([
-                first, second, third, first
-            ])
+            DuplicateTop(amount_to_take=1, index_for_insertion=3)
         ]
     )

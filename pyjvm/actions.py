@@ -89,5 +89,11 @@ class Push(Action):
 
 
 @attr.s(frozen=True)
-class PushMany:
+class PushMany(Action):
     values = attr.ib(factory=tuple, converter=tuple)
+
+
+@attr.s(frozen=True)
+class DuplicateTop(Action):
+    amount_to_take = attr.ib()
+    index_for_insertion = attr.ib()

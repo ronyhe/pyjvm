@@ -45,13 +45,10 @@ class Duplicate(Instructor):
 @bytecode('dup_x1')
 class DuplicateX1(Instructor):
     def execute(self):
-        top = self.peek_op_stack()
-        ante_top = self.peek_op_stack(1)
         return IncrementProgramCounter.after(
-            actions.Pop(2),
-            actions.PushMany([
-                top, ante_top, top
-            ])
+            actions.DuplicateTop(
+                amount_to_take=1, index_for_insertion=2
+            )
         )
 
 
@@ -59,22 +56,14 @@ class DuplicateX1(Instructor):
 class DuplicateX2(StackInstructor):
     def execute(self):
         if self.matches_comp_types('111'):
-            first, second, third = self.peek_many(3)
-            ops = [
-                actions.Pop(3),
-                actions.PushMany([
-                    first, second, third, first
-                ])
-            ]
+            op = actions.DuplicateTop(
+                amount_to_take=1, index_for_insertion=3
+            )
         elif self.matches_comp_types('12'):
-            first, second = self.peek_many(2)
-            ops = [
-                actions.Pop(2),
-                actions.PushMany([
-                    first, second, first
-                ])
-            ]
+            op = actions.DuplicateTop(
+                amount_to_take=1, index_for_insertion=2
+            )
         else:
             raise ValueError('No comp type case match')
 
-        return IncrementProgramCounter.after(*ops)
+        return IncrementProgramCounter.after(op)
