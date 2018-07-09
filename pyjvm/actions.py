@@ -1,3 +1,6 @@
+import attr
+
+
 class Action:
     pass
 
@@ -49,6 +52,7 @@ class Actions:
         return set(get_type(ac) for ac in self.actions)
 
 
+@attr.s
 class IncrementProgramCounter(Action):
     @classmethod
     def after(cls, *actions):
@@ -56,84 +60,29 @@ class IncrementProgramCounter(Action):
         acts.append(cls())
         return Actions(*acts)
 
-    def __repr__(self):
-        return self.__class__.__name__
 
-
+@attr.s(frozen=True)
 class StoreInLocals(Action):
-    def __init__(self, *, index, value):
-        self.index = index
-        self.value = value
-
-    def __eq__(self, other):
-        try:
-            return self.index == other.index and self.value == other.value
-        except AttributeError:
-            return False
+    index = attr.ib()
+    value = attr.ib()
 
     def __iter__(self):
         yield self.index
         yield self.value
 
-    def __hash__(self):
-        elements = self.__class__, self.index, self.value
-        return hash(elements)
 
-    def __repr__(self):
-        return f'{self.__class__.__name__}(index={self.index}, value={repr(self.value)})'
-
-
+@attr.s(frozen=True)
 class Pop(Action):
-    def __init__(self, amount=1):
-        self.amount = amount
-
-    def __eq__(self, other):
-        try:
-            return self.amount == other.amount
-        except AttributeError:
-            return False
-
-    def __hash__(self):
-        elements = self.__class__, self.amount
-        return hash(elements)
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}({self.amount})'
+    amount = attr.ib(default=1)
 
 
+@attr.s(frozen=True)
 class StoreIntoArray(Action):
-    def __init__(self, *, array, index, value):
-        self.array = array
-        self.index = index
-        self.value = value
-
-    def __eq__(self, other):
-        try:
-            return self.array == other.array and self.index == other.index and self.value == other.value
-        except AttributeError:
-            return False
-
-    def __hash__(self):
-        elements = self.__class__, self.array, self.index, self.value
-        return hash(elements)
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}(array={self.array}, index={self.index}, value={self.value})'
+    array = attr.ib()
+    index = attr.ib()
+    value = attr.ib()
 
 
+@attr.s(frozen=True)
 class Push(Action):
-    def __init__(self, value):
-        self.value = value
-
-    def __eq__(self, other):
-        try:
-            return self.value == other.value
-        except AttributeError:
-            return False
-
-    def __hash__(self):
-        elements = self.__class__, self.value
-        return hash(elements)
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}(value={self.value})'
+    value = attr.ib()
