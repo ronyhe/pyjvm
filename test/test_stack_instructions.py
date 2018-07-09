@@ -1,4 +1,4 @@
-from pyjvm.actions import Pop, Push, PushMany, DuplicateTop
+from pyjvm.actions import Pop, Push, DuplicateTop
 from pyjvm.jvm_types import Integer
 from test.utils import assert_incrementing_instruction, SOME_INT
 
