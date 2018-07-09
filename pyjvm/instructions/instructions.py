@@ -1,8 +1,26 @@
+from collections import OrderedDict
+
 from pyjvm.class_registry import ClassRegistry
 
 _registry = ClassRegistry()
 
 bytecode = _registry.decorator
+
+
+def bytecode_dict(names_and_args):
+    dic = OrderedDict(names_and_args)
+
+    def func(class_):
+        for name, args in dic.items():
+            class_ = bytecode(name, *args)(class_)
+
+        return class_
+
+    return func
+
+
+def bytecode_list(names):
+    return bytecode_dict({name: [] for name in names})
 
 
 class InstructorInputs:
@@ -42,4 +60,4 @@ def get_implemented_instructions():
 
 
 # noinspection PyUnresolvedReferences
-from pyjvm.instructions import stores
+from pyjvm.instructions import loads_and_stores

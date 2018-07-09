@@ -119,3 +119,21 @@ class StoreIntoArray(Action):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(array={self.array}, index={self.index}, value={self.value})'
+
+
+class Push(Action):
+    def __init__(self, value):
+        self.value = value
+
+    def __eq__(self, other):
+        try:
+            return self.value == other.value
+        except AttributeError:
+            return False
+
+    def __hash__(self):
+        elements = self.__class__, self.value
+        return hash(elements)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(value={self.value})'
