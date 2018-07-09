@@ -1,5 +1,6 @@
 from jawa.constants import ConstantPool
 
+from pyjvm.actions import IncrementProgramCounter
 from pyjvm.frame_locals import Locals
 from pyjvm.instructions.instructions import InstructorInputs, execute_instruction
 from pyjvm.jvm_types import Integer
@@ -41,3 +42,10 @@ def assert_instruction(expected=None, **kwargs):
     inputs = DefaultInputs(**kwargs)
     actions = execute_instruction(inputs)
     assert actions.has(*expected)
+
+
+def assert_incrementing_instruction(expected=None, **kwargs):
+    if expected is None:
+        expected = []
+    expected.append(IncrementProgramCounter)
+    assert_instruction(expected=expected, **kwargs)
