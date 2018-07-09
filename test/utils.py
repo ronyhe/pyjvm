@@ -2,7 +2,10 @@ from jawa.constants import ConstantPool
 
 from pyjvm.frame_locals import Locals
 from pyjvm.instructions.instructions import InstructorInputs, execute_instruction
+from pyjvm.jvm_types import Integer
 from pyjvm.stack import Stack
+
+SOME_INT = Integer.create_instance(54)
 
 
 class DefaultInputs(InstructorInputs):
