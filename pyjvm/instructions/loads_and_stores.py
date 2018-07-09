@@ -30,9 +30,9 @@ def _create_into_array_list(phrase):
 
 
 _STORE = bytecode_dict(_create_store_load_dict('store'))
-_STORE_INTO_ARRAY = bytecode_list(_create_into_array_list('astore'))
 _LOAD = bytecode_dict(_create_store_load_dict('load'))
-_LOAD_INTO_ARRAY = bytecode_list(_create_into_array_list('aload'))
+_STORE_INTO_ARRAY = bytecode_list(_create_into_array_list('astore'))
+_LOAD_FROM_ARRAY = bytecode_list(_create_into_array_list('aload'))
 
 
 @_STORE
@@ -73,5 +73,17 @@ class LoadFromLocals(Instructor):
     def execute(self):
         value = self.locals.load(self.index_in_locals)
         return IncrementProgramCounter.after(
+            actions.Push(value)
+        )
+
+
+@_LOAD_FROM_ARRAY
+class LoadFromArray(Instructor):
+    def execute(self):
+        index = self.peek_op_stack()
+        array = self.peek_op_stack(1)
+        value = array.value[index.value]
+        return IncrementProgramCounter.after(
+            actions.Pop(2),
             actions.Push(value)
         )

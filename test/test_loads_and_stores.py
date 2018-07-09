@@ -62,3 +62,18 @@ def test_int_load():
             Push(SOME_INT)
         ]
     )
+
+
+def test_int_load_from_array():
+    array = ArrayReferenceType(Integer).create_instance([SOME_INT])
+    index = Integer.create_instance(0)
+    assert_incrementing_instruction(
+        instruction='iaload',
+
+        op_stack=[index, array],
+
+        expected=[
+            Pop(2),
+            Push(SOME_INT)
+        ]
+    )

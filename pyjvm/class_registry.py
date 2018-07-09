@@ -17,7 +17,7 @@ class ClassRegistry:
         try:
             init = self._mapping[name]
         except KeyError as e:
-            raise KeyError(f'{name} does not exists in the class registry') from e
+            raise KeyError(f'{name} does not exist in the class registry') from e
         else:
             args = args + init.args
             kwargs.update(init.kwargs)
