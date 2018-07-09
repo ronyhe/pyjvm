@@ -1,7 +1,6 @@
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.actions import StoreInLocals, Pop, IncrementProgramCounter
-from pyjvm.stack import Stack
 from test.utils import assert_instruction, SOME_INT
 
 
@@ -12,7 +11,7 @@ def test_int_store():
     assert_instruction(
         instruction=instruction,
 
-        op_stack=Stack([SOME_INT]),
+        op_stack=[SOME_INT],
 
         expected=[
             StoreInLocals(value=SOME_INT, index=index),
@@ -26,7 +25,7 @@ def test_int_store_with_built_in_index():
     assert_instruction(
         instruction=Instruction.create('istore_2'),
 
-        op_stack=Stack([SOME_INT]),
+        op_stack=[SOME_INT],
 
         expected=[
             StoreInLocals(index=2, value=SOME_INT),
