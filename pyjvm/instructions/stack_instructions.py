@@ -22,3 +22,16 @@ class Duplicate(Instructor):
         return IncrementProgramCounter.after(
             actions.Push(self.peek_op_stack())
         )
+
+
+@bytecode('dup_x1')
+class DuplicateX1(Instructor):
+    def execute(self):
+        top = self.peek_op_stack()
+        ante_top = self.peek_op_stack(1)
+        return IncrementProgramCounter.after(
+            actions.Pop(2),
+            actions.Push(top),
+            actions.Push(ante_top),
+            actions.Push(top)
+        )
