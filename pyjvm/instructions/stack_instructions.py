@@ -14,3 +14,11 @@ class Pop(Instructor):
         return IncrementProgramCounter.after(
             actions.Pop(self.amount)
         )
+
+
+@bytecode('dup')
+class Duplicate(Instructor):
+    def execute(self):
+        return IncrementProgramCounter.after(
+            actions.Push(self.peek_op_stack())
+        )
