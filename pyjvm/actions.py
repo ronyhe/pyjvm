@@ -99,3 +99,23 @@ class Pop(Action):
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.amount})'
+
+
+class StoreIntoArray(Action):
+    def __init__(self, *, array, index, value):
+        self.array = array
+        self.index = index
+        self.value = value
+
+    def __eq__(self, other):
+        try:
+            return self.array == other.array and self.index == other.index and self.value == other.value
+        except AttributeError:
+            return False
+
+    def __hash__(self):
+        elements = self.__class__, self.array, self.index, self.value
+        return hash(elements)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(array={self.array}, index={self.index}, value={self.value})'

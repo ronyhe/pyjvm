@@ -1,4 +1,5 @@
 from jawa.constants import ConstantPool
+from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import IncrementProgramCounter
 from pyjvm.frame_locals import Locals
@@ -6,9 +7,10 @@ from pyjvm.instructions.instructions import InstructorInputs, execute_instructio
 from pyjvm.jvm_types import Integer
 from pyjvm.stack import Stack
 
-SOME_INT = Integer.create_instance(54)
+SOME_INT = Integer.create_instance(2)
 
 _OP_STACK_KEY = 'op_stack'
+_INSTRUCTION_KEY = 'instruction'
 
 
 class DefaultInputs(InstructorInputs):
@@ -39,7 +41,15 @@ class DefaultInputs(InstructorInputs):
 def assert_instruction(expected=None, **kwargs):
     if expected is None:
         expected = []
-    inputs = DefaultInputs(**kwargs)
+    args = dict(kwargs)
+
+    # instruction can be a string, coerce it to an instruction if needed
+    instruction = args[_INSTRUCTION_KEY]
+    if isinstance(instruction, str):
+        instruction = Instruction.create(instruction)
+    args[_INSTRUCTION_KEY] = instruction
+
+    inputs = DefaultInputs(**args)
     actions = execute_instruction(inputs)
     assert actions.has(*expected)
 

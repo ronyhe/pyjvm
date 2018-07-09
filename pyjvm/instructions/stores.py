@@ -30,3 +30,21 @@ class StoreIntoLocals(Instructor):
             actions.StoreInLocals(index=self.index_in_locals, value=self.peek_op_stack()),
             Pop()
         )
+
+
+def _store_into_array_decorator(class_):
+    type_letters = 'lfdibcsa'
+    for letter in type_letters:
+        class_ = bytecode(letter + 'astore')(class_)
+
+    return class_
+
+
+@_store_into_array_decorator
+class StoreIntoArray(Instructor):
+    def execute(self):
+        value, index, array = (self.peek_op_stack(i) for i in range(3))
+        return IncrementProgramCounter.after(
+            actions.StoreIntoArray(array=array, index=index.value, value=value),
+            Pop(3)
+        )
