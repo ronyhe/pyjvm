@@ -46,7 +46,11 @@ class Instructor:
         return int(self.instruction.operands[index].value)
 
     def peek_op_stack(self, *args, **kwargs):
-        return self.op_stack.peek(*args, *kwargs)
+        return self.op_stack.peek(*args, **kwargs)
+
+    def peek_many(self, amount):
+        for i in range(amount):
+            yield self.peek_op_stack(i)
 
 
 def execute_instruction(inputs):

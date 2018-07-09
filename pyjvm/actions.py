@@ -86,3 +86,8 @@ class StoreIntoArray(Action):
 @attr.s(frozen=True)
 class Push(Action):
     value = attr.ib()
+
+
+@attr.s(frozen=True)
+class PushMany:
+    values = attr.ib(factory=tuple, converter=tuple)
