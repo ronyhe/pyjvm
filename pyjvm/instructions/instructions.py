@@ -78,3 +78,5 @@ class NoOp(Instructor):
 from pyjvm.instructions import loads_and_stores
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import stack_instructions
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import constant_instructions
