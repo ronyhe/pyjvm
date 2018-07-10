@@ -38,7 +38,9 @@ class Pop(Instructor):
 class Duplicate(Instructor):
     def execute(self):
         return IncrementProgramCounter.after(
-            actions.Push(self.peek_op_stack())
+            actions.DuplicateTop(
+                amount_to_take=1, index_for_insertion=1
+            )
         )
 
 
