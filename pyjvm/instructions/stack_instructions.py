@@ -1,11 +1,44 @@
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter
-from pyjvm.instructions.instructions import Instructor, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode, bytecode_dict
 from pyjvm.jvm_types import CompType
 
 
-# noinspection PyAbstractClass
-class StackInstructor(Instructor):
+def _single_iterable_byte_code_dict(specs):
+    return bytecode_dict({k: [v] for k, v in specs.items()})
+
+
+@_single_iterable_byte_code_dict({
+    'dup': [
+        ('1', 1, 1)
+    ],
+    'dup_x1': [
+        ('1', 1, 2),
+        ('2', 1, 2)
+    ],
+    'dup_x2': [
+        ('111', 1, 3),
+        ('12', 1, 2)
+    ],
+    'dup2': [
+        ('11', 2, 2),
+        ('2', 1, 1)
+    ]
+})
+class DuplicationInstructor(Instructor):
+    def __init__(self, inputs, specs):
+        super().__init__(inputs)
+        self.specs = list(specs)
+
+    def execute(self):
+        for comp_type_string, amount_to_take, index_for_insertion in self.specs:
+            if self.matches_comp_types(comp_type_string):
+                return IncrementProgramCounter.after(
+                    actions.DuplicateTop(amount_to_take=amount_to_take, index_for_insertion=index_for_insertion)
+                )
+
+        raise ValueError('No comp type case match')
+
     def matches_comp_types(self, numbers):
         numbers = [int(i) for i in numbers]
         for index, num in enumerate(numbers):
@@ -32,40 +65,3 @@ class Pop(Instructor):
         return IncrementProgramCounter.after(
             actions.Pop(self.amount)
         )
-
-
-@bytecode('dup')
-class Duplicate(Instructor):
-    def execute(self):
-        return IncrementProgramCounter.after(
-            actions.DuplicateTop(
-                amount_to_take=1, index_for_insertion=1
-            )
-        )
-
-
-@bytecode('dup_x1')
-class DuplicateX1(Instructor):
-    def execute(self):
-        return IncrementProgramCounter.after(
-            actions.DuplicateTop(
-                amount_to_take=1, index_for_insertion=2
-            )
-        )
-
-
-@bytecode('dup_x2')
-class DuplicateX2(StackInstructor):
-    def execute(self):
-        if self.matches_comp_types('111'):
-            op = actions.DuplicateTop(
-                amount_to_take=1, index_for_insertion=3
-            )
-        elif self.matches_comp_types('12'):
-            op = actions.DuplicateTop(
-                amount_to_take=1, index_for_insertion=2
-            )
-        else:
-            raise ValueError('No comp type case match')
-
-        return IncrementProgramCounter.after(op)
