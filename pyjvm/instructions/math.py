@@ -1,3 +1,4 @@
+import functools
 import operator
 
 from pyjvm import actions
@@ -15,42 +16,46 @@ _ALL_TYPES = list(TYPE_LETTERS.keys())
 _INTEGRAL_TYPES = [Integer, Long]
 
 
-class BinaryOperator:
-    def __init__(self, name, op, types):
+class MathOperation:
+    def __init__(self, name, op, types, operands):
         self.name = name
         self.op = op
         self.types = types
+        self.operands = operands
 
     @classmethod
-    def all_types(cls, name, op):
-        return cls(name, op, _ALL_TYPES)
+    def all_types(cls, name, op, operands=2):
+        return cls(name, op, _ALL_TYPES, operands)
 
     @classmethod
-    def integral_types(cls, name, op):
-        return cls(name, op, _INTEGRAL_TYPES)
+    def integral_types(cls, name, op, operands=2):
+        return cls(name, op, _INTEGRAL_TYPES, operands)
 
     def bytecode_args(self):
         dic = {}
         for type_ in self.types:
             letter = TYPE_LETTERS[type_]
             name = letter + self.name
-            dic[name] = [self.op, type_]
+            dic[name] = [self.op, type_, self.operands]
 
         return dic
 
 
 OPERATORS = (
-    BinaryOperator.all_types('add', operator.add),
-    BinaryOperator.all_types('sub', operator.sub),
-    BinaryOperator.all_types('mul', operator.mul),
-    BinaryOperator.all_types('div', operator.truediv),
-    BinaryOperator.all_types('rem', operator.mod),
+    MathOperation.all_types('add', operator.add),
+    MathOperation.all_types('sub', operator.sub),
+    MathOperation.all_types('mul', operator.mul),
+    MathOperation.all_types('div', operator.truediv),
+    MathOperation.all_types('rem', operator.mod),
 
-    BinaryOperator.integral_types('shl', operator.lshift),
-    BinaryOperator.integral_types('shr', operator.rshift),
-    BinaryOperator.integral_types('and', operator.and_),
-    BinaryOperator.integral_types('or', operator.or_),
-    BinaryOperator.integral_types('xor', operator.xor)
+    MathOperation.all_types('neg', operator.neg, operands=1),
+    MathOperation('inc', functools.partial(operator.add, 1), [Integer], operands=1),
+
+    MathOperation.integral_types('shl', operator.lshift),
+    MathOperation.integral_types('shr', operator.rshift),
+    MathOperation.integral_types('and', operator.and_),
+    MathOperation.integral_types('or', operator.or_),
+    MathOperation.integral_types('xor', operator.xor)
 )
 
 
@@ -64,18 +69,18 @@ def _create_bytecode_dict():
 
 @bytecode_dict(_create_bytecode_dict())
 class BinaryMath(Instructor):
-    def __init__(self, inputs, op, type_):
+    def __init__(self, inputs, op, type_, ops):
         super().__init__(inputs)
         self.op = op
         self.type = type_
+        self.ops = ops
 
     def execute(self):
-        right = self.peek_op_stack(0)
-        left = self.peek_op_stack(1)
-        value = self.op(left.value, right.value)
+        ops = reversed(list(self.peek_many(self.ops)))
+        value = self.op(*(op.value for op in ops))
         result = self.type.create_instance(value)
         return IncrementProgramCounter.after(
-            actions.Pop(2),
+            actions.Pop(self.ops),
             actions.Push(result)
         )
 
