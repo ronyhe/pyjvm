@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from pyjvm.actions import IncrementProgramCounter
 from pyjvm.class_registry import ClassRegistry
 
 _registry = ClassRegistry()
@@ -61,6 +62,16 @@ def execute_instruction(inputs):
 
 def get_implemented_instructions():
     return _registry.keys()
+
+
+@bytecode_list([
+    'nop',
+    'monitorenter',
+    'monitorexit'
+])
+class NoOp(Instructor):
+    def execute(self):
+        return IncrementProgramCounter()
 
 
 # noinspection PyUnresolvedReferences
