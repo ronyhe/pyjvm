@@ -25,5 +25,3 @@ class BlankTestMachine(Machine):
         inst = inst._replace(pos=0)
         self.current_frame.instructions = tuple([inst])
         self.run_frame(self.current_frame)
-
-

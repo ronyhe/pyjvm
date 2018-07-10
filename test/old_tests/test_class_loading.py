@@ -1,12 +1,3 @@
-from jawa.cf import ClassFile
-from jawa.util.bytecode import Instruction, Operand, OperandTypes
-
-from pyjvm.class_loaders import FixedClassLoader
-from pyjvm.jawa_conversions import convert_class_file
-from pyjvm.jvm_class import NAME_OF_STATIC_CONSTRUCTOR
-from pyjvm.jvm_types import Integer
-from test.old_tests.test_utils import BlankTestMachine
-
 #
 # def test_class_init():
 #     class_name = 'class_name'
