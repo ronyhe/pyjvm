@@ -75,3 +75,13 @@ class Pop(Instructor):
         return IncrementProgramCounter.after(
             actions.Pop(self.amount)
         )
+
+
+@bytecode('swap')
+class Swap(Instructor):
+    def execute(self):
+        return IncrementProgramCounter.after(
+            actions.Pop(2),
+            actions.Push(self.peek_op_stack(0)),
+            actions.Push(self.peek_op_stack(1))
+        )

@@ -1,4 +1,4 @@
-from pyjvm.actions import Pop, DuplicateTop
+from pyjvm.actions import Pop, DuplicateTop, Push
 from pyjvm.jvm_types import Integer, Long
 from test.utils import assert_incrementing_instruction, SOME_INT
 
@@ -59,4 +59,17 @@ def test_pop():
         instruction='pop',
         op_stack=[SOME_INT],
         expected=[Pop()]
+    )
+
+
+def test_swap():
+    first, second = _create_integers(2)
+    assert_incrementing_instruction(
+        instruction='swap',
+        op_stack=[first, second],
+        expected=[
+            Pop(2),
+            Push(first),
+            Push(second)
+        ]
     )
