@@ -1,5 +1,6 @@
 import jawa.methods
 import jawa.util.descriptor
+from jawa import constants
 from jawa.cf import ClassFile
 
 from pyjvm.jvm_class import JvmClass, BytecodeMethod
@@ -51,6 +52,17 @@ def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
 
 def convert_type(type_: jawa.util.descriptor.JVMType) -> Type:
     return _convert_type(*type_)
+
+
+def convert_constant(const):
+    types = {
+        constants.Integer: Integer,
+        constants.Float: Float,
+        constants.Long: Long,
+        constants.Double: Double,
+    }
+    type_ = types[type(const)]
+    return type_.create_instance(const.value)
 
 
 def _convert_type(base, dimensions, name):

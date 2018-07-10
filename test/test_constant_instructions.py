@@ -1,8 +1,9 @@
+from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.actions import Push
 from pyjvm.instructions import constant_instructions
-from pyjvm.jvm_types import Integer
+from pyjvm.jvm_types import Integer, Double
 from test.utils import assert_incrementing_instruction
 
 
@@ -30,5 +31,19 @@ def test_bipush():
         instruction=Instruction.create('bipush', [Operand(OperandTypes.LITERAL, value)]),
         expected=[
             Push(Integer.create_instance(value))
+        ]
+    )
+
+
+def test_ldc():
+    value = 5.0
+    constants = ConstantPool()
+    constant = constants.create_double(value)
+    instruction = Instruction.create('ldc', [Operand(OperandTypes.CONSTANT_INDEX, constant.index)])
+    assert_incrementing_instruction(
+        instruction=instruction,
+        constants=constants,
+        expected=[
+            Push(Double.create_instance(value))
         ]
     )

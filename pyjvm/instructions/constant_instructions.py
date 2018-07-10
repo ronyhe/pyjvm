@@ -1,6 +1,7 @@
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter
-from pyjvm.instructions.instructions import Instructor, bytecode_dict, bytecode_list
+from pyjvm.instructions.instructions import Instructor, bytecode_dict, bytecode_list, bytecode
+from pyjvm.jawa_conversions import convert_constant
 from pyjvm.jvm_types import Integer, NULL_VALUE, Long, Float, Double
 
 
@@ -46,4 +47,14 @@ class PushOperand(Instructor):
         value = Integer.create_instance(self.operand_as_int())
         return IncrementProgramCounter.after(
             actions.Push(value)
+        )
+
+
+@bytecode('ldc')
+class LoadFromConstantPool(Instructor):
+    def execute(self):
+        index = self.operand_as_int()
+        constant = self.constants[index]
+        return IncrementProgramCounter.after(
+            actions.Push(convert_constant(constant))
         )
