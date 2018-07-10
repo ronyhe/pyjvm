@@ -23,6 +23,16 @@ def _single_iterable_byte_code_dict(specs):
     'dup2': [
         ('11', 2, 2),
         ('2', 1, 1)
+    ],
+    'dup2_x1': [
+        ('111', 2, 3),
+        ('21', 1, 2)
+    ],
+    'dup2_x2': [
+        ('1111', 2, 4),
+        ('211', 1, 3),
+        ('112', 2, 3),
+        ('22', 1, 2)
     ]
 })
 class DuplicationInstructor(Instructor):
