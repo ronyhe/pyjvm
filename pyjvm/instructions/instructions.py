@@ -80,3 +80,5 @@ from pyjvm.instructions import loads_and_stores
 from pyjvm.instructions import stack_instructions
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import constant_instructions
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import conversions
