@@ -82,3 +82,5 @@ from pyjvm.instructions import stack_instructions
 from pyjvm.instructions import constant_instructions
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import conversions
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import math
