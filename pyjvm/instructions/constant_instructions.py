@@ -50,7 +50,11 @@ class PushOperand(Instructor):
         )
 
 
-@bytecode('ldc')
+@bytecode_list([
+    'ldc',
+    'ldc_w',
+    'ldc2_w'
+])
 class LoadFromConstantPool(Instructor):
     def execute(self):
         index = self.operand_as_int()
