@@ -1,7 +1,7 @@
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.actions import Push, ThrowNullPointerException
+from pyjvm.actions import Push
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, NULL_VALUE
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction
