@@ -97,3 +97,8 @@ class PushMany(Action):
 class DuplicateTop(Action):
     amount_to_take = attr.ib()
     index_for_insertion = attr.ib()
+
+
+@attr.s(frozen=True)
+class ThrowNullPointerException(Action):
+    pass

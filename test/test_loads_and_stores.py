@@ -1,9 +1,9 @@
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.actions import StoreInLocals, Pop, StoreIntoArray, Push
+from pyjvm.actions import StoreInLocals, Pop, StoreIntoArray, Push, ThrowNullPointerException
 from pyjvm.frame_locals import Locals
-from pyjvm.jvm_types import ArrayReferenceType, Integer
-from test.utils import SOME_INT, assert_incrementing_instruction
+from pyjvm.jvm_types import ArrayReferenceType, Integer, NULL_VALUE
+from test.utils import SOME_INT, assert_incrementing_instruction, assert_instruction
 
 
 def test_int_store():
@@ -52,6 +52,22 @@ def test_int_store_into_array():
     )
 
 
+def test_int_store_into_null_array():
+    value = SOME_INT
+    index = Integer.create_instance(1)
+    array = NULL_VALUE
+
+    assert_instruction(
+        instruction='iastore',
+
+        op_stack=[value, index, array],
+
+        expected=[
+            ThrowNullPointerException()
+        ]
+    )
+
+
 def test_int_load():
     locals_ = Locals(5)
     locals_.store(2, SOME_INT)
@@ -75,5 +91,19 @@ def test_int_load_from_array():
         expected=[
             Pop(2),
             Push(SOME_INT)
+        ]
+    )
+
+
+def test_int_load_from_null_array():
+    array = NULL_VALUE
+    index = Integer.create_instance(0)
+    assert_instruction(
+        instruction='iaload',
+
+        op_stack=[index, array],
+
+        expected=[
+            ThrowNullPointerException()
         ]
     )
