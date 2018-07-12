@@ -14,7 +14,11 @@ class InstanceOf(Instructor):
         class_name = constant.name.value
 
         obj = self.peek_op_stack()
-        answer = is_value_instance_of(obj, class_as_descriptor(class_name), self.loader)
+        if obj.is_null:
+            answer = False
+        else:
+            answer = is_value_instance_of(obj, class_as_descriptor(class_name), self.loader)
+
         if answer:
             result = Integer.create_instance(1)
         else:
