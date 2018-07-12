@@ -26,11 +26,12 @@ def bytecode_list(names):
 
 class InstructorInputs:
     # noinspection PyShadowingBuiltins
-    def __init__(self, *, instruction, locals, op_stack, constants):
+    def __init__(self, *, instruction, locals, op_stack, constants, loader):
         self.instruction = instruction
         self.locals = locals
         self.op_stack = op_stack
         self.constants = constants
+        self.loader = loader
 
 
 class Instructor:
@@ -39,6 +40,7 @@ class Instructor:
         self.locals = inputs.locals
         self.op_stack = inputs.op_stack
         self.constants = inputs.constants
+        self.loader = inputs.loader
 
     def execute(self):
         raise NotImplementedError()
@@ -84,3 +86,5 @@ from pyjvm.instructions import constant_instructions
 from pyjvm.instructions import conversions
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import math
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import references
