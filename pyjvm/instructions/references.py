@@ -1,5 +1,5 @@
 from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter
+from pyjvm.actions import IncrementProgramCounter, Actions
 from pyjvm.hierarchies import is_value_instance_of
 from pyjvm.instructions.instructions import bytecode, Instructor
 from pyjvm.jvm_types import Integer
@@ -27,3 +27,21 @@ class InstanceOf(Instructor):
         return IncrementProgramCounter.after(
             actions.Push(result)
         )
+
+
+@bytecode('arraylength')
+class ArrayLength(Instructor):
+    def execute(self):
+        array = self.peek_op_stack()
+        if array.is_null:
+            return Actions(
+                actions.ThrowNullPointerException()
+            )
+        else:
+            size = len(array.value)
+            result = Integer.create_instance(size)
+
+            return IncrementProgramCounter.after(
+                actions.Pop(),
+                actions.Push(result)
+            )
