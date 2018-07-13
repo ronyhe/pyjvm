@@ -1,7 +1,8 @@
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
-from pyjvm.actions import Push, ThrowNullPointerException
+from pyjvm import value_array_type_indicators
+from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction
@@ -58,5 +59,35 @@ def test_null_array_length():
         op_stack=[NULL_VALUE],
         expected=[
             ThrowNullPointerException
+        ]
+    )
+
+
+def test_new_value_type_array():
+    type_ = Integer
+    indicator = value_array_type_indicators.indicator_by_type(type_)
+    instruction = Instruction.create('newarray', [Operand(OperandTypes.LITERAL, indicator)])
+    size = 34
+    expected_value = [type_.create_instance(type_.default_value) for _ in range(size)]
+    expected_object = ArrayReferenceType(type_).create_instance(expected_value)
+    assert_incrementing_instruction(
+        instruction=instruction,
+        op_stack=[Integer.create_instance(size)],
+        expected=[
+            Pop(),
+            Push(expected_object)
+        ]
+    )
+
+
+def test_negative_array_size():
+    type_ = Integer
+    indicator = value_array_type_indicators.indicator_by_type(type_)
+    instruction = Instruction.create('newarray', [Operand(OperandTypes.LITERAL, indicator)])
+    assert_instruction(
+        instruction=instruction,
+        op_stack=[Integer.create_instance(-4)],
+        expected=[
+            ThrowNegativeArraySizeException
         ]
     )

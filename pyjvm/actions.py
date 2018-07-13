@@ -102,3 +102,8 @@ class DuplicateTop(Action):
 @attr.s(frozen=True)
 class ThrowNullPointerException(Action):
     pass
+
+
+@attr.s(frozen=True)
+class ThrowNegativeArraySizeException(Action):
+    pass
