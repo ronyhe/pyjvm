@@ -80,6 +80,28 @@ def test_new_value_type_array():
     )
 
 
+def test_new_ref_array():
+    type_ = DUMMY_CLASS.type
+    class_name = DUMMY_CLASS.name
+    consts = ConstantPool()
+    const = consts.create_class(class_name)
+    instruction = Instruction.create('anewarray', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
+
+    size = 43
+    expected_value = [type_.create_instance(type_.default_value) for _ in range(size)]
+    expected_object = ArrayReferenceType(type_).create_instance(expected_value)
+
+    assert_incrementing_instruction(
+        instruction=instruction,
+        constants=consts,
+        op_stack=[Integer.create_instance(size)],
+        expected=[
+            Pop(),
+            Push(expected_object)
+        ]
+    )
+
+
 def test_negative_array_size():
     type_ = Integer
     indicator = value_array_type_indicators.indicator_by_type(type_)

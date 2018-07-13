@@ -2,7 +2,7 @@ from pyjvm import actions, value_array_type_indicators
 from pyjvm.actions import IncrementProgramCounter, Actions
 from pyjvm.hierarchies import is_value_instance_of
 from pyjvm.instructions.instructions import bytecode, Instructor
-from pyjvm.jvm_types import Integer, ArrayReferenceType
+from pyjvm.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
 from pyjvm.utils import class_as_descriptor
 
 
@@ -47,11 +47,9 @@ class ArrayLength(Instructor):
             )
 
 
-@bytecode('newarray')
-class NewValueArray(Instructor):
+class CreateNewArray(Instructor):
     def execute(self):
-        type_indicator = self.operand_as_int()
-        type_ = value_array_type_indicators.type_by_indicator(type_indicator)
+        type_ = self._get_type()
         size = self.peek_op_stack().value
         if size < 0:
             return Actions(
@@ -64,3 +62,24 @@ class NewValueArray(Instructor):
                 actions.Pop(),
                 actions.Push(result)
             )
+
+    def _get_type(self):
+        raise NotImplementedError()
+
+
+@bytecode('newarray')
+class NewValueArray(CreateNewArray):
+    def _get_type(self):
+        type_indicator = self.operand_as_int()
+        type_ = value_array_type_indicators.type_by_indicator(type_indicator)
+        return type_
+
+
+@bytecode('anewarray')
+class NewValueArray(CreateNewArray):
+    def _get_type(self):
+        index = self.operand_as_int()
+        const = self.constants[index]
+        class_name = const.name.value
+        type_ = ObjectReferenceType(refers_to=class_name)
+        return type_
