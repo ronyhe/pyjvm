@@ -1,5 +1,5 @@
 from pyjvm import actions, value_array_type_indicators
-from pyjvm.actions import IncrementProgramCounter, Actions
+from pyjvm.actions import IncrementProgramCounter, Actions, ThrowCheckCastException
 from pyjvm.hierarchies import is_value_instance_of
 from pyjvm.instructions.instructions import bytecode, Instructor
 from pyjvm.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
@@ -27,6 +27,25 @@ class InstanceOf(Instructor):
         return IncrementProgramCounter.after(
             actions.Push(result)
         )
+
+
+@bytecode('checkcast')
+class CheckCast(Instructor):
+    def execute(self):
+        constant_index = self.operand_as_int()
+        constant = self.constants[constant_index]
+        class_name = constant.name.value
+
+        obj = self.peek_op_stack()
+        answer = obj.is_null or is_value_instance_of(obj, class_as_descriptor(class_name), self.loader)
+        if answer:
+            return Actions(
+                IncrementProgramCounter()
+            )
+        else:
+            return Actions(
+                ThrowCheckCastException()
+            )
 
 
 @bytecode('arraylength')

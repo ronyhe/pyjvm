@@ -2,10 +2,10 @@ from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm import value_array_type_indicators
-from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException
+from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, ThrowCheckCastException
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
-from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction
+from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME
 
 TRUE = Integer.create_instance(1)
 FALSE = Integer.create_instance(0)
@@ -37,6 +37,50 @@ def test_instance_of():
             Push(FALSE)
         ],
         **args
+    )
+
+
+def test_check_cast():
+    class_name = DUMMY_CLASS.name
+    consts = ConstantPool()
+    const = consts.create_class(class_name)
+    instruction = Instruction.create('checkcast', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
+    obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
+
+    assert_incrementing_instruction(
+        constants=consts,
+        instruction=instruction,
+        op_stack=[obj],
+        expected=[]
+    )
+
+
+def test_check_null_cast():
+    class_name = DUMMY_CLASS.name
+    consts = ConstantPool()
+    const = consts.create_class(class_name)
+    instruction = Instruction.create('checkcast', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
+
+    assert_incrementing_instruction(
+        constants=consts,
+        instruction=instruction,
+        op_stack=[NULL_VALUE],
+        expected=[]
+    )
+
+
+def test_negative_check_cast():
+    class_name = DUMMY_SUB_CLASS_NAME
+    consts = ConstantPool()
+    const = consts.create_class(class_name)
+    instruction = Instruction.create('checkcast', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
+    obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
+
+    assert_instruction(
+        constants=consts,
+        instruction=instruction,
+        op_stack=[obj],
+        expected=[ThrowCheckCastException]
     )
 
 

@@ -107,3 +107,8 @@ class ThrowNullPointerException(Action):
 @attr.s(frozen=True)
 class ThrowNegativeArraySizeException(Action):
     pass
+
+
+@attr.s(frozen=True)
+class ThrowCheckCastException(Action):
+    pass
