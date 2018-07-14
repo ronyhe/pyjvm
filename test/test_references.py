@@ -2,9 +2,10 @@ from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm import value_array_type_indicators
-from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, ThrowCheckCastException
+from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, \
+    ThrowCheckCastException, ThrowObject
 from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
+from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, ObjectReferenceType
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME
 
 TRUE = Integer.create_instance(1)
@@ -155,5 +156,16 @@ def test_negative_array_size():
         op_stack=[Integer.create_instance(-4)],
         expected=[
             ThrowNegativeArraySizeException
+        ]
+    )
+
+
+def test_a_throw():
+    obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
+    assert_instruction(
+        instruction='athrow',
+        op_stack=[obj],
+        expected=[
+            ThrowObject(obj)
         ]
     )

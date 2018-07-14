@@ -102,3 +102,12 @@ class NewValueArray(CreateNewArray):
         class_name = const.name.value
         type_ = ObjectReferenceType(refers_to=class_name)
         return type_
+
+
+@bytecode('athrow')
+class Throw(Instructor):
+    def execute(self):
+        obj = self.peek_op_stack()
+        return Actions(
+            actions.ThrowObject(obj)
+        )

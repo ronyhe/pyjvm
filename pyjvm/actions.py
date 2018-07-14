@@ -112,3 +112,8 @@ class ThrowNegativeArraySizeException(Action):
 @attr.s(frozen=True)
 class ThrowCheckCastException(Action):
     pass
+
+
+@attr.s(frozen=True)
+class ThrowObject(Action):
+    value = attr.ib()
