@@ -146,3 +146,22 @@ class GetField(Instructor):
             actions.Pop(),
             actions.Push(value)
         )
+
+
+@bytecode('putfield')
+class PutField(Instructor):
+    def execute(self):
+        field_ref = self.operand_as_constant()
+        name = field_ref.name_and_type.name.value.value
+        value = self.peek_op_stack(0)
+        obj = self.peek_op_stack(1)
+
+        if obj.is_null:
+            return Actions(
+                actions.ThrowNullPointerException()
+            )
+
+        return IncrementProgramCounter.after(
+            actions.Pop(2),
+            actions.PutField(obj, name, value)
+        )

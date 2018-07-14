@@ -122,3 +122,10 @@ class ThrowObject(Action):
 @attr.s(frozen=True)
 class PushNewInstance(Action):
     class_ = attr.ib()
+
+
+@attr.s(frozen=True)
+class PutField(Action):
+    object_ = attr.ib()
+    field_name = attr.ib()
+    value = attr.ib()
