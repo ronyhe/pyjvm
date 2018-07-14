@@ -1,10 +1,9 @@
 from typing import Tuple, Dict
 
 import attr
-from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
-from pyjvm.jvm_types import Type, JvmValue
+from pyjvm.jvm_types import JvmValue
 
 # noinspection SpellCheckingInspection
 NAME_OF_STATIC_CONSTRUCTOR = 'clinit'
