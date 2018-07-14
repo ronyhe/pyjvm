@@ -203,6 +203,7 @@ def test_get_field():
         constants=consts,
         op_stack=[obj],
         expected=[
+            Pop(),
             Push(value)
         ]
     )

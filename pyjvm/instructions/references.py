@@ -143,5 +143,6 @@ class GetField(Instructor):
 
         value = obj.value.fields[name]
         return IncrementProgramCounter.after(
+            actions.Pop(),
             actions.Push(value)
         )
