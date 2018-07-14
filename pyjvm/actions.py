@@ -117,3 +117,8 @@ class ThrowCheckCastException(Action):
 @attr.s(frozen=True)
 class ThrowObject(Action):
     value = attr.ib()
+
+
+@attr.s(frozen=True)
+class PushNewInstance(Action):
+    class_ = attr.ib()

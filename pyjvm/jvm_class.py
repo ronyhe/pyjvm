@@ -1,5 +1,6 @@
 from typing import Tuple, Dict
 
+import attr
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
@@ -16,15 +17,15 @@ class BytecodeMethod:
         self.instructions: Tuple[Instruction] = tuple(instructions)
 
 
+@attr.s
 class JvmClass:
-    def __init__(self, name, name_of_base, constants, names_of_interfaces=(), fields=(), methods=(), static_fields=()):
-        self.name: str = name
-        self.name_of_base: str = name_of_base
-        self.constants: ConstantPool = constants
-        self.interfaces: Tuple[str] = tuple(names_of_interfaces)
-        self.fields: Dict[str, Type] = dict(fields)
-        self.methods: Dict[str, BytecodeMethod] = dict(methods)
-        self.static_fields: Dict[str, Type] = dict(static_fields)
+    name = attr.ib()
+    name_of_base = attr.ib()
+    constants = attr.ib()
+    interfaces = attr.ib(converter=tuple, default=())
+    fields = attr.ib(converter=dict, default=())
+    methods = attr.ib(converter=dict, default=())
+    static_fields = attr.ib(converter=dict, default=())
 
 
 class JvmObject:

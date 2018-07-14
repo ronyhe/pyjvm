@@ -116,3 +116,15 @@ class Throw(Instructor):
         return Actions(
             action
         )
+
+
+@bytecode('new')
+class New(Instructor):
+    def execute(self):
+        class_constant_index = self.operand_as_int()
+        class_constant = self.constants[class_constant_index]
+        class_name = class_constant.name.value
+        class_ = self.loader.get_the_class(class_name)
+        return IncrementProgramCounter.after(
+            actions.PushNewInstance(class_)
+        )

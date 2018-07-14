@@ -43,7 +43,7 @@ def test_instance_of_interface():
         implementor_name,
         root_name,
         ConstantPool(),
-        names_of_interfaces=(interface_name,)
+        interfaces=(interface_name,)
     )
 
     loader = dummy_loader()

@@ -3,7 +3,8 @@ from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm import value_array_type_indicators
 from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, \
-    ThrowCheckCastException, ThrowObject
+    ThrowCheckCastException, ThrowObject, PushNewInstance
+from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME
@@ -167,5 +168,20 @@ def test_a_throw():
         op_stack=[obj],
         expected=[
             ThrowObject(obj)
+        ]
+    )
+
+
+def test_new():
+    consts = ConstantPool()
+    const = consts.create_class(DUMMY_CLASS.name)
+    instruction = Instruction.create('new', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
+    class_ = convert_class_file(DUMMY_CLASS.class_file)
+
+    assert_incrementing_instruction(
+        constants=consts,
+        instruction=instruction,
+        expected=[
+            PushNewInstance(class_)
         ]
     )
