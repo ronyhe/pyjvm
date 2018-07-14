@@ -48,6 +48,10 @@ class Instructor:
     def operand_as_int(self, index=0):
         return int(self.instruction.operands[index].value)
 
+    def operand_as_constant(self, index=0):
+        index = self.operand_as_int(index)
+        return self.constants[index]
+
     def peek_op_stack(self, *args, **kwargs):
         return self.op_stack.peek(*args, **kwargs)
 

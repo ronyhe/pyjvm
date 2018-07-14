@@ -185,3 +185,24 @@ def test_new():
             PushNewInstance(class_)
         ]
     )
+
+
+def test_get_field():
+    consts = ConstantPool()
+    field_ref = DUMMY_CLASS.instance_field_ref(consts)
+
+    value = Integer.create_instance(50)
+    fields = {
+        DUMMY_CLASS.instance_field.name: value
+    }
+    obj = DUMMY_CLASS.type.create_instance(JvmObject(fields))
+    instruction = Instruction.create('getfield', [Operand(OperandTypes.CONSTANT_INDEX, field_ref.index)])
+
+    assert_incrementing_instruction(
+        instruction=instruction,
+        constants=consts,
+        op_stack=[obj],
+        expected=[
+            Push(value)
+        ]
+    )

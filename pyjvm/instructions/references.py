@@ -128,3 +128,20 @@ class New(Instructor):
         return IncrementProgramCounter.after(
             actions.PushNewInstance(class_)
         )
+
+
+@bytecode('getfield')
+class GetField(Instructor):
+    def execute(self):
+        field_ref = self.operand_as_constant()
+        name = field_ref.name_and_type.name.value
+        obj = self.peek_op_stack()
+        if obj.is_null:
+            return Actions(
+                actions.ThrowNullPointerException()
+            )
+
+        value = obj.value.fields[name]
+        return IncrementProgramCounter.after(
+            actions.Push(value)
+        )
