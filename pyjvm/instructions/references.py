@@ -108,6 +108,11 @@ class NewValueArray(CreateNewArray):
 class Throw(Instructor):
     def execute(self):
         obj = self.peek_op_stack()
+        if obj.is_null:
+            action = actions.ThrowNullPointerException()
+        else:
+            action = actions.ThrowObject(obj)
+
         return Actions(
-            actions.ThrowObject(obj)
+            action
         )

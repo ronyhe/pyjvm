@@ -5,7 +5,7 @@ from pyjvm import value_array_type_indicators
 from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, \
     ThrowCheckCastException, ThrowObject
 from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, ObjectReferenceType
+from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME
 
 TRUE = Integer.create_instance(1)
