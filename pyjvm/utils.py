@@ -14,6 +14,8 @@ def dump_class(path, echo):
             echo(method)
             for instruction in method.code.disassemble():
                 echo('\t' + str(instruction))
+            for ex in method.code.exception_table:
+                print(ex)
         echo()
         for constant in cf.constants:
             echo(constant)
