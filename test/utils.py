@@ -1,6 +1,6 @@
 from jawa.cf import ClassFile
 from jawa.constants import ConstantPool
-from jawa.util.bytecode import Instruction
+from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.actions import IncrementProgramCounter
 from pyjvm.class_loaders import FixedClassLoader
@@ -95,3 +95,11 @@ def assert_incrementing_instruction(expected=None, **kwargs):
         expected = []
     expected.append(IncrementProgramCounter)
     assert_instruction(expected=expected, **kwargs)
+
+
+def constant_instruction(name, constant):
+    return Instruction.create(name, [Operand(OperandTypes.CONSTANT_INDEX, constant.index)])
+
+
+def literal_instruction(name, literal):
+    return Instruction.create(name, [Operand(OperandTypes.LITERAL, literal)])

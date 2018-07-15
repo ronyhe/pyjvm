@@ -129,3 +129,10 @@ class PutField(Action):
     object_ = attr.ib()
     field_name = attr.ib()
     value = attr.ib()
+
+
+@attr.s(frozen=True)
+class PutStatic(Action):
+    class_name = attr.ib()
+    field_name = attr.ib()
+    value = attr.ib()

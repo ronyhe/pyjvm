@@ -3,11 +3,12 @@ from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm import value_array_type_indicators
 from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, \
-    ThrowCheckCastException, ThrowObject, PushNewInstance, PutField
+    ThrowCheckCastException, ThrowObject, PushNewInstance, PutField, PutStatic
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
-from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME
+from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME, \
+    constant_instruction
 
 TRUE = Integer.create_instance(1)
 FALSE = Integer.create_instance(0)
@@ -227,5 +228,20 @@ def test_put_field():
         expected=[
             Pop(2),
             PutField(obj, DUMMY_CLASS.instance_field.name.value, value)
+        ]
+    )
+
+
+def test_put_static():
+    consts = ConstantPool()
+    field_ref = DUMMY_CLASS.class_field_ref(consts)
+    value = Integer.create_instance(45)
+    assert_incrementing_instruction(
+        constants=consts,
+        instruction=constant_instruction('putstatic', field_ref),
+        op_stack=[value],
+        expected=[
+            Pop(),
+            PutStatic(field_ref.class_.name.value, field_ref.name_and_type.name.value.value, value)
         ]
     )

@@ -165,3 +165,16 @@ class PutField(Instructor):
             actions.Pop(2),
             actions.PutField(obj, name, value)
         )
+
+
+@bytecode('putstatic')
+class PutStatic(Instructor):
+    def execute(self):
+        field_ref = self.operand_as_constant()
+        field_name = field_ref.name_and_type.name.value.value
+        class_name = field_ref.class_.name.value
+        value = self.peek_op_stack()
+        return IncrementProgramCounter.after(
+            actions.Pop(),
+            actions.PutStatic(class_name, field_name, value)
+        )
