@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from pyjvm.actions import IncrementProgramCounter
+from pyjvm.actions import IncrementProgramCounter, Action, Actions
 from pyjvm.class_registry import ClassRegistry
 
 _registry = ClassRegistry()
@@ -63,7 +63,11 @@ class Instructor:
 def execute_instruction(inputs):
     instruction_name = inputs.instruction.mnemonic
     executor = _registry.get(instruction_name, inputs)
-    return executor.execute()
+    action_or_actions = executor.execute()
+    if isinstance(action_or_actions, Action):
+        return Actions(action_or_actions)
+    else:
+        return action_or_actions
 
 
 def get_implemented_instructions():

@@ -39,13 +39,9 @@ class CheckCast(Instructor):
         obj = self.peek_op_stack()
         answer = obj.is_null or is_value_instance_of(obj, class_as_descriptor(class_name), self.loader)
         if answer:
-            return Actions(
-                IncrementProgramCounter()
-            )
+            return IncrementProgramCounter()
         else:
-            return Actions(
-                ThrowCheckCastException()
-            )
+            return ThrowCheckCastException()
 
 
 @bytecode('arraylength')
@@ -53,9 +49,7 @@ class ArrayLength(Instructor):
     def execute(self):
         array = self.peek_op_stack()
         if array.is_null:
-            return Actions(
-                actions.ThrowNullPointerException()
-            )
+            return actions.ThrowNullPointerException()
         else:
             size = len(array.value)
             result = Integer.create_instance(size)
@@ -71,9 +65,7 @@ class CreateNewArray(Instructor):
         type_ = self._get_type()
         size = self.peek_op_stack().value
         if size < 0:
-            return Actions(
-                actions.ThrowNegativeArraySizeException()
-            )
+            return actions.ThrowNegativeArraySizeException()
         else:
             elements = [type_.create_instance(type_.default_value) for _ in range(size)]
             result = ArrayReferenceType(type_).create_instance(elements)
@@ -137,9 +129,7 @@ class GetField(Instructor):
         name = field_ref.name_and_type.name.value
         obj = self.peek_op_stack()
         if obj.is_null:
-            return Actions(
-                actions.ThrowNullPointerException()
-            )
+            return actions.ThrowNullPointerException()
 
         value = obj.value.fields[name]
         return IncrementProgramCounter.after(
@@ -157,9 +147,7 @@ class PutField(Instructor):
         obj = self.peek_op_stack(1)
 
         if obj.is_null:
-            return Actions(
-                actions.ThrowNullPointerException()
-            )
+            return actions.ThrowNullPointerException()
 
         return IncrementProgramCounter.after(
             actions.Pop(2),

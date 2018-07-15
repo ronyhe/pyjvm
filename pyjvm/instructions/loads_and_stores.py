@@ -56,9 +56,8 @@ class StoreIntoArray(Instructor):
     def execute(self):
         value, index, array = (self.peek_op_stack(i) for i in range(3))
         if array.is_null:
-            return Actions(
-                ThrowNullPointerException()
-            )
+            return ThrowNullPointerException()
+
         return IncrementProgramCounter.after(
             actions.StoreIntoArray(array=array, index=index.value, value=value),
             Pop(3)
@@ -87,9 +86,8 @@ class LoadFromArray(Instructor):
         index = self.peek_op_stack()
         array = self.peek_op_stack(1)
         if array.is_null:
-            return Actions(
-                actions.ThrowNullPointerException()
-            )
+            return actions.ThrowNullPointerException()
+
         value = array.value[index.value]
         return IncrementProgramCounter.after(
             actions.Pop(2),
