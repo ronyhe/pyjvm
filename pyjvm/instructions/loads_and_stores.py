@@ -1,5 +1,5 @@
 from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter, Pop, Actions, ThrowNullPointerException
+from pyjvm.actions import IncrementProgramCounter, Pop, ThrowNullPointerException
 from pyjvm.instructions.instructions import Instructor, bytecode_dict, bytecode_list
 
 
