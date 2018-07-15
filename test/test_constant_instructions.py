@@ -1,10 +1,9 @@
 from jawa.constants import ConstantPool
-from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm.actions import Push
 from pyjvm.instructions import constant_instructions
 from pyjvm.jvm_types import Integer, Double
-from test.utils import assert_incrementing_instruction
+from test.utils import assert_incrementing_instruction, constant_instruction, literal_instruction
 
 
 def _constant_test(mnemonic, value):
@@ -28,7 +27,7 @@ def test_constants():
 def test_bipush():
     value = 5
     assert_incrementing_instruction(
-        instruction=Instruction.create('bipush', [Operand(OperandTypes.LITERAL, value)]),
+        instruction=literal_instruction('bipush', value),
         expected=[
             Push(Integer.create_instance(value))
         ]
@@ -39,9 +38,9 @@ def test_ldc():
     value = 5.0
     constants = ConstantPool()
     constant = constants.create_double(value)
-    instruction = Instruction.create('ldc', [Operand(OperandTypes.CONSTANT_INDEX, constant.index)])
+
     assert_incrementing_instruction(
-        instruction=instruction,
+        instruction=constant_instruction('ldc', constant),
         constants=constants,
         expected=[
             Push(Double.create_instance(value))

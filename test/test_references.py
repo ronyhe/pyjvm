@@ -1,5 +1,4 @@
 from jawa.constants import ConstantPool
-from jawa.util.bytecode import Instruction, Operand, OperandTypes
 
 from pyjvm import value_array_type_indicators
 from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, \
@@ -8,7 +7,7 @@ from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME, \
-    constant_instruction
+    constant_instruction, literal_instruction
 
 TRUE = Integer.create_instance(1)
 FALSE = Integer.create_instance(0)
@@ -18,7 +17,7 @@ def test_instance_of():
     class_name = DUMMY_CLASS.name
     consts = ConstantPool()
     const = consts.create_class(class_name)
-    instruction = Instruction.create('instanceof', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
+    instruction = constant_instruction('instanceof', const)
     obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
 
     args = {
@@ -47,12 +46,11 @@ def test_check_cast():
     class_name = DUMMY_CLASS.name
     consts = ConstantPool()
     const = consts.create_class(class_name)
-    instruction = Instruction.create('checkcast', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
     obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
 
     assert_incrementing_instruction(
         constants=consts,
-        instruction=instruction,
+        instruction=constant_instruction('checkcast', const),
         op_stack=[obj],
         expected=[]
     )
@@ -62,11 +60,10 @@ def test_check_null_cast():
     class_name = DUMMY_CLASS.name
     consts = ConstantPool()
     const = consts.create_class(class_name)
-    instruction = Instruction.create('checkcast', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
 
     assert_incrementing_instruction(
         constants=consts,
-        instruction=instruction,
+        instruction=constant_instruction('checkcast', const),
         op_stack=[NULL_VALUE],
         expected=[]
     )
@@ -76,12 +73,11 @@ def test_negative_check_cast():
     class_name = DUMMY_SUB_CLASS_NAME
     consts = ConstantPool()
     const = consts.create_class(class_name)
-    instruction = Instruction.create('checkcast', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
     obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
 
     assert_instruction(
         constants=consts,
-        instruction=instruction,
+        instruction=constant_instruction('checkcast', const),
         op_stack=[obj],
         expected=[ThrowCheckCastException]
     )
@@ -113,12 +109,12 @@ def test_null_array_length():
 def test_new_value_type_array():
     type_ = Integer
     indicator = value_array_type_indicators.indicator_by_type(type_)
-    instruction = Instruction.create('newarray', [Operand(OperandTypes.LITERAL, indicator)])
     size = 34
     expected_value = [type_.create_instance(type_.default_value) for _ in range(size)]
     expected_object = ArrayReferenceType(type_).create_instance(expected_value)
+
     assert_incrementing_instruction(
-        instruction=instruction,
+        instruction=literal_instruction('newarray', indicator),
         op_stack=[Integer.create_instance(size)],
         expected=[
             Pop(),
@@ -132,14 +128,13 @@ def test_new_ref_array():
     class_name = DUMMY_CLASS.name
     consts = ConstantPool()
     const = consts.create_class(class_name)
-    instruction = Instruction.create('anewarray', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
 
     size = 43
     expected_value = [type_.create_instance(type_.default_value) for _ in range(size)]
     expected_object = ArrayReferenceType(type_).create_instance(expected_value)
 
     assert_incrementing_instruction(
-        instruction=instruction,
+        instruction=constant_instruction('anewarray', const),
         constants=consts,
         op_stack=[Integer.create_instance(size)],
         expected=[
@@ -152,9 +147,8 @@ def test_new_ref_array():
 def test_negative_array_size():
     type_ = Integer
     indicator = value_array_type_indicators.indicator_by_type(type_)
-    instruction = Instruction.create('newarray', [Operand(OperandTypes.LITERAL, indicator)])
     assert_instruction(
-        instruction=instruction,
+        instruction=literal_instruction('newarray', indicator),
         op_stack=[Integer.create_instance(-4)],
         expected=[
             ThrowNegativeArraySizeException
@@ -176,12 +170,11 @@ def test_a_throw():
 def test_new():
     consts = ConstantPool()
     const = consts.create_class(DUMMY_CLASS.name)
-    instruction = Instruction.create('new', [Operand(OperandTypes.CONSTANT_INDEX, const.index)])
     class_ = convert_class_file(DUMMY_CLASS.class_file)
 
     assert_incrementing_instruction(
         constants=consts,
-        instruction=instruction,
+        instruction=constant_instruction('new', const),
         expected=[
             PushNewInstance(class_)
         ]
@@ -197,10 +190,9 @@ def test_get_field():
         DUMMY_CLASS.instance_field.name: value
     }
     obj = DUMMY_CLASS.type.create_instance(JvmObject(fields))
-    instruction = Instruction.create('getfield', [Operand(OperandTypes.CONSTANT_INDEX, field_ref.index)])
 
     assert_incrementing_instruction(
-        instruction=instruction,
+        instruction=constant_instruction('getfield', field_ref),
         constants=consts,
         op_stack=[obj],
         expected=[
@@ -219,10 +211,9 @@ def test_put_field():
         DUMMY_CLASS.instance_field.name: Integer.create_instance(Integer.default_value)
     }
     obj = DUMMY_CLASS.type.create_instance(JvmObject(fields))
-    instruction = Instruction.create('putfield', [Operand(OperandTypes.CONSTANT_INDEX, field_ref.index)])
 
     assert_incrementing_instruction(
-        instruction=instruction,
+        instruction=constant_instruction('putfield', field_ref),
         constants=consts,
         op_stack=[value, obj],
         expected=[

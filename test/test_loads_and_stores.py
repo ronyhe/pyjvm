@@ -1,17 +1,14 @@
-from jawa.util.bytecode import Instruction, Operand, OperandTypes
-
 from pyjvm.actions import StoreInLocals, Pop, StoreIntoArray, Push, ThrowNullPointerException
 from pyjvm.frame_locals import Locals
 from pyjvm.jvm_types import ArrayReferenceType, Integer, NULL_VALUE
-from test.utils import SOME_INT, assert_incrementing_instruction, assert_instruction
+from test.utils import SOME_INT, assert_incrementing_instruction, assert_instruction, literal_instruction
 
 
 def test_int_store():
     index = 1
-    instruction = Instruction.create('istore', [Operand(OperandTypes.LITERAL, index)])
 
     assert_incrementing_instruction(
-        instruction=instruction,
+        instruction=literal_instruction('istore', index),
 
         op_stack=[SOME_INT],
 
