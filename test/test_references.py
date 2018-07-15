@@ -7,7 +7,7 @@ from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME, \
-    constant_instruction, literal_instruction
+    constant_instruction, literal_instruction, dummy_loader
 
 TRUE = Integer.create_instance(1)
 FALSE = Integer.create_instance(0)
@@ -234,5 +234,25 @@ def test_put_static():
         expected=[
             Pop(),
             PutStatic(field_ref.class_.name.value, field_ref.name_and_type.name.value.value, value)
+        ]
+    )
+
+
+def test_get_static():
+    class_name = DUMMY_CLASS.name
+    field_name = DUMMY_CLASS.class_field.name.value
+    loader = dummy_loader()
+    consts = ConstantPool()
+
+    value = Integer.create_instance(67)
+    loader.get_the_statics(class_name)[field_name] = value
+    field_ref = DUMMY_CLASS.class_field_ref(consts)
+
+    assert_incrementing_instruction(
+        loader=loader,
+        constants=consts,
+        instruction=constant_instruction('getstatic', field_ref),
+        expected=[
+            Push(value)
         ]
     )

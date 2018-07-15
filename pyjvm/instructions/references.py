@@ -166,3 +166,16 @@ class PutStatic(Instructor):
             actions.Pop(),
             actions.PutStatic(class_name, field_name, value)
         )
+
+
+@bytecode('getstatic')
+class GetStatic(Instructor):
+    def execute(self):
+        field_ref = self.operand_as_constant()
+        field_name = field_ref.name_and_type.name.value.value
+        class_name = field_ref.class_.name.value
+
+        value = self.loader.get_the_statics(class_name)[field_name]
+        return IncrementProgramCounter.after(
+            actions.Push(value)
+        )
