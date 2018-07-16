@@ -77,11 +77,26 @@ def get_implemented_instructions():
 @bytecode_list([
     'nop',
     'monitorenter',
-    'monitorexit'
+    'monitorexit',
+    'breakpoint',
+    'impdep1',
+    'impdep2'
 ])
 class NoOp(Instructor):
     def execute(self):
         return IncrementProgramCounter()
+
+
+@bytecode_list([
+    'jsr',
+    'jsr_w',
+    'ret',
+    'invokedynamic'
+])
+class InstructionNotImplemented(Instructor):
+    def execute(self):
+        name = self.instruction.mnemonic
+        raise NotImplementedError(f'The {name} instruction is not implemented by this jvm')
 
 
 # noinspection PyUnresolvedReferences
