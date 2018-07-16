@@ -1,4 +1,3 @@
-from jawa.attributes.code import CodeAttribute
 from jawa.cf import ClassFile
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
