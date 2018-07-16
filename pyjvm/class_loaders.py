@@ -1,4 +1,5 @@
-from pyjvm.jvm_types import RootObjectType
+from pyjvm.jvm_class import JvmObject
+from pyjvm.jvm_types import RootObjectType, ObjectReferenceType
 
 
 def _name_and_default_value(pair):
@@ -61,6 +62,14 @@ class ClassLoader:
             name = the_class.name_of_base
 
         return acc
+
+    def default_instance(self, class_name):
+        fields = self.collect_fields_in_ancestors(class_name)
+        obj = JvmObject.defaults(fields)
+
+        type_ = ObjectReferenceType(class_name)
+        instance = type_.create_instance(obj)
+        return instance
 
 
 class FixedClassLoader(ClassLoader):

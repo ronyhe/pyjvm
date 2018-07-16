@@ -136,3 +136,10 @@ class PutStatic(Action):
     class_name = attr.ib()
     field_name = attr.ib()
     value = attr.ib()
+
+
+@attr.s(frozen=True)
+class Invoke(Action):
+    class_name = attr.ib()
+    method_name = attr.ib()
+    arguments = attr.ib(converter=tuple)

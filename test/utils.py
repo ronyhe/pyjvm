@@ -1,3 +1,4 @@
+from jawa.attributes.code import CodeAttribute
 from jawa.cf import ClassFile
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction, Operand, OperandTypes
@@ -26,6 +27,8 @@ class _DummyClass:
         self.class_field = self.class_file.fields.create('class_field', self.DESCRIPTOR)
         self.class_field.access_flags.set('acc_static', True)
         self.type = ObjectReferenceType(self.name)
+        self.method = self.class_file.methods.create('some_method', '(I)I', code=True)
+        self.method.code.assemble([])
 
     def create_field_ref(self, constants, field):
         return constants.create_field_ref(self.name, field.name, self.DESCRIPTOR)
@@ -35,6 +38,13 @@ class _DummyClass:
 
     def class_field_ref(self, constants):
         return self.create_field_ref(constants, self.class_field)
+
+    def method_ref(self, constants):
+        return constants.create_method_ref(
+            DUMMY_CLASS.name,
+            self.method.name.value,
+            DUMMY_CLASS.method.descriptor.value
+        )
 
 
 DUMMY_SUB_CLASS_NAME = 'Sub'

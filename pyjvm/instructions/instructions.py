@@ -96,3 +96,5 @@ from pyjvm.instructions import conversions
 from pyjvm.instructions import math
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import references
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import invocations

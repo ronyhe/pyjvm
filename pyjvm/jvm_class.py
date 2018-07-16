@@ -1,7 +1,6 @@
-from typing import Tuple, Dict
+from typing import Dict
 
 import attr
-from jawa.util.bytecode import Instruction
 
 from pyjvm.jvm_types import JvmValue
 
@@ -9,14 +8,15 @@ from pyjvm.jvm_types import JvmValue
 NAME_OF_STATIC_CONSTRUCTOR = 'clinit'
 
 
+@attr.s(frozen=True)
 class BytecodeMethod:
-    def __init__(self, max_locals, max_stack, instructions):
-        self.max_locals: int = int(max_locals)
-        self.max_stack: int = int(max_stack)
-        self.instructions: Tuple[Instruction] = tuple(instructions)
+    max_locals = attr.ib(converter=int)
+    max_stack = attr.ib(converter=int)
+    instructions = attr.ib(converter=tuple)
+    args = attr.ib(converter=tuple)
 
 
-@attr.s
+@attr.s(frozen=True)
 class JvmClass:
     name = attr.ib()
     name_of_base = attr.ib()
