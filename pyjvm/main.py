@@ -1,4 +1,5 @@
 import click
+from jawa.util.bytecode import opcode_table
 
 from pyjvm import utils
 from pyjvm.instructions.instructions import get_implemented_instructions
@@ -11,11 +12,13 @@ def cli():
 
 @click.command()
 def instruction_report():
-    keys = sorted(get_implemented_instructions())
-    for key in keys:
+    present_instructions = set(get_implemented_instructions())
+    expected_instructions = set(op['mnemonic'] for op in opcode_table.values())
+    missing = expected_instructions.difference(present_instructions)
+    for key in sorted(missing):
         click.echo(key)
 
-    click.echo(f'{len(keys)} implemented')
+    click.echo(f'{len(present_instructions)} implemented out of {len(expected_instructions)}. Missing: {len(missing)}')
 
 
 @click.command()
