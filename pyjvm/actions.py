@@ -143,3 +143,8 @@ class Invoke(Action):
     class_name = attr.ib()
     method_name = attr.ib()
     arguments = attr.ib(converter=tuple)
+
+
+@attr.s(frozen=True)
+class ReturnResult(Action):
+    result = attr.ib()

@@ -113,3 +113,5 @@ from pyjvm.instructions import math
 from pyjvm.instructions import references
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import invocations
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import control
