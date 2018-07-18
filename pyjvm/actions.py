@@ -148,3 +148,8 @@ class Invoke(Action):
 @attr.s(frozen=True)
 class ReturnResult(Action):
     result = attr.ib()
+
+
+@attr.s(frozen=True)
+class ReturnVoid(Action):
+    pass

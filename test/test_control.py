@@ -1,4 +1,4 @@
-from pyjvm.actions import ReturnResult
+from pyjvm.actions import ReturnResult, ReturnVoid
 from pyjvm.instructions.control import RETURN_RESULT_INSTRUCTIONS
 from pyjvm.jvm_types import Integer
 from test.utils import assert_instruction
@@ -17,3 +17,10 @@ def test_return_results():
                 ReturnResult(value)
             ]
         )
+
+
+def test_return_void():
+    assert_instruction(
+        instruction='return',
+        expected=[ReturnVoid()]
+    )

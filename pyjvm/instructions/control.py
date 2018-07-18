@@ -1,5 +1,5 @@
 from pyjvm import actions
-from pyjvm.instructions.instructions import Instructor, bytecode_list
+from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode
 
 # noinspection SpellCheckingInspection
 _RETURN_LETTERS = 'ilfda'
@@ -13,3 +13,9 @@ class ReturnResult(Instructor):
     def execute(self):
         result = self.peek_op_stack()
         return actions.ReturnResult(result)
+
+
+@bytecode('return')
+class ReturnVoid(Instructor):
+    def execute(self):
+        return actions.ReturnVoid()
