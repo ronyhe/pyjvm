@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from jawa.cf import ClassFile
+from jawa.util.bytecode import Operand, OperandTypes
 
 
 def dump_class(path, echo):
@@ -34,3 +35,12 @@ def split_by_predicate(iterable, predicate):
 
 def class_as_descriptor(name):
     return 'L' + name + ';'
+
+
+def literal_operand(value):
+    return Operand(OperandTypes.LITERAL, value)
+
+
+def pull_pairs(flat):
+    it = iter(flat)
+    return zip(it, it)

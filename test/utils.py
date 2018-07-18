@@ -9,6 +9,7 @@ from pyjvm.instructions.instructions import InstructorInputs, execute_instructio
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_types import Integer, ObjectReferenceType
 from pyjvm.stack import Stack
+from pyjvm.utils import literal_operand
 
 SOME_INT = Integer.create_instance(2)
 
@@ -111,4 +112,4 @@ def constant_instruction(name, constant):
 
 
 def literal_instruction(name, literal):
-    return Instruction.create(name, [Operand(OperandTypes.LITERAL, literal)])
+    return Instruction.create(name, [literal_operand(literal)])
