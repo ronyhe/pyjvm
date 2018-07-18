@@ -91,7 +91,8 @@ class NoOp(Instructor):
     'jsr',
     'jsr_w',
     'ret',
-    'invokedynamic'
+    'invokedynamic',
+    'wide'
 ])
 class InstructionNotImplemented(Instructor):
     def execute(self):
