@@ -4,6 +4,7 @@ from collections import OrderedDict
 from jawa.util.bytecode import Instruction
 
 from pyjvm import actions
+from pyjvm.actions import Actions
 from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode
 # noinspection SpellCheckingInspection
 from pyjvm.utils import pull_pairs
@@ -11,6 +12,7 @@ from test.utils import literal_operand
 
 LOOKUPSWITCH = 'lookupswitch'
 
+# noinspection SpellCheckingInspection
 _RETURN_LETTERS = 'ilfda'
 RETURN_RESULT_INSTRUCTIONS = [
     letter + 'return' for letter in _RETURN_LETTERS
@@ -81,3 +83,17 @@ class LookupSwitch:
         default, num_pairs, *flat = ops
         pairs = pull_pairs(flat)
         return cls(default, pairs)
+
+
+@bytecode(LOOKUPSWITCH)
+class LookupSwitchInstructor(Instructor):
+    def execute(self):
+        source = self.instruction.pos
+        value = self.peek_op_stack()
+        switch = LookupSwitch.from_instruction(self.instruction)
+        offset = switch.find_offset(value.value)
+        target = source + offset
+        return Actions(
+            actions.Pop(),
+            actions.GoTo(target)
+        )
