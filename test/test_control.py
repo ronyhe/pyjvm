@@ -27,7 +27,6 @@ def test_return_void():
 
 
 def test_go_to():
-
     # noinspection PyProtectedMember
     offset = 4
     source = 10
