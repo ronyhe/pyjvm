@@ -2,7 +2,7 @@ from pyjvm import actions
 from pyjvm.actions import Actions
 from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode
 # noinspection SpellCheckingInspection
-from pyjvm.switches import LookupSwitch, LOOKUPSWITCH
+from pyjvm.switches import LookupSwitch, LOOKUP_SWITCH
 
 # noinspection SpellCheckingInspection
 _RETURN_LETTERS = 'ilfda'
@@ -36,7 +36,7 @@ class GoTo(Instructor):
         return actions.GoTo(target)
 
 
-@bytecode(LOOKUPSWITCH)
+@bytecode(LOOKUP_SWITCH)
 class LookupSwitchInstructor(Instructor):
     def execute(self):
         source = self.instruction.pos
