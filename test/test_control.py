@@ -1,7 +1,7 @@
 from pyjvm.actions import ReturnResult, ReturnVoid, GoTo, Pop
 from pyjvm.instructions.control import RETURN_RESULT_INSTRUCTIONS
-from pyjvm.switches import LookupSwitch
 from pyjvm.jvm_types import Integer
+from pyjvm.switches import LookupSwitch
 from test.utils import assert_instruction, literal_instruction
 
 
