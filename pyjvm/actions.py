@@ -153,3 +153,8 @@ class ReturnResult(Action):
 @attr.s(frozen=True)
 class ReturnVoid(Action):
     pass
+
+
+@attr.s(frozen=True)
+class GoTo(Action):
+    target = attr.ib(converter=int)

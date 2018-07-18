@@ -19,3 +19,12 @@ class ReturnResult(Instructor):
 class ReturnVoid(Instructor):
     def execute(self):
         return actions.ReturnVoid()
+
+
+@bytecode('goto')
+class GoTo(Instructor):
+    def execute(self):
+        source = self.instruction.pos
+        offset = self.operand_as_int()
+        target = source + offset
+        return actions.GoTo(target)
