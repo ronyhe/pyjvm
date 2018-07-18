@@ -21,7 +21,10 @@ class ReturnVoid(Instructor):
         return actions.ReturnVoid()
 
 
-@bytecode('goto')
+@bytecode_list([
+    'goto',
+    'goto_w'
+])
 class GoTo(Instructor):
     def execute(self):
         source = self.instruction.pos
