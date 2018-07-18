@@ -5,7 +5,6 @@ from jawa.util.bytecode import Instruction
 
 from pyjvm.utils import literal_operand, pull_pairs
 
-
 LOOKUP_SWITCH = 'lookupswitch'
 TABLE_SWITCH = 'tableswitch'
 
