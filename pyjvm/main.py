@@ -15,10 +15,13 @@ def instruction_report():
     present_instructions = set(get_implemented_instructions())
     expected_instructions = set(op['mnemonic'] for op in opcode_table.values())
     missing = expected_instructions.difference(present_instructions)
+    invented = present_instructions.difference(expected_instructions)
+    click.echo(f'{len(present_instructions)} implemented out of {len(expected_instructions)}. Missing: {len(missing)}')
+
     for key in sorted(missing):
         click.echo(key)
 
-    click.echo(f'{len(present_instructions)} implemented out of {len(expected_instructions)}. Missing: {len(missing)}')
+    click.echo(f'\n{len(invented)} invented instructions')
 
 
 @click.command()
