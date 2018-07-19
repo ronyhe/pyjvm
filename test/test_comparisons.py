@@ -24,6 +24,7 @@ def test_single_operand_branch_comparisons():
     source = 2
 
     for name, op in UNARY_BRANCH_COMPARISONS.items():
+        # noinspection PyProtectedMember
         instruction = literal_instruction(name, offset)._replace(pos=source)
 
         result = op(value, 0)
@@ -37,4 +38,3 @@ def test_single_operand_branch_comparisons():
             op_stack=[Integer.create_instance(value)],
             expected=[Pop(), GoTo(target)]
         )
-

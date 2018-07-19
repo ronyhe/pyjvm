@@ -3,7 +3,6 @@ import operator
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter, Actions
 from pyjvm.instructions.instructions import bytecode_dict, Instructor
-from pyjvm.jvm_types import Integer
 from pyjvm.utils import bool_to_num
 from test.utils import literal_instruction
 
