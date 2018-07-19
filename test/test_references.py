@@ -1,12 +1,14 @@
 from jawa.constants import ConstantPool
+from jawa.util.bytecode import Instruction
 
 from pyjvm import value_array_type_indicators
 from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, \
     ThrowCheckCastException, ThrowObject, PushNewInstance, PutField, PutStatic
+from pyjvm.instructions.references import create_levels
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType
-from pyjvm.utils import TRUE, FALSE
+from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, ObjectReferenceType, NULL_OBJECT
+from pyjvm.utils import TRUE, FALSE, constant_operand, literal_operand
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME, \
     constant_instruction, literal_instruction, dummy_loader
 
@@ -140,6 +142,46 @@ def test_new_ref_array():
             Push(expected_object)
         ]
     )
+
+
+def test_multi_new_array():
+    type_ = DUMMY_CLASS.type
+    class_name = DUMMY_CLASS.name
+    consts = ConstantPool()
+    const = consts.create_class(class_name)
+    array_type = ArrayReferenceType(
+        ArrayReferenceType(
+            type_
+        )
+    )
+
+    sizes = 2, 3
+    null = type_.create_instance(NULL_OBJECT)
+    expected_value = array_type.create_instance([
+        [null] * 3,
+        [null] * 3
+    ])
+
+    instruction = Instruction.create('multianewarray', [
+        constant_operand(const),
+        literal_operand(len(sizes))
+    ])
+    assert_incrementing_instruction(
+        constants=consts,
+        instruction=instruction,
+        op_stack=[Integer.create_instance(v) for v in sizes],
+        expected=[
+            Pop(2),
+            Push(expected_value)
+        ]
+    )
+
+
+def test_levels():
+    assert create_levels([2, 3], lambda: 1) == [
+        [1, 1, 1],
+        [1, 1, 1]
+    ]
 
 
 def test_negative_array_size():

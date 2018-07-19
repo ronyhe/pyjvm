@@ -43,6 +43,10 @@ def literal_operand(value):
     return Operand(OperandTypes.LITERAL, value)
 
 
+def constant_operand(const):
+    return Operand(OperandTypes.CONSTANT_INDEX, const.index)
+
+
 def pull_pairs(flat):
     it = iter(flat)
     return zip(it, it)

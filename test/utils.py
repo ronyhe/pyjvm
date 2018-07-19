@@ -9,7 +9,7 @@ from pyjvm.instructions.instructions import InstructorInputs, execute_instructio
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_types import Integer, ObjectReferenceType
 from pyjvm.stack import Stack
-from pyjvm.utils import literal_operand
+from pyjvm.utils import literal_operand, constant_operand
 
 SOME_INT = Integer.create_instance(2)
 
@@ -108,7 +108,7 @@ def assert_incrementing_instruction(expected=None, **kwargs):
 
 
 def constant_instruction(name, constant):
-    return Instruction.create(name, [Operand(OperandTypes.CONSTANT_INDEX, constant.index)])
+    return Instruction.create(name, [constant_operand(constant)])
 
 
 def literal_instruction(name, literal):

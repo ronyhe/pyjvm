@@ -1,5 +1,5 @@
 from pyjvm import actions, value_array_type_indicators
-from pyjvm.actions import IncrementProgramCounter, Actions, ThrowCheckCastException
+from pyjvm.actions import IncrementProgramCounter, Actions, ThrowCheckCastException, ThrowNegativeArraySizeException
 from pyjvm.hierarchies import is_value_instance_of
 from pyjvm.instructions.instructions import bytecode, Instructor
 from pyjvm.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
@@ -96,6 +96,30 @@ class NewValueArray(CreateNewArray):
         return type_
 
 
+@bytecode('multianewarray')
+class NewMultiArray(Instructor):
+    def execute(self):
+        class_ = self.operand_as_constant()
+        class_name = class_.name.value
+        base_type = ObjectReferenceType(class_name)
+
+        num_dimensions = self.operand_as_int(index=1)
+        dimensions = [v.value for v in self.peek_many(num_dimensions)]
+        if any(d < 0 for d in dimensions):
+            return ThrowNegativeArraySizeException()
+
+        array_type = base_type
+        for _ in range(num_dimensions):
+            array_type = ArrayReferenceType(array_type)
+
+        array_value = create_levels(dimensions, lambda: base_type.create_instance(base_type.default_value))
+
+        return IncrementProgramCounter.after(
+            actions.Pop(num_dimensions),
+            actions.Push(array_type.create_instance(array_value))
+        )
+
+
 @bytecode('athrow')
 class Throw(Instructor):
     def execute(self):
@@ -179,3 +203,13 @@ class GetStatic(Instructor):
         return IncrementProgramCounter.after(
             actions.Push(value)
         )
+
+
+def create_levels(levels, base_factory):
+    def loop(current, rest):
+        if len(rest) == 0:
+            return [base_factory() for _ in range(current)]
+        else:
+            return [loop(rest[0], rest[1:]) for _ in range(current)]
+
+    return loop(levels[0], levels[1:])
