@@ -2,7 +2,7 @@ import operator
 
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter, Actions
-from pyjvm.instructions.instructions import bytecode_dict, Instructor
+from pyjvm.instructions.instructions import bytecode_dict, Instructor, bytecode
 from pyjvm.utils import bool_to_num
 
 
@@ -73,7 +73,7 @@ class BranchComparison(Instructor):
         self.op = op
 
     def execute(self):
-        values = [v.value for v in self.peek_many(self.pops)]
+        values = self._get_values()
         result = self.op(*values)
 
         if result:
@@ -86,6 +86,16 @@ class BranchComparison(Instructor):
             actions.Pop(self.pops),
             actions.GoTo(target)
         )
+
+    def _get_values(self):
+        return [v.value for v in self.peek_many(self.pops)]
+
+
+@bytecode('ifnull', 1, lambda v: v.is_null)
+@bytecode('ifnonnull', 1, lambda v: v.is_null)
+class NullBranchComparison(BranchComparison):
+    def _get_values(self):
+        return [v for v in self.peek_many(self.pops)]
 
 
 @bytecode_dict(_dict_to_instruction_dict(BOOLEAN_COMPARISONS))

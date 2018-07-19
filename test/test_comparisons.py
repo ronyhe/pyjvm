@@ -1,7 +1,9 @@
+from jawa.util.bytecode import Instruction
+
 from pyjvm.actions import Pop, Push, GoTo
 from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
     BINARY_REFERENCE_COMPARISONS, unary_op
-from pyjvm.jvm_types import Integer
+from pyjvm.jvm_types import Integer, NULL_OBJECT
 from pyjvm.utils import bool_to_num
 from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction, DUMMY_CLASS, \
     dummy_loader
@@ -68,3 +70,17 @@ def test_reference_binary_branch_comparisons():
 
     for name, op in BINARY_REFERENCE_COMPARISONS.items():
         _test_branch_comp(name, source, offset, values, DUMMY_CLASS.type, op)
+
+
+def test_if_null():
+    offset = 10
+    source = 3
+    # noinspection PyProtectedMember
+    assert_instruction(
+        instruction=literal_instruction('ifnull', offset)._replace(pos=source),
+        op_stack=[DUMMY_CLASS.type.create_instance(NULL_OBJECT)],
+        expected=[
+            Pop(),
+            GoTo(source + offset)
+        ]
+    )
