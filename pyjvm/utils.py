@@ -50,3 +50,10 @@ def pull_pairs(flat):
 
 TRUE = Integer.create_instance(1)
 FALSE = Integer.create_instance(0)
+
+
+def bool_to_num(b):
+    if b:
+        return TRUE
+    else:
+        return FALSE
