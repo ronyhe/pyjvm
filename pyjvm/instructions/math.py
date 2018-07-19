@@ -17,6 +17,7 @@ _INTEGRAL_TYPES = [Integer, Long]
 
 
 def _logical_right_shift(a, b):
+    # Taken from: https://stackoverflow.com/a/5833119/3129333
     return (a % 0x100000000) >> b
 
 
