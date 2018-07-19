@@ -20,6 +20,33 @@ def test_comparisons():
         )
 
 
+def _test_binary_branch_comp(name, source, offset, values, type_, op):
+    result = op(*values)
+    if result:
+        actual_offset = offset
+    else:
+        actual_offset = 1
+    target = source + actual_offset
+    # noinspection PyProtectedMember
+    assert_instruction(
+        instruction=literal_instruction(name, offset)._replace(pos=source),
+        op_stack=[type_.create_instance(v) for v in values],
+        expected=[
+            Pop(2),
+            GoTo(target)
+        ]
+    )
+
+
+def test_binary_branch_comparisons():
+    offset = 6
+    source = 3
+
+    values = 4, 5
+    for name, op in BINARY_BRANCH_COMPARISONS.items():
+        _test_binary_branch_comp(name, source, offset, values, Integer, op)
+
+
 def test_unary_branch_comparisons():
     value = 22
     offset = 5
@@ -42,51 +69,11 @@ def test_unary_branch_comparisons():
         )
 
 
-def test_binary_branch_comparisons():
-    offset = 6
-    source = 3
-
-    values = 4, 5
-    for name, op in BINARY_BRANCH_COMPARISONS.items():
-        # noinspection PyProtectedMember
-        instruction = literal_instruction(name, offset)._replace(pos=source)
-        result = op(*values)
-        if result:
-            target = source + offset
-        else:
-            target = source + 1
-
-        assert_instruction(
-            instruction=instruction,
-            op_stack=[Integer.create_instance(v) for v in values],
-            expected=[
-                Pop(2),
-                GoTo(target)
-            ]
-        )
-
-
 def test_reference_binary_branch_comparisons():
     offset = 7
     source = 4
-    type_ = DUMMY_CLASS.type
     instance = dummy_loader().default_instance(DUMMY_CLASS.name)
-    values = [type_.create_instance(instance) for _ in range(2)]
+    values = [instance, instance]
 
     for name, op in BINARY_REFERENCE_COMPARISONS.items():
-        # noinspection PyProtectedMember
-        instruction = literal_instruction(name, offset)._replace(pos=source)
-        result = op(*values)
-        if result:
-            target = source + offset
-        else:
-            target = source + 1
-
-        assert_instruction(
-            instruction=instruction,
-            op_stack=[Integer.create_instance(v) for v in values],
-            expected=[
-                Pop(2),
-                GoTo(target)
-            ]
-        )
+        _test_binary_branch_comp(name, source, offset, values, DUMMY_CLASS.type, op)
