@@ -13,8 +13,8 @@ def _create_push_constants_dict():
 
     specs = (
         ('i', Integer, 5),
+        ('f', Float, 2),
         ('l', Long, 1),
-        ('f', Float, 1),
         ('d', Double, 1),
     )
     for prefix, type_, max_value in specs:
