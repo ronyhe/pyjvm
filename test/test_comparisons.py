@@ -1,5 +1,3 @@
-from jawa.util.bytecode import Instruction
-
 from pyjvm.actions import Pop, Push, GoTo
 from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
     BINARY_REFERENCE_COMPARISONS, unary_op

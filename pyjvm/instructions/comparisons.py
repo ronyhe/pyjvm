@@ -92,7 +92,7 @@ class BranchComparison(Instructor):
 
 
 @bytecode('ifnull', 1, lambda v: v.is_null)
-@bytecode('ifnonnull', 1, lambda v: v.is_null)
+@bytecode('ifnonnull', 1, lambda v: not v.is_null)
 class NullBranchComparison(BranchComparison):
     def _get_values(self):
         return [v for v in self.peek_many(self.pops)]
