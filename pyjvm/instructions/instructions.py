@@ -116,3 +116,5 @@ from pyjvm.instructions import references
 from pyjvm.instructions import invocations
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import control
+# noinspection PyUnresolvedReferences
+from pyjvm.instructions import comparisons
