@@ -18,7 +18,7 @@ def test_comparisons():
         )
 
 
-def test_single_operand_branch_comparisons():
+def test_unary_branch_comparisons():
     value = 22
     offset = 5
     source = 2
