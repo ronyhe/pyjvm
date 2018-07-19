@@ -1,8 +1,8 @@
 from pyjvm import actions
 from pyjvm.actions import Actions
-from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode
+from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode, bytecode_dict
 # noinspection SpellCheckingInspection
-from pyjvm.switches import LookupSwitch, LOOKUP_SWITCH, TABLE_SWITCH, TableSwitch
+from pyjvm.switches import LOOKUP_SWITCH, TABLE_SWITCH, TableSwitch, LookupSwitch
 
 # noinspection SpellCheckingInspection
 _RETURN_LETTERS = 'ilfda'
@@ -36,26 +36,19 @@ class GoTo(Instructor):
         return actions.GoTo(target)
 
 
-@bytecode(LOOKUP_SWITCH)
-class LookupSwitchInstructor(Instructor):
+@bytecode_dict({
+    TABLE_SWITCH: [TableSwitch],
+    LOOKUP_SWITCH: [LookupSwitch]
+})
+class Switch(Instructor):
+    def __init__(self, inputs, switch_class):
+        super().__init__(inputs)
+        self.switch_class = switch_class
+
     def execute(self):
         source = self.instruction.pos
         value = self.peek_op_stack()
-        switch = LookupSwitch.from_instruction(self.instruction)
-        offset = switch.find_offset(value.value)
-        target = source + offset
-        return Actions(
-            actions.Pop(),
-            actions.GoTo(target)
-        )
-
-
-@bytecode(TABLE_SWITCH)
-class TableSwitchInstructor(Instructor):
-    def execute(self):
-        source = self.instruction.pos
-        value = self.peek_op_stack()
-        switch = TableSwitch.from_instruction(self.instruction)
+        switch = self.switch_class.from_instruction(self.instruction)
         offset = switch.find_offset(value.value)
         target = source + offset
         return Actions(
