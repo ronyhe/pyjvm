@@ -1,6 +1,6 @@
 from jawa.cf import ClassFile
 from jawa.constants import ConstantPool
-from jawa.util.bytecode import Instruction, Operand, OperandTypes
+from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import IncrementProgramCounter
 from pyjvm.class_loaders import FixedClassLoader

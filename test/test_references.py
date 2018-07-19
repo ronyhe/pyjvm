@@ -7,7 +7,7 @@ from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArr
 from pyjvm.instructions.references import create_levels
 from pyjvm.jawa_conversions import convert_class_file
 from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, ObjectReferenceType, NULL_OBJECT
+from pyjvm.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, NULL_OBJECT
 from pyjvm.utils import TRUE, FALSE, constant_operand, literal_operand
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME, \
     constant_instruction, literal_instruction, dummy_loader
