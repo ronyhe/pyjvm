@@ -59,7 +59,7 @@ class BooleanComparison(Instructor):
 
 
 @bytecode_dict(_UNARY_BRANCH_COMPARISON_DICT)
-class BranchComparison(Instructor):
+class UnaryBranchComparison(Instructor):
     def __init__(self, inputs, op):
         super().__init__(inputs)
         self.op = op
