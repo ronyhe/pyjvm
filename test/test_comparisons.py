@@ -1,6 +1,6 @@
 from pyjvm.actions import Pop, Push, GoTo
 from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
-    BINARY_REFERENCE_COMPARISONS
+    BINARY_REFERENCE_COMPARISONS, unary_op
 from pyjvm.jvm_types import Integer
 from pyjvm.utils import bool_to_num
 from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction, DUMMY_CLASS, \
@@ -21,11 +21,6 @@ def test_comparisons():
 
 
 def _test_branch_comp(name, source, offset, values, type_, op):
-    try:
-        values = list(values)
-    except TypeError:
-        values = [values]
-
     result = op(*values)
     if result:
         actual_offset = offset
@@ -33,15 +28,18 @@ def _test_branch_comp(name, source, offset, values, type_, op):
         actual_offset = 1
     target = source + actual_offset
 
-    # noinspection PyProtectedMember
-    assert_instruction(
-        instruction=literal_instruction(name, offset)._replace(pos=source),
-        op_stack=[type_.create_instance(v) for v in values],
-        expected=[
-            Pop(len(values)),
-            GoTo(target)
-        ]
-    )
+    try:
+        # noinspection PyProtectedMember
+        assert_instruction(
+            instruction=literal_instruction(name, offset)._replace(pos=source),
+            op_stack=[type_.create_instance(v) for v in values],
+            expected=[
+                Pop(len(values)),
+                GoTo(target)
+            ]
+        )
+    except AssertionError as e:
+        raise AssertionError(f'Branch comparison test for {name} failed') from e
 
 
 def test_binary_branch_comparisons():
@@ -59,7 +57,7 @@ def test_unary_branch_comparisons():
     source = 2
 
     for name, op in UNARY_BRANCH_COMPARISONS.items():
-        _test_branch_comp(name, source, offset, value, Integer, lambda v: op(v, 0))
+        _test_branch_comp(name, source, offset, [value], Integer, unary_op(op))
 
 
 def test_reference_binary_branch_comparisons():

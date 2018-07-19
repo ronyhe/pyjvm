@@ -46,6 +46,48 @@ BINARY_REFERENCE_COMPARISONS = {
 }
 
 
+def unary_op(op):
+    return lambda n: op(n, 0)
+
+
+def _create_instruction_dict():
+    dic = {}
+    dic.update({
+        k: [1, unary_op(v)] for k, v in UNARY_BRANCH_COMPARISONS.items()
+    })
+    dic.update({
+        k: [2, v] for k, v in BINARY_BRANCH_COMPARISONS.items()
+    })
+    dic.update({
+        k: [2, v] for k, v in BINARY_REFERENCE_COMPARISONS.items()
+    })
+
+    return dic
+
+
+@bytecode_dict(_create_instruction_dict())
+class BranchComparison(Instructor):
+    def __init__(self, inputs, pops, op):
+        super().__init__(inputs)
+        self.pops = pops
+        self.op = op
+
+    def execute(self):
+        values = [v.value for v in self.peek_many(self.pops)]
+        result = self.op(*values)
+
+        if result:
+            offset = self.operand_as_int()
+        else:
+            offset = 1
+
+        target = self.instruction.pos + offset
+        return Actions(
+            actions.Pop(self.pops),
+            actions.GoTo(target)
+        )
+
+
 @bytecode_dict(_dict_to_instruction_dict(BOOLEAN_COMPARISONS))
 class BooleanComparison(Instructor):
     def __init__(self, inputs, op):
@@ -62,50 +104,50 @@ class BooleanComparison(Instructor):
         )
 
 
-@bytecode_dict(_dict_to_instruction_dict(UNARY_BRANCH_COMPARISONS))
-class UnaryBranchComparison(Instructor):
-    def __init__(self, inputs, op):
-        super().__init__(inputs)
-        self.op = op
-
-    def execute(self):
-        value = self.peek_op_stack()
-
-        result = self.op(value.value, 0)
-        if result:
-            offset = self.operand_as_int()
-        else:
-            offset = 1
-
-        source = self.instruction.pos
-        target = source + offset
-
-        return Actions(
-            actions.Pop(),
-            actions.GoTo(target)
-        )
-
-
-@bytecode_dict(_dict_to_instruction_dict(BINARY_BRANCH_COMPARISONS))
-@bytecode_dict(_dict_to_instruction_dict(BINARY_REFERENCE_COMPARISONS))
-class BinaryBranchComparison(Instructor):
-    def __init__(self, inputs, op):
-        super().__init__(inputs)
-        self.op = op
-
-    def execute(self):
-        values = self.peek_many(2)
-
-        result = self.op(*(value.value for value in values))
-        if result:
-            offset = self.operand_as_int()
-        else:
-            offset = 1
-
-        source = self.instruction.pos
-        target = source + offset
-
-        return Actions(
-            actions.Pop(2),
-            actions.GoTo(target)
-        )
+# @bytecode_dict(_dict_to_instruction_dict(UNARY_BRANCH_COMPARISONS))
+# class UnaryBranchComparison(Instructor):
+#     def __init__(self, inputs, op):
+#         super().__init__(inputs)
+#         self.op = op
+#
+#     def execute(self):
+#         value = self.peek_op_stack()
+#
+#         result = self.op(value.value, 0)
+#         if result:
+#             offset = self.operand_as_int()
+#         else:
+#             offset = 1
+#
+#         source = self.instruction.pos
+#         target = source + offset
+#
+#         return Actions(
+#             actions.Pop(),
+#             actions.GoTo(target)
+#         )
+#
+#
+# @bytecode_dict(_dict_to_instruction_dict(BINARY_BRANCH_COMPARISONS))
+# @bytecode_dict(_dict_to_instruction_dict(BINARY_REFERENCE_COMPARISONS))
+# class BinaryBranchComparison(Instructor):
+#     def __init__(self, inputs, op):
+#         super().__init__(inputs)
+#         self.op = op
+#
+#     def execute(self):
+#         values = self.peek_many(2)
+#
+#         result = self.op(*(value.value for value in values))
+#         if result:
+#             offset = self.operand_as_int()
+#         else:
+#             offset = 1
+#
+#         source = self.instruction.pos
+#         target = source + offset
+#
+#         return Actions(
+#             actions.Pop(2),
+#             actions.GoTo(target)
+#         )
