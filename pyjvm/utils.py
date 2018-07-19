@@ -3,6 +3,8 @@ from pathlib import Path
 from jawa.cf import ClassFile
 from jawa.util.bytecode import Operand, OperandTypes
 
+from pyjvm.jvm_types import Integer
+
 
 def dump_class(path, echo):
     path = Path(path)
@@ -44,3 +46,7 @@ def literal_operand(value):
 def pull_pairs(flat):
     it = iter(flat)
     return zip(it, it)
+
+
+TRUE = Integer.create_instance(1)
+FALSE = Integer.create_instance(0)
