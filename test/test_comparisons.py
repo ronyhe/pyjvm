@@ -1,8 +1,11 @@
 from pyjvm.actions import Pop, Push, GoTo
-from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS
+from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
+    BINARY_REFERENCE_COMPARISONS
+from pyjvm.jvm_class import JvmObject
 from pyjvm.jvm_types import Integer
 from pyjvm.utils import bool_to_num
-from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction
+from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction, DUMMY_CLASS, \
+    dummy_loader
 
 
 def test_comparisons():
@@ -46,6 +49,32 @@ def test_binary_branch_comparisons():
 
     values = 4, 5
     for name, op in BINARY_BRANCH_COMPARISONS.items():
+        # noinspection PyProtectedMember
+        instruction = literal_instruction(name, offset)._replace(pos=source)
+        result = op(*values)
+        if result:
+            target = source + offset
+        else:
+            target = source + 1
+
+        assert_instruction(
+            instruction=instruction,
+            op_stack=[Integer.create_instance(v) for v in values],
+            expected=[
+                Pop(2),
+                GoTo(target)
+            ]
+        )
+
+
+def test_reference_binary_branch_comparisons():
+    offset = 7
+    source = 4
+    type_ = DUMMY_CLASS.type
+    instance = dummy_loader().default_instance(DUMMY_CLASS.name)
+    values = [type_.create_instance(instance) for _ in range(2)]
+
+    for name, op in BINARY_REFERENCE_COMPARISONS.items():
         # noinspection PyProtectedMember
         instruction = literal_instruction(name, offset)._replace(pos=source)
         result = op(*values)

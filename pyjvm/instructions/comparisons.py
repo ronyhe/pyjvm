@@ -37,8 +37,12 @@ BINARY_BRANCH_COMPARISONS = {
     "if_icmpge": operator.ge,
     "if_icmpgt": operator.gt,
     "if_icmple": operator.le,
-    "if_acmpeq": operator.eq,
-    "if_acmpne": operator.ne
+}
+
+# noinspection SpellCheckingInspection
+BINARY_REFERENCE_COMPARISONS = {
+    "if_acmpeq": operator.is_,
+    "if_acmpne": operator.is_not
 }
 
 
@@ -83,6 +87,7 @@ class UnaryBranchComparison(Instructor):
 
 
 @bytecode_dict(_dict_to_instruction_dict(BINARY_BRANCH_COMPARISONS))
+@bytecode_dict(_dict_to_instruction_dict(BINARY_REFERENCE_COMPARISONS))
 class BinaryBranchComparison(Instructor):
     def __init__(self, inputs, op):
         super().__init__(inputs)
