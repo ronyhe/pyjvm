@@ -16,6 +16,10 @@ _ALL_TYPES = list(TYPE_LETTERS.keys())
 _INTEGRAL_TYPES = [Integer, Long]
 
 
+def _logical_right_shift(a, b):
+    return (a % 0x100000000) >> b
+
+
 class MathOperation:
     def __init__(self, name, op, types, operands):
         self.name = name
@@ -55,7 +59,9 @@ OPERATORS = (
     MathOperation.integral_types('shr', operator.rshift),
     MathOperation.integral_types('and', operator.and_),
     MathOperation.integral_types('or', operator.or_),
-    MathOperation.integral_types('xor', operator.xor)
+    MathOperation.integral_types('xor', operator.xor),
+
+    MathOperation.integral_types('ushr', _logical_right_shift)
 )
 
 
@@ -83,5 +89,3 @@ class BinaryMath(Instructor):
             actions.Pop(self.ops),
             actions.Push(result)
         )
-
-# add neg and iinc
