@@ -56,7 +56,7 @@ def test_binary_branch_comparisons():
 
         assert_instruction(
             instruction=instruction,
-            op_stack = [Integer.create_instance(v) for v in values],
+            op_stack=[Integer.create_instance(v) for v in values],
             expected=[
                 Pop(2),
                 GoTo(target)

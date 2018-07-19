@@ -81,6 +81,7 @@ class UnaryBranchComparison(Instructor):
             actions.GoTo(target)
         )
 
+
 @bytecode_dict(_dict_to_instruction_dict(BINARY_BRANCH_COMPARISONS))
 class BinaryBranchComparison(Instructor):
     def __init__(self, inputs, op):
