@@ -20,19 +20,25 @@ def test_comparisons():
         )
 
 
-def _test_binary_branch_comp(name, source, offset, values, type_, op):
+def _test_branch_comp(name, source, offset, values, type_, op):
+    try:
+        values = list(values)
+    except TypeError:
+        values = [values]
+
     result = op(*values)
     if result:
         actual_offset = offset
     else:
         actual_offset = 1
     target = source + actual_offset
+
     # noinspection PyProtectedMember
     assert_instruction(
         instruction=literal_instruction(name, offset)._replace(pos=source),
         op_stack=[type_.create_instance(v) for v in values],
         expected=[
-            Pop(2),
+            Pop(len(values)),
             GoTo(target)
         ]
     )
@@ -44,7 +50,7 @@ def test_binary_branch_comparisons():
 
     values = 4, 5
     for name, op in BINARY_BRANCH_COMPARISONS.items():
-        _test_binary_branch_comp(name, source, offset, values, Integer, op)
+        _test_branch_comp(name, source, offset, values, Integer, op)
 
 
 def test_unary_branch_comparisons():
@@ -53,20 +59,7 @@ def test_unary_branch_comparisons():
     source = 2
 
     for name, op in UNARY_BRANCH_COMPARISONS.items():
-        # noinspection PyProtectedMember
-        instruction = literal_instruction(name, offset)._replace(pos=source)
-
-        result = op(value, 0)
-        if result:
-            target = source + offset
-        else:
-            target = source + 1
-
-        assert_instruction(
-            instruction=instruction,
-            op_stack=[Integer.create_instance(value)],
-            expected=[Pop(), GoTo(target)]
-        )
+        _test_branch_comp(name, source, offset, value, Integer, lambda v: op(v, 0))
 
 
 def test_reference_binary_branch_comparisons():
@@ -76,4 +69,4 @@ def test_reference_binary_branch_comparisons():
     values = [instance, instance]
 
     for name, op in BINARY_REFERENCE_COMPARISONS.items():
-        _test_binary_branch_comp(name, source, offset, values, DUMMY_CLASS.type, op)
+        _test_branch_comp(name, source, offset, values, DUMMY_CLASS.type, op)
