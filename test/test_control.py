@@ -1,7 +1,7 @@
 from pyjvm.actions import ReturnResult, ReturnVoid, GoTo, Pop
 from pyjvm.instructions.control import RETURN_RESULT_INSTRUCTIONS
 from pyjvm.jvm_types import Integer
-from pyjvm.switches import LookupSwitch
+from pyjvm.switches import LookupSwitch, TableSwitch
 from test.utils import assert_instruction, literal_instruction
 
 
@@ -59,6 +59,32 @@ def test_lookup_switch():
             expected=[
                 Pop(),
                 GoTo(source + offset)
+            ]
+        )
+
+    assert_instruction(
+        instruction=instruction,
+        op_stack=[Integer.create_instance(irrelevant_value)],
+        expected=[
+            Pop(),
+            GoTo(source + switch.default)
+        ]
+    )
+
+
+def test_table_switch():
+    source = 1
+    switch = TableSwitch(10, [2, 3, 4])
+    instruction = switch.create_instruction(source)
+    irrelevant_value = switch.high * 2
+
+    for i, off in enumerate(switch.offsets):
+        assert_instruction(
+            instruction=instruction,
+            op_stack=[Integer.create_instance(i + switch.low)],
+            expected=[
+                Pop(),
+                GoTo(source + off)
             ]
         )
 

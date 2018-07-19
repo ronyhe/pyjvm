@@ -2,7 +2,7 @@ from pyjvm import actions
 from pyjvm.actions import Actions
 from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode
 # noinspection SpellCheckingInspection
-from pyjvm.switches import LookupSwitch, LOOKUP_SWITCH
+from pyjvm.switches import LookupSwitch, LOOKUP_SWITCH, TABLE_SWITCH, TableSwitch
 
 # noinspection SpellCheckingInspection
 _RETURN_LETTERS = 'ilfda'
@@ -42,6 +42,20 @@ class LookupSwitchInstructor(Instructor):
         source = self.instruction.pos
         value = self.peek_op_stack()
         switch = LookupSwitch.from_instruction(self.instruction)
+        offset = switch.find_offset(value.value)
+        target = source + offset
+        return Actions(
+            actions.Pop(),
+            actions.GoTo(target)
+        )
+
+
+@bytecode(TABLE_SWITCH)
+class TableSwitchInstructor(Instructor):
+    def execute(self):
+        source = self.instruction.pos
+        value = self.peek_op_stack()
+        switch = TableSwitch.from_instruction(self.instruction)
         offset = switch.find_offset(value.value)
         target = source + offset
         return Actions(
