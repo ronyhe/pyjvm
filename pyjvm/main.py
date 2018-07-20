@@ -2,6 +2,7 @@ import click
 from jawa.util.bytecode import opcode_table
 
 from pyjvm import utils
+from pyjvm.actions import Action
 from pyjvm.instructions.instructions import get_implemented_instructions
 
 
@@ -26,11 +27,20 @@ def instruction_report():
 
 
 @click.command()
+def action_report():
+    names = Action.action_names()
+    click.echo(f'{len(names)} commands:')
+    for name in names:
+        click.echo(name)
+
+
+@click.command()
 @click.argument('path')
 def dump_class(path):
     utils.dump_class(path, click.echo)
 
 
+cli.add_command(action_report)
 cli.add_command(instruction_report)
 cli.add_command(dump_class)
 

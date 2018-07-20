@@ -2,7 +2,14 @@ import attr
 
 
 class Action:
-    pass
+    _subs = []
+
+    def __init_subclass__(cls, **kwargs):
+        cls._subs.append(cls.__name__)
+
+    @classmethod
+    def action_names(cls):
+        return tuple(cls._subs)
 
 
 class Actions:
