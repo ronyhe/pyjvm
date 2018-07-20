@@ -23,21 +23,23 @@ class Frame:
                  class_: JvmClass,
                  _locals: Locals,
                  op_stack: Stack[JvmValue],
-                 instructions: Iterable[Instruction]):
+                 instructions: Iterable[Instruction],
+                 pc=0):
         self.class_ = class_
         self.locals = _locals
         self.op_stack = op_stack
         self.instructions = tuple(instructions)
+        self.pc = pc
 
-    def next_instruction(self, pc):
+    def next_instruction(self):
         for ins in self.instructions:
-            if ins.pos >= pc:
+            if ins.pos >= self.pc:
                 return ins
 
-        return None
+        raise IndexError('No more instructions')
 
 
 class Machine:
     def __init__(self, class_loader: ClassLoader):
-        self.current_frame: Frame = None
         self.class_loader = class_loader
+        self.frames = Stack()
