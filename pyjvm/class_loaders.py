@@ -14,9 +14,9 @@ class LoaderEntry:
 
 
 class ClassLoader:
-    def __init__(self):
+    def __init__(self, first_load_function=None):
         self._map = dict()
-        self.first_load_function = None
+        self.first_load_function = first_load_function
 
     def _load_jvm_class(self, name):
         raise NotImplementedError()
@@ -43,6 +43,7 @@ class ClassLoader:
 
     def get_ancestors(self, class_name):
         acc = set()
+        # noinspection PyUnresolvedReferences
         acc.add(class_name)
         curr = class_name
         while not curr == RootObjectType.refers_to:
