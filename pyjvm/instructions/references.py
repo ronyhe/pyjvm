@@ -1,5 +1,5 @@
 from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter, Actions, ThrowCheckCastException, ThrowNegativeArraySizeException
+from pyjvm.actions import IncrementProgramCounter, Actions
 from pyjvm.instructions.instructions import bytecode, Instructor
 from pyjvm.model.hierarchies import is_value_instance_of
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
@@ -42,7 +42,7 @@ class CheckCast(Instructor):
         if answer:
             return IncrementProgramCounter()
         else:
-            return ThrowCheckCastException()
+            return actions.throw_check_cast()
 
 
 @bytecode('arraylength')
@@ -50,7 +50,7 @@ class ArrayLength(Instructor):
     def execute(self):
         array = self.peek_op_stack()
         if array.is_null:
-            return actions.ThrowNullPointerException()
+            return actions.throw_null_pointer()
         else:
             size = len(array.value)
             result = Integer.create_instance(size)
@@ -66,7 +66,7 @@ class CreateNewArray(Instructor):
         type_ = self._get_type()
         size = self.peek_op_stack().value
         if size < 0:
-            return actions.ThrowNegativeArraySizeException()
+            return actions.throw_negative_array_size()
         else:
             elements = [type_.create_instance(type_.default_value) for _ in range(size)]
             result = ArrayReferenceType(type_).create_instance(elements)
@@ -107,7 +107,7 @@ class NewMultiArray(Instructor):
         num_dimensions = self.operand_as_int(index=1)
         dimensions = [v.value for v in self.peek_many(num_dimensions)]
         if any(d < 0 for d in dimensions):
-            return ThrowNegativeArraySizeException()
+            return actions.throw_negative_array_size()
 
         array_type = base_type
         for _ in range(num_dimensions):
@@ -126,7 +126,7 @@ class Throw(Instructor):
     def execute(self):
         obj = self.peek_op_stack()
         if obj.is_null:
-            action = actions.ThrowNullPointerException()
+            action = actions.throw_null_pointer()
         else:
             action = actions.ThrowObject(obj)
 
@@ -154,7 +154,7 @@ class GetField(Instructor):
         name = field_ref.name_and_type.name.value
         obj = self.peek_op_stack()
         if obj.is_null:
-            return actions.ThrowNullPointerException()
+            return actions.throw_null_pointer()
 
         value = obj.value.fields[name]
         return IncrementProgramCounter.after(
@@ -172,7 +172,7 @@ class PutField(Instructor):
         obj = self.peek_op_stack(1)
 
         if obj.is_null:
-            return actions.ThrowNullPointerException()
+            return actions.throw_null_pointer()
 
         return IncrementProgramCounter.after(
             actions.Pop(2),

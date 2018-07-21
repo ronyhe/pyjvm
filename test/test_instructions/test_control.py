@@ -28,9 +28,9 @@ def test_return_void():
 
 
 def test_go_to():
-    # noinspection PyProtectedMember
     offset = 4
     source = 10
+    # noinspection PyProtectedMember
     instruction = literal_instruction('goto', offset)._replace(pos=source)
     target = offset + source
 

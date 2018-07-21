@@ -1,4 +1,4 @@
-from pyjvm.actions import StoreInLocals, Pop, StoreIntoArray, Push, ThrowNullPointerException
+from pyjvm.actions import StoreInLocals, Pop, StoreIntoArray, Push, throw_null_pointer
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import ArrayReferenceType, Integer, NULL_VALUE
 from test.utils import SOME_INT, assert_incrementing_instruction, assert_instruction, literal_instruction
@@ -60,7 +60,7 @@ def test_int_store_into_null_array():
         op_stack=[value, index, array],
 
         expected=[
-            ThrowNullPointerException()
+            throw_null_pointer()
         ]
     )
 
@@ -101,6 +101,6 @@ def test_int_load_from_null_array():
         op_stack=[index, array],
 
         expected=[
-            ThrowNullPointerException()
+            throw_null_pointer()
         ]
     )

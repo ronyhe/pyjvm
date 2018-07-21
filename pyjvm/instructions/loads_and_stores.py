@@ -1,5 +1,5 @@
 from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter, Pop, ThrowNullPointerException
+from pyjvm.actions import IncrementProgramCounter, Pop
 from pyjvm.instructions.instructions import Instructor, bytecode_dict, bytecode_list
 
 
@@ -56,7 +56,7 @@ class StoreIntoArray(Instructor):
     def execute(self):
         value, index, array = (self.peek_op_stack(i) for i in range(3))
         if array.is_null:
-            return ThrowNullPointerException()
+            return actions.throw_null_pointer()
 
         return IncrementProgramCounter.after(
             actions.StoreIntoArray(array=array, index=index.value, value=value),
@@ -86,7 +86,7 @@ class LoadFromArray(Instructor):
         index = self.peek_op_stack()
         array = self.peek_op_stack(1)
         if array.is_null:
-            return actions.ThrowNullPointerException()
+            return actions.throw_null_pointer()
 
         value = array.value[index.value]
         return IncrementProgramCounter.after(

@@ -1,8 +1,8 @@
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
-from pyjvm.actions import Push, ThrowNullPointerException, Pop, ThrowNegativeArraySizeException, \
-    ThrowCheckCastException, ThrowObject, PushNewInstance, PutField, PutStatic
+from pyjvm.actions import Push, ThrowObject, PushNewInstance, PutField, PutStatic, throw_null_pointer, Pop, \
+    throw_negative_array_size, throw_check_cast
 from pyjvm.instructions.references import create_levels
 from pyjvm.model.jvm_class import JvmObject
 from pyjvm.model.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, NULL_OBJECT
@@ -79,7 +79,7 @@ def test_negative_check_cast():
         constants=consts,
         instruction=constant_instruction('checkcast', const),
         op_stack=[obj],
-        expected=[ThrowCheckCastException]
+        expected=[throw_check_cast()]
     )
 
 
@@ -101,7 +101,7 @@ def test_null_array_length():
         instruction='arraylength',
         op_stack=[NULL_VALUE],
         expected=[
-            ThrowNullPointerException
+            throw_null_pointer()
         ]
     )
 
@@ -191,7 +191,7 @@ def test_negative_array_size():
         instruction=literal_instruction('newarray', indicator),
         op_stack=[Integer.create_instance(-4)],
         expected=[
-            ThrowNegativeArraySizeException
+            throw_negative_array_size()
         ]
     )
 

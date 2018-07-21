@@ -107,23 +107,13 @@ class DuplicateTop(Action):
 
 
 @attr.s(frozen=True)
-class ThrowNullPointerException(Action):
-    pass
-
-
-@attr.s(frozen=True)
-class ThrowNegativeArraySizeException(Action):
-    pass
-
-
-@attr.s(frozen=True)
-class ThrowCheckCastException(Action):
-    pass
-
-
-@attr.s(frozen=True)
 class ThrowObject(Action):
     value = attr.ib()
+
+
+@attr.s(frozen=True)
+class CreateAndThrow(Action):
+    class_name = attr.ib()
 
 
 @attr.s(frozen=True)
@@ -165,3 +155,19 @@ class ReturnVoid(Action):
 @attr.s(frozen=True)
 class GoTo(Action):
     target = attr.ib(converter=int)
+
+
+def _throw_built_in(name):
+    return CreateAndThrow('java/lang/' + name)
+
+
+def throw_null_pointer():
+    return _throw_built_in('NullPointerException')
+
+
+def throw_check_cast():
+    return _throw_built_in('CheckCastException')
+
+
+def throw_negative_array_size():
+    return _throw_built_in('NegativeArraySizeException')
