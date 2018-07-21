@@ -1,5 +1,5 @@
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField, PutStatic
+    StoreIntoArray, PutField, PutStatic, GoTo
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
@@ -115,3 +115,9 @@ def test_put_static():
     ))
 
     assert loader.get_the_statics(class_name)[field_name] == SOME_INT
+
+
+def test_go_to():
+    target = 15
+    machine = act_on_dummy(GoTo(target))
+    assert machine.frames.peek().pc == target

@@ -94,3 +94,6 @@ class Machine:
 
     def _put_static(self, action):
         self.class_loader.get_the_statics(action.class_name)[action.field_name] = action.value
+
+    def _go_to(self, action):
+        self.frames.peek().pc = action.target
