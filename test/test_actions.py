@@ -1,5 +1,5 @@
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField
+    StoreIntoArray, PutField, PutStatic
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
@@ -99,3 +99,19 @@ def test_put_field():
     ))
 
     assert instance.value.fields[field_name] == SOME_INT
+
+
+def test_put_static():
+    machine = dummy_machine()
+    loader = machine.class_loader
+    class_name = DUMMY_CLASS.name
+    field_name = DUMMY_CLASS.class_field.name.value
+
+    assert not loader.get_the_statics(class_name)[field_name] == SOME_INT
+    machine.act(PutStatic(
+        class_name,
+        field_name,
+        SOME_INT
+    ))
+
+    assert loader.get_the_statics(class_name)[field_name] == SOME_INT

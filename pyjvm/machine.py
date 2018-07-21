@@ -91,3 +91,6 @@ class Machine:
 
     def _put_field(self, action):
         action.object_.value.fields[action.field_name] = action.value
+
+    def _put_static(self, action):
+        self.class_loader.get_the_statics(action.class_name)[action.field_name] = action.value
