@@ -1,3 +1,4 @@
+import re
 from typing import Iterable
 
 from jawa.util.bytecode import Instruction
@@ -39,7 +40,21 @@ class Frame:
         raise IndexError('No more instructions')
 
 
+def _to_snake_case(text):
+    letters = list(text)
+    new_letters = [c if c.islower() else '_' + c.lower() for c in text]
+    return ''.join(new_letters)
+
+
 class Machine:
     def __init__(self, class_loader: ClassLoader):
         self.class_loader = class_loader
         self.frames = Stack()
+
+    def act(self, action):
+        action_class = action.__class__.__name__
+        snake_case = _to_snake_case(action_class)
+        getattr(self, snake_case)()
+
+    def _increment_program_counter(self):
+        self.frames.peek().pc += 1
