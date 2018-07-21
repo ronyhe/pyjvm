@@ -85,5 +85,9 @@ class Machine:
     def _store_in_locals(self, action):
         self.frames.peek().locals.store(action.index, action.value)
 
+    # noinspection PyMethodMayBeStatic
     def _store_into_array(self, action):
         action.array.value[action.index] = action.value
+
+    def _put_field(self, action):
+        action.object_.value.fields[action.field_name] = action.value

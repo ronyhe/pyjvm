@@ -1,5 +1,5 @@
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray
+    StoreIntoArray, PutField
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
@@ -82,3 +82,20 @@ def test_store_in_array():
     ))
 
     assert array_values[index] == value
+
+
+def test_put_field():
+    machine = dummy_machine()
+    loader = machine.class_loader
+    field_name = DUMMY_CLASS.instance_field.name.value
+
+    instance = loader.default_instance(DUMMY_CLASS.name)
+
+    assert not instance.value.fields[field_name] == SOME_INT
+    machine.act(PutField(
+        instance,
+        field_name,
+        SOME_INT
+    ))
+
+    assert instance.value.fields[field_name] == SOME_INT
