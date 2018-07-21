@@ -1,9 +1,11 @@
-from pyjvm.actions import IncrementProgramCounter, Push, Pop
+from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.stack import Stack
 from pyjvm.utils.jawa_conversions import convert_class_file
 from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
+
+DUMMY_AS_JVM_CLASS = convert_class_file(DUMMY_CLASS.class_file)
 
 
 def dummy_machine():
@@ -37,3 +39,9 @@ def test_pop():
     stack.push(SOME_INT)
     machine.act(Pop(2))
     assert stack.size() == 0
+
+
+def test_push_new_instance():
+    machine = act_on_dummy(PushNewInstance(DUMMY_AS_JVM_CLASS))
+    stack = machine.frames.peek().op_stack
+    assert stack.peek().type == DUMMY_CLASS.type

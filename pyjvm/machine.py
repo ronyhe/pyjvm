@@ -66,3 +66,8 @@ class Machine:
         amount = action.amount
         for _ in range(amount):
             self.frames.peek().op_stack.pop()
+
+    def _push_new_instance(self, action):
+        class_ = action.class_
+        instance = self.class_loader.default_instance(class_.name)
+        self.frames.peek().op_stack.push(instance)
