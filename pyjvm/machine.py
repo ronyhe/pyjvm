@@ -71,3 +71,13 @@ class Machine:
         class_ = action.class_
         instance = self.class_loader.default_instance(class_.name)
         self.frames.peek().op_stack.push(instance)
+
+    def _duplicate_top(self, action):
+        amount_to_take = action.amount_to_take
+        index_for_insertion = action.index_for_insertion
+        stack = self.frames.peek().op_stack
+
+        values = stack.peek_many(amount_to_take)
+        copies = [v.type.create_instance(v.value) for v in values]
+        for copy in reversed(copies):
+            stack.insert_at_offset(index_for_insertion, copy)
