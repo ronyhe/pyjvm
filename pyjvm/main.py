@@ -1,9 +1,9 @@
 import click
 from jawa.util.bytecode import opcode_table
 
-from pyjvm import utils
 from pyjvm.actions import Action
 from pyjvm.instructions.instructions import get_implemented_instructions
+from pyjvm.utils import utils
 
 
 @click.group()

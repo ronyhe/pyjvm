@@ -1,7 +1,7 @@
 from jawa.constants import ConstantPool
 
 from pyjvm.actions import Pop, Invoke
-from pyjvm.jvm_types import Integer
+from pyjvm.model.jvm_types import Integer
 from test.utils import DUMMY_CLASS, assert_incrementing_instruction, constant_instruction, dummy_loader
 
 

@@ -3,9 +3,9 @@ import jawa.util.descriptor
 from jawa import constants
 from jawa.cf import ClassFile
 
-from pyjvm.jvm_class import JvmClass, BytecodeMethod
-from pyjvm.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType
-from pyjvm.utils import split_by_predicate
+from pyjvm.model.jvm_class import JvmClass, BytecodeMethod
+from pyjvm.model.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType
+from pyjvm.utils.utils import split_by_predicate
 
 _LETTERS_MAP = {
     'D': Double,

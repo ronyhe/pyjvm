@@ -2,7 +2,7 @@ from jawa.constants import ConstantPool
 
 from pyjvm.actions import Push
 from pyjvm.instructions import constant_instructions
-from pyjvm.jvm_types import Integer, Double
+from pyjvm.model.jvm_types import Integer, Double
 from test.utils import assert_incrementing_instruction, constant_instruction, literal_instruction
 
 

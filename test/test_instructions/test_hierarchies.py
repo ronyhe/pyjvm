@@ -1,9 +1,9 @@
 from jawa.constants import ConstantPool
 
-from pyjvm.hierarchies import is_type_instance_of
-from pyjvm.jvm_class import JvmClass
-from pyjvm.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
-from pyjvm.utils import class_as_descriptor
+from pyjvm.model.hierarchies import is_type_instance_of
+from pyjvm.model.jvm_class import JvmClass
+from pyjvm.model.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
+from pyjvm.utils.utils import class_as_descriptor
 from test.utils import DUMMY_SUB_CLASS_NAME, DUMMY_CLASS, dummy_loader
 
 _DUMMY_DESCRIPTOR = class_as_descriptor(DUMMY_CLASS.name)

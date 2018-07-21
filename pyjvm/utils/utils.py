@@ -3,7 +3,7 @@ from pathlib import Path
 from jawa.cf import ClassFile
 from jawa.util.bytecode import Operand, OperandTypes
 
-from pyjvm.jvm_types import Integer
+from pyjvm.model.jvm_types import Integer
 
 
 def dump_class(path, echo):

@@ -1,6 +1,6 @@
 from pyjvm.actions import Pop, Push
 from pyjvm.instructions.math import OPERATORS
-from pyjvm.jvm_types import Integer
+from pyjvm.model.jvm_types import Integer
 from test.utils import assert_incrementing_instruction
 
 

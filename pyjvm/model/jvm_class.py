@@ -2,7 +2,7 @@ from typing import Dict
 
 import attr
 
-from pyjvm.jvm_types import JvmValue
+from pyjvm.model.jvm_types import JvmValue
 
 # noinspection SpellCheckingInspection
 NAME_OF_STATIC_CONSTRUCTOR = 'clinit'

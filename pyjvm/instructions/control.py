@@ -2,7 +2,7 @@ from pyjvm import actions
 from pyjvm.actions import Actions
 from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode, bytecode_dict
 # noinspection SpellCheckingInspection
-from pyjvm.switches import LOOKUP_SWITCH, TABLE_SWITCH, TableSwitch, LookupSwitch
+from pyjvm.instructions.switches import LOOKUP_SWITCH, TABLE_SWITCH, TableSwitch, LookupSwitch
 
 # noinspection SpellCheckingInspection
 _RETURN_LETTERS = 'ilfda'

@@ -1,9 +1,10 @@
-from pyjvm import actions, value_array_type_indicators
+from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter, Actions, ThrowCheckCastException, ThrowNegativeArraySizeException
-from pyjvm.hierarchies import is_value_instance_of
 from pyjvm.instructions.instructions import bytecode, Instructor
-from pyjvm.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
-from pyjvm.utils import class_as_descriptor
+from pyjvm.model.hierarchies import is_value_instance_of
+from pyjvm.model.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
+from pyjvm.utils import value_array_type_indicators
+from pyjvm.utils.utils import class_as_descriptor
 
 
 @bytecode('instanceof')

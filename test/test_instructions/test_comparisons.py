@@ -1,8 +1,8 @@
 from pyjvm.actions import Pop, Push, GoTo
 from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
     BINARY_REFERENCE_COMPARISONS, unary_op
-from pyjvm.jvm_types import Integer, NULL_OBJECT
-from pyjvm.utils import bool_to_num
+from pyjvm.model.jvm_types import Integer, NULL_OBJECT
+from pyjvm.utils.utils import bool_to_num
 from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction, DUMMY_CLASS, \
     dummy_loader
 

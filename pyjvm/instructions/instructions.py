@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from pyjvm.actions import IncrementProgramCounter, Action, Actions
-from pyjvm.class_registry import ClassRegistry
+from pyjvm.utils.class_registry import ClassRegistry
 
 _registry = ClassRegistry()
 

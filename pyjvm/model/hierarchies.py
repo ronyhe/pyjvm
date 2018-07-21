@@ -1,8 +1,8 @@
 from jawa.util.descriptor import field_descriptor
 
-from pyjvm.class_loaders import ClassLoader
-from pyjvm.jawa_conversions import convert_type
-from pyjvm.jvm_types import JvmValue, Type
+from pyjvm.loaders.class_loaders import ClassLoader
+from pyjvm.model.jvm_types import JvmValue, Type
+from pyjvm.utils.jawa_conversions import convert_type
 
 
 def is_value_instance_of(instance: JvmValue, descriptor_for_possible_parent: str, loader: ClassLoader) -> bool:

@@ -1,5 +1,5 @@
-from pyjvm.jvm_class import JvmObject
-from pyjvm.jvm_types import RootObjectType, ObjectReferenceType
+from pyjvm.model.jvm_class import JvmObject
+from pyjvm.model.jvm_types import RootObjectType, ObjectReferenceType
 
 
 def _name_and_default_value(pair):

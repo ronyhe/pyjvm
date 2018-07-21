@@ -2,11 +2,11 @@ from typing import Iterable
 
 from jawa.util.bytecode import Instruction
 
-from pyjvm.class_loaders import ClassLoader
-from pyjvm.frame_locals import Locals
-from pyjvm.jvm_class import BytecodeMethod, JvmClass
-from pyjvm.jvm_types import JvmValue
-from pyjvm.stack import Stack
+from pyjvm.loaders.class_loaders import ClassLoader
+from pyjvm.model.frame_locals import Locals
+from pyjvm.model.jvm_class import BytecodeMethod, JvmClass
+from pyjvm.model.jvm_types import JvmValue
+from pyjvm.model.stack import Stack
 
 
 class Frame:
