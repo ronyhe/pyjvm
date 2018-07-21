@@ -1,6 +1,6 @@
 from jawa.util.descriptor import field_descriptor
 
-from pyjvm.loaders.class_loaders import ClassLoader
+from pyjvm.model.class_loaders import ClassLoader
 from pyjvm.model.jvm_types import JvmValue, Type
 from pyjvm.utils.jawa_conversions import convert_type
 

@@ -2,7 +2,7 @@ from typing import Iterable
 
 from jawa.util.bytecode import Instruction
 
-from pyjvm.loaders.class_loaders import ClassLoader
+from pyjvm.model.class_loaders import ClassLoader
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_class import BytecodeMethod, JvmClass
 from pyjvm.model.jvm_types import JvmValue

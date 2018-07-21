@@ -4,7 +4,7 @@ from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import IncrementProgramCounter
 from pyjvm.instructions.instructions import InstructorInputs, execute_instruction
-from pyjvm.loaders.class_loaders import FixedClassLoader
+from pyjvm.model.class_loaders import FixedClassLoader
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ObjectReferenceType
 from pyjvm.model.stack import Stack
