@@ -1,10 +1,9 @@
-from pyjvm.actions import IncrementProgramCounter, Push
+from pyjvm.actions import IncrementProgramCounter, Push, Pop
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
-from pyjvm.model.jvm_types import Integer
 from pyjvm.model.stack import Stack
 from pyjvm.utils.jawa_conversions import convert_class_file
-from test.utils import dummy_loader, DUMMY_CLASS
+from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
 
 
 def dummy_machine():
@@ -26,7 +25,15 @@ def test_increment_program_counter():
 
 
 def test_push():
-    value = Integer.create_instance(1)
-    machine = act_on_dummy(Push(value))
+    machine = act_on_dummy(Push(SOME_INT))
     actual = machine.frames.peek().op_stack.peek()
-    assert actual == value
+    assert actual == SOME_INT
+
+
+def test_pop():
+    machine = dummy_machine()
+    stack = machine.frames.peek().op_stack
+    stack.push(SOME_INT)
+    stack.push(SOME_INT)
+    machine.act(Pop(2))
+    assert stack.size() == 0

@@ -61,3 +61,8 @@ class Machine:
     def _push(self, action):
         value = action.value
         self.frames.peek().op_stack.push(value)
+
+    def _pop(self, action):
+        amount = action.amount
+        for _ in range(amount):
+            self.frames.peek().op_stack.pop()
