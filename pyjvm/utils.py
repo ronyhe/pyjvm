@@ -10,9 +10,9 @@ def dump_class(path, echo):
     path = Path(path)
     with path.open(mode='rb') as file:
         cf = ClassFile(file)
-        echo(cf.this)
+        echo(f'{cf.this.name.value} : {cf.super_.name.value}')
         for field in cf.fields:
-            echo(field)
+            echo(f'\t{field.name.value}: {field.type}')
         for method in cf.methods:
             echo(method)
             for instruction in method.code.disassemble():
