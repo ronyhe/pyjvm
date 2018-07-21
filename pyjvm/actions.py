@@ -69,28 +69,6 @@ class IncrementProgramCounter(Action):
 
 
 @attr.s(frozen=True)
-class StoreInLocals(Action):
-    index = attr.ib()
-    value = attr.ib()
-
-    def __iter__(self):
-        yield self.index
-        yield self.value
-
-
-@attr.s(frozen=True)
-class Pop(Action):
-    amount = attr.ib(default=1)
-
-
-@attr.s(frozen=True)
-class StoreIntoArray(Action):
-    array = attr.ib()
-    index = attr.ib()
-    value = attr.ib()
-
-
-@attr.s(frozen=True)
 class Push(Action):
     value = attr.ib()
 
@@ -101,9 +79,36 @@ class PushMany(Action):
 
 
 @attr.s(frozen=True)
+class Pop(Action):
+    amount = attr.ib(default=1)
+
+
+@attr.s(frozen=True)
+class PushNewInstance(Action):
+    class_ = attr.ib()
+
+
+@attr.s(frozen=True)
 class DuplicateTop(Action):
     amount_to_take = attr.ib()
     index_for_insertion = attr.ib()
+
+
+@attr.s(frozen=True)
+class StoreInLocals(Action):
+    index = attr.ib()
+    value = attr.ib()
+
+    def __iter__(self):
+        yield self.index
+        yield self.value
+
+
+@attr.s(frozen=True)
+class StoreIntoArray(Action):
+    array = attr.ib()
+    index = attr.ib()
+    value = attr.ib()
 
 
 @attr.s(frozen=True)
@@ -114,11 +119,6 @@ class ThrowObject(Action):
 @attr.s(frozen=True)
 class CreateAndThrow(Action):
     class_name = attr.ib()
-
-
-@attr.s(frozen=True)
-class PushNewInstance(Action):
-    class_ = attr.ib()
 
 
 @attr.s(frozen=True)
