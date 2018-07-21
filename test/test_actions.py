@@ -1,7 +1,8 @@
-from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals
+from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
+    StoreIntoArray
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
-from pyjvm.model.jvm_types import Integer
+from pyjvm.model.jvm_types import Integer, ArrayReferenceType
 from pyjvm.model.stack import Stack
 from pyjvm.utils.jawa_conversions import convert_class_file
 from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
@@ -66,3 +67,18 @@ def test_store_in_locals():
         SOME_INT
     ))
     assert machine.frames.peek().locals.load(index) == SOME_INT
+
+
+def test_store_in_array():
+    array_type = ArrayReferenceType(Integer)
+    array_values = [Integer.create_instance(0) for _ in range(10)]
+
+    array = array_type.create_instance(array_values)
+    index = 3
+    value = SOME_INT
+
+    act_on_dummy(StoreIntoArray(
+        array, index, value
+    ))
+
+    assert array_values[index] == value
