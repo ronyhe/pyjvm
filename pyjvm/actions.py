@@ -94,10 +94,6 @@ class StoreInLocals(Action):
     index = attr.ib()
     value = attr.ib()
 
-    def __iter__(self):
-        yield self.index
-        yield self.value
-
 
 @attr.s(frozen=True)
 class StoreIntoArray(Action):

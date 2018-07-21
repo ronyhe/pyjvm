@@ -1,4 +1,4 @@
-from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop
+from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer
@@ -57,3 +57,12 @@ def test_duplicate_top():
     for _ in range(2):
         for i in range(2):
             assert stack.pop() == Integer.create_instance(i)
+
+
+def test_store_in_locals():
+    index = 1
+    machine = act_on_dummy(StoreInLocals(
+        index,
+        SOME_INT
+    ))
+    assert machine.frames.peek().locals.load(index) == SOME_INT

@@ -81,3 +81,6 @@ class Machine:
         copies = [v.type.create_instance(v.value) for v in values]
         for copy in reversed(copies):
             stack.insert_at_offset(index_for_insertion, copy)
+
+    def _store_in_locals(self, action):
+        self.frames.peek().locals.store(action.index, action.value)
