@@ -15,10 +15,11 @@ def dump_class(path, echo):
             echo(f'\t{field.name.value}: {field.type}')
         for method in cf.methods:
             echo(method)
-            for instruction in method.code.disassemble():
-                echo('\t' + str(instruction))
-            for ex in method.code.exception_table:
-                print(ex)
+            if method.code is not None:
+                for instruction in method.code.disassemble():
+                    echo('\t' + str(instruction))
+                for ex in method.code.exception_table:
+                    print(ex)
         echo()
         for constant in cf.constants:
             echo(constant)

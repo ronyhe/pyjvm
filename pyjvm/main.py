@@ -47,3 +47,7 @@ cli.add_command(dump_class)
 
 def main():
     cli()
+
+
+if __name__ == '__main__':
+    main()
