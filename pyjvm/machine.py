@@ -1,4 +1,3 @@
-import re
 from typing import Iterable
 
 from jawa.util.bytecode import Instruction
@@ -54,7 +53,12 @@ class Machine:
     def act(self, action):
         action_class = action.__class__.__name__
         snake_case = _to_snake_case(action_class)
-        getattr(self, snake_case)()
+        getattr(self, snake_case)(action)
 
-    def _increment_program_counter(self):
+    # noinspection PyUnusedLocal
+    def _increment_program_counter(self, action):
         self.frames.peek().pc += 1
+
+    def _push(self, action):
+        value = action.value
+        self.frames.peek().op_stack.push(value)
