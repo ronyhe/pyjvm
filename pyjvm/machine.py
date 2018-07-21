@@ -40,7 +40,6 @@ class Frame:
 
 
 def _to_snake_case(text):
-    letters = list(text)
     new_letters = [c if c.islower() else '_' + c.lower() for c in text]
     return ''.join(new_letters)
 

@@ -74,11 +74,6 @@ class Push(Action):
 
 
 @attr.s(frozen=True)
-class PushMany(Action):
-    values = attr.ib(factory=tuple, converter=tuple)
-
-
-@attr.s(frozen=True)
 class Pop(Action):
     amount = attr.ib(default=1)
 
