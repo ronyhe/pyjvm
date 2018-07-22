@@ -22,7 +22,7 @@ class BytecodeMethod:
     max_stack = attr.ib(converter=int)
     instructions = attr.ib(converter=tuple)
     args = attr.ib(converter=tuple)
-    exception_handlers = attr.ib(converter=tuple, default=tuple)
+    exception_handlers = attr.ib(converter=tuple, factory=tuple)
 
 
 @attr.s(frozen=True)
