@@ -1,6 +1,6 @@
 import pytest
 
-from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
+from pyjvm.actions import Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
     StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject, CreateAndThrow
 from pyjvm.machine import Machine, Frame, Unhandled
 from pyjvm.model.frame_locals import Locals
@@ -32,9 +32,9 @@ def act_on_dummy(action):
     return machine
 
 
-# def test_increment_program_counter():
-#     machine = act_on_dummy(IncrementProgramCounter())
-#     assert machine.frames.peek().pc == 1
+def test_increment_program_counter():
+    machine = act_on_dummy(IncrementProgramCounter())
+    assert machine.frames.peek().pc == 1
 
 
 def test_push():
