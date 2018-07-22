@@ -1,7 +1,8 @@
 import pytest
 
 from pyjvm.actions import Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject, CreateAndThrow
+    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject, CreateAndThrow, \
+    IncrementProgramCounter
 from pyjvm.machine import Machine, Frame, Unhandled
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_class import Handlers, ExceptionHandler
