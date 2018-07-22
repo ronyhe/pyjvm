@@ -28,6 +28,7 @@ class _DummyClass:
         self.class_field.access_flags.set('acc_static', True)
         self.type = ObjectReferenceType(self.name)
         self.method = self.class_file.methods.create('some_method', '(I)I', code=True)
+        self.method.code.max_locals = 5
         self.method.code.assemble([])
 
     def create_field_ref(self, constants, field):

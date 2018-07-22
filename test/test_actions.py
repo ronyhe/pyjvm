@@ -1,5 +1,5 @@
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField, PutStatic, GoTo
+    StoreIntoArray, PutField, PutStatic, GoTo, Invoke
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
@@ -121,3 +121,22 @@ def test_go_to():
     target = 15
     machine = act_on_dummy(GoTo(target))
     assert machine.frames.peek().pc == target
+
+
+def test_invoke():
+    machine = dummy_machine()
+    class_name = DUMMY_CLASS.name
+    method_name = DUMMY_CLASS.method.name.value
+    arguments = [machine.class_loader.default_instance(DUMMY_CLASS.name)]
+
+    machine.act(Invoke(
+        class_name,
+        method_name,
+        arguments
+    ))
+
+    stack = machine.frames
+    assert stack.size() == 2
+
+    locals_ = stack.peek().locals
+    assert locals_.load(0).type == DUMMY_CLASS.type

@@ -97,3 +97,12 @@ class Machine:
 
     def _go_to(self, action):
         self.frames.peek().pc = action.target
+
+    def _invoke(self, action):
+        class_ = self.class_loader.get_the_class(action.class_name)
+        method = class_.methods[action.method_name]
+        frame = Frame.from_class_and_method(class_, method)
+        for index, value in enumerate(action.arguments):
+            frame.locals.store(index, value)
+
+        self.frames.push(frame)
