@@ -1,5 +1,8 @@
+import jawa
+
 from pyjvm.model.jvm_class import JvmObject
 from pyjvm.model.jvm_types import RootObjectType, ObjectReferenceType
+from pyjvm.utils.jawa_conversions import convert_class_file
 
 
 def _name_and_default_value(pair):
@@ -85,3 +88,15 @@ class FixedClassLoader(ClassLoader):
 class EmptyClassLoader(FixedClassLoader):
     def __init__(self):
         super().__init__(dict())
+
+
+class TraditionalLoader(ClassLoader):
+    def __init__(self, cp_string):
+        super().__init__()
+        # noinspection PyUnresolvedReferences
+        self._jawa_loader = jawa.classloader.ClassLoader(cp_string)
+
+    def _load_jvm_class(self, name):
+        cf = self._jawa_loader[name]
+        class_ = convert_class_file(cf)
+        return class_
