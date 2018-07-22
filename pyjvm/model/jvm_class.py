@@ -15,6 +15,17 @@ class ExceptionHandler:
     handler_pc = attr.ib()
     catch_type = attr.ib()
 
+    def relevant_to_pc(self, pc):
+        return pc in range(self.start_pc, self.end_pc)
+
+
+@attr.s(frozen=True)
+class Handlers:
+    handlers = attr.ib(converter=tuple, factory=tuple)
+
+    def find_handlers(self, pc):
+        return tuple(handler for handler in self.handlers if handler.relevant_to_pc(pc))
+
 
 @attr.s(frozen=True)
 class BytecodeMethod:
@@ -22,7 +33,7 @@ class BytecodeMethod:
     max_stack = attr.ib(converter=int)
     instructions = attr.ib(converter=tuple)
     args = attr.ib(converter=tuple)
-    exception_handlers = attr.ib(converter=tuple, factory=tuple)
+    exception_handlers = attr.ib(factory=Handlers)
 
 
 @attr.s(frozen=True)
