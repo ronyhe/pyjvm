@@ -1,6 +1,8 @@
+import pytest
+
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult
-from pyjvm.machine import Machine, Frame
+    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject
+from pyjvm.machine import Machine, Frame, Unhandled
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
 from pyjvm.model.stack import Stack
@@ -165,3 +167,10 @@ def test_return_result():
     assert frames.size() == 1
     assert ops.size() == 1
     assert ops.peek() == SOME_INT
+
+
+def test_throw_object():
+    machine = dummy_machine()
+    instance = machine.class_loader.default_instance(DUMMY_CLASS.name)
+    with pytest.raises(Unhandled):
+        machine.act(ThrowObject(instance))

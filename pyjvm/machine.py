@@ -4,9 +4,11 @@ from jawa.util.bytecode import Instruction
 
 from pyjvm.model.class_loaders import ClassLoader
 from pyjvm.model.frame_locals import Locals
-from pyjvm.model.jvm_class import BytecodeMethod, JvmClass
+from pyjvm.model.hierarchies import is_value_instance_of
+from pyjvm.model.jvm_class import BytecodeMethod, JvmClass, Handlers
 from pyjvm.model.jvm_types import JvmValue
 from pyjvm.model.stack import Stack
+from pyjvm.utils.utils import class_as_descriptor
 
 
 class Frame:
@@ -24,11 +26,13 @@ class Frame:
                  _locals: Locals,
                  op_stack: Stack[JvmValue],
                  instructions: Iterable[Instruction],
+                 handlers=Handlers(),
                  pc=0):
         self.class_ = class_
         self.locals = _locals
         self.op_stack = op_stack
         self.instructions = tuple(instructions)
+        self.handlers = handlers
         self.pc = pc
 
     def next_instruction(self):
@@ -39,9 +43,9 @@ class Frame:
         raise IndexError('No more instructions')
 
 
-def _to_snake_case(text):
-    new_letters = [c if c.islower() else '_' + c.lower() for c in text]
-    return ''.join(new_letters)
+class Unhandled(Exception):
+    def __init__(self, instance):
+        self.instance = instance
 
 
 class Machine:
@@ -116,3 +120,28 @@ class Machine:
         frames = self.frames
         frames.pop()
         frames.peek().op_stack.push(action.result)
+
+    def _throw_object(self, action):
+        self._throw_instance(action.value)
+
+    def _throw_instance(self, instance):
+        frames = self.frames
+        frame = frames.peek()
+        handlers = frame.handlers.find_handlers(frame.pc)
+        for handler in handlers:
+            class_name = frame.constants[handler.catch_type].name.value
+            type_match = is_value_instance_of(instance, class_as_descriptor(class_name), self.class_loader)
+            if type_match:
+                self.pc = handler.handler_pc
+                break
+
+        frames.pop()
+        if frames.size() == 0:
+            raise Unhandled(instance)
+        else:
+            self._throw_instance(instance)
+
+
+def _to_snake_case(text):
+    new_letters = [c if c.islower() else '_' + c.lower() for c in text]
+    return ''.join(new_letters)
