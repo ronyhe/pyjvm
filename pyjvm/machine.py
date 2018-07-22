@@ -89,6 +89,7 @@ class Machine:
     def _store_into_array(self, action):
         action.array.value[action.index] = action.value
 
+    # noinspection PyMethodMayBeStatic
     def _put_field(self, action):
         action.object_.value.fields[action.field_name] = action.value
 
