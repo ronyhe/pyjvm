@@ -1,5 +1,5 @@
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid
+    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
@@ -154,3 +154,14 @@ def test_return_void():
     machine.act(ReturnVoid())
     assert frames.size() == 1
     assert frames.peek().op_stack.size() == 0
+
+
+def test_return_result():
+    machine = dummy_machine()
+    frames = machine.frames
+    frames.push(dummy_frame())
+    machine.act(ReturnResult(SOME_INT))
+    ops = frames.peek().op_stack
+    assert frames.size() == 1
+    assert ops.size() == 1
+    assert ops.peek() == SOME_INT

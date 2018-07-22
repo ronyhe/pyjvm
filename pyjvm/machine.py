@@ -107,5 +107,11 @@ class Machine:
 
         self.frames.push(frame)
 
+    # noinspection PyUnusedLocal
     def _return_void(self, action):
         self.frames.pop()
+
+    def _return_result(self, action):
+        frames = self.frames
+        frames.pop()
+        frames.peek().op_stack.push(action.result)
