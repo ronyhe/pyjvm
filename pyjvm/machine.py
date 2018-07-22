@@ -73,7 +73,7 @@ class Machine:
 
     def _push_new_instance(self, action):
         class_ = action.class_
-        instance = self.class_loader.default_instance(class_.name)
+        instance = self._create_instance(class_.name)
         self.frames.peek().op_stack.push(instance)
 
     def _duplicate_top(self, action):
@@ -124,6 +124,11 @@ class Machine:
     def _throw_object(self, action):
         self._throw_instance(action.value)
 
+    def _create_and_throw(self, action):
+        class_name = action.class_name
+        instance = self._create_instance(class_name)
+        self._throw_instance(instance)
+
     def _throw_instance(self, instance):
         frames = self.frames
         frame = frames.peek()
@@ -140,6 +145,9 @@ class Machine:
             raise Unhandled(instance)
         else:
             self._throw_instance(instance)
+
+    def _create_instance(self, class_name):
+        return self.class_loader.default_instance(class_name)
 
 
 def _to_snake_case(text):

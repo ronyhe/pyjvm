@@ -1,7 +1,7 @@
 import pytest
 
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject
+    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject, CreateAndThrow
 from pyjvm.machine import Machine, Frame, Unhandled
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_class import Handlers, ExceptionHandler
@@ -214,3 +214,13 @@ def test_throw_with_handler():
     assert frames.size() == 2
     assert frames.peek() is frame_with_handler
     assert frames.peek().pc == handler_pc
+
+
+def test_create_and_throw():
+    machine = dummy_machine()
+    try:
+        machine.act(CreateAndThrow(DUMMY_CLASS.name))
+    except Unhandled as ex:
+        assert ex.instance.type == DUMMY_CLASS.type
+    else:
+        pytest.fail()
