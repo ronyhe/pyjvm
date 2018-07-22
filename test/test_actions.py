@@ -4,12 +4,17 @@ from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, D
     StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject
 from pyjvm.machine import Machine, Frame, Unhandled
 from pyjvm.model.frame_locals import Locals
+from pyjvm.model.jvm_class import Handlers, ExceptionHandler
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
 from pyjvm.model.stack import Stack
 from pyjvm.utils.jawa_conversions import convert_class_file
 from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
 
-DUMMY_AS_JVM_CLASS = convert_class_file(DUMMY_CLASS.class_file)
+3
+
+
+def dummy_as_jvm_class():
+    return convert_class_file(DUMMY_CLASS.class_file)
 
 
 def dummy_frame():
@@ -50,7 +55,7 @@ def test_pop():
 
 
 def test_push_new_instance():
-    machine = act_on_dummy(PushNewInstance(DUMMY_AS_JVM_CLASS))
+    machine = act_on_dummy(PushNewInstance(dummy_as_jvm_class()))
     stack = machine.frames.peek().op_stack
     assert stack.peek().type == DUMMY_CLASS.type
 
@@ -174,3 +179,38 @@ def test_throw_object():
     instance = machine.class_loader.default_instance(DUMMY_CLASS.name)
     with pytest.raises(Unhandled):
         machine.act(ThrowObject(instance))
+
+
+def test_throw_with_handler():
+    machine = dummy_machine()
+    class_ = dummy_as_jvm_class()
+    class_constant = class_.constants.create_class(DUMMY_CLASS.name)
+
+    handler_pc = 8
+    frame_with_handler = Frame(
+        dummy_as_jvm_class(),
+        Locals(5),
+        Stack(),
+        [],
+        Handlers([
+            ExceptionHandler(
+                start_pc=0,
+                end_pc=1,
+                handler_pc=handler_pc,
+                catch_type=class_constant.index
+            )
+        ])
+    )
+
+    frame_that_throws = dummy_frame()
+
+    frames = machine.frames
+    frames.push(frame_with_handler)
+    frames.push(frame_that_throws)
+
+    instance = machine.class_loader.default_instance(DUMMY_CLASS.name)
+    machine.act(ThrowObject(instance))
+
+    assert frames.size() == 2
+    assert frames.peek() is frame_with_handler
+    assert frames.peek().pc == handler_pc

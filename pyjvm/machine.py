@@ -129,11 +129,11 @@ class Machine:
         frame = frames.peek()
         handlers = frame.handlers.find_handlers(frame.pc)
         for handler in handlers:
-            class_name = frame.constants[handler.catch_type].name.value
+            class_name = frame.class_.constants[handler.catch_type].name.value
             type_match = is_value_instance_of(instance, class_as_descriptor(class_name), self.class_loader)
             if type_match:
-                self.pc = handler.handler_pc
-                break
+                frame.pc = handler.handler_pc
+                return
 
         frames.pop()
         if frames.size() == 0:
