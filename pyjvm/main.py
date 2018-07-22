@@ -5,8 +5,10 @@ from jawa.cf import ClassFile
 from jawa.classloader import ClassLoader
 from jawa.util.bytecode import opcode_table
 
+from pyjvm import machine
 from pyjvm.actions import Action
 from pyjvm.instructions.instructions import get_implemented_instructions
+from pyjvm.model.class_loaders import TraditionalLoader
 from pyjvm.utils import utils
 
 
@@ -53,6 +55,14 @@ def dump_class(path):
 def dump_class_from_jar(path, name):
     loader = ClassLoader(path)
     utils.dump_class(loader[name], click.echo)
+
+
+@click.command()
+@click.argument('main_class')
+@click.option('-cp', default='')
+def run(main_class, cp):
+    loader = TraditionalLoader(cp)
+    machine.run(loader, main_class)
 
 
 cli.add_command(action_report)
