@@ -2,6 +2,7 @@ from typing import Iterable
 
 from jawa.util.bytecode import Instruction
 
+from pyjvm.instructions.instructions import execute_instruction, InstructorInputs
 from pyjvm.model.class_loaders import ClassLoader
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.hierarchies import is_value_instance_of
@@ -51,7 +52,26 @@ class Unhandled(Exception):
 class Machine:
     def __init__(self, class_loader: ClassLoader):
         self.class_loader = class_loader
+        self.class_loader.first_load_function = self._first_class_load
         self.frames = Stack()
+
+    def run(self):
+        while True:
+            frame = self.frames.peek()
+            try:
+                instruction = frame.next_instruction()
+            except IndexError:
+                break
+            inputs = InstructorInputs(
+                instruction=instruction,
+                locals=frame.locals,
+                op_stack=frame.op_stack,
+                constants=frame.class_.constants,
+                loader=self.class_loader
+            )
+            actions = execute_instruction(inputs)
+            for action in actions:
+                self.act(action)
 
     def act(self, action):
         action_class = action.__class__.__name__
@@ -150,7 +170,28 @@ class Machine:
     def _create_instance(self, class_name):
         return self.class_loader.default_instance(class_name)
 
+    def _first_class_load(self, class_):
+        try:
+            method = class_.methods['clinit']
+        except KeyError:
+            return
+        temp_stack = Stack()
+        temp_stack.push(Frame.from_class_and_method(class_, method))
+
+        old_stack = self.frames
+        self.frames = temp_stack
+        self.run()
+        self.frames = old_stack
+
 
 def _to_snake_case(text):
     new_letters = [c if c.islower() else '_' + c.lower() for c in text]
     return ''.join(new_letters)
+
+
+def run(loader, main_class_name):
+    class_ = loader.get_the_class(main_class_name)
+    frame = Frame.from_class_and_method(class_, class_.methods['main'])
+    machine = Machine(loader)
+    machine.frames.push(frame)
+    machine.run()
