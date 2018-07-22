@@ -56,8 +56,7 @@ class Instructor:
         return self.op_stack.peek(*args, **kwargs)
 
     def peek_many(self, amount):
-        for i in range(amount):
-            yield self.peek_op_stack(i)
+        return [self.peek_op_stack(i) for i in range(amount)]
 
 
 def execute_instruction(inputs):

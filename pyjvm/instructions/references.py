@@ -197,7 +197,7 @@ class PutStatic(Instructor):
 class GetStatic(Instructor):
     def execute(self):
         field_ref = self.operand_as_constant()
-        field_name = field_ref.name_and_type.name.value.value
+        field_name = field_ref.name_and_type.name.value
         class_name = field_ref.class_.name.value
 
         value = self.loader.get_the_statics(class_name)[field_name]

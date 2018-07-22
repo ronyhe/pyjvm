@@ -65,6 +65,7 @@ def run(main_class, cp):
     machine.run(loader, main_class)
 
 
+cli.add_command(run)
 cli.add_command(action_report)
 cli.add_command(instruction_report)
 cli.add_command(dump_class)

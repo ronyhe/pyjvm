@@ -80,7 +80,9 @@ class Machine:
 
     # noinspection PyUnusedLocal
     def _increment_program_counter(self, action):
-        self.frames.peek().pc += 1
+        frame = self.frames.peek()
+        current_instruction = frame.next_instruction()
+        frame.pc = current_instruction.pos + 1
 
     def _push(self, action):
         value = action.value

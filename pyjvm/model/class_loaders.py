@@ -94,7 +94,7 @@ class TraditionalLoader(ClassLoader):
     def __init__(self, cp_string):
         super().__init__()
         # noinspection PyUnresolvedReferences
-        self._jawa_loader = jawa.classloader.ClassLoader(cp_string)
+        self._jawa_loader = jawa.classloader.ClassLoader(*cp_string.split(':'))
 
     def _load_jvm_class(self, name):
         cf = self._jawa_loader[name]

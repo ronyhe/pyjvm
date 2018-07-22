@@ -44,12 +44,20 @@ def convert_class_file(cf: ClassFile) -> JvmClass:
 
 def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
     arg_types = [convert_type(t) for t in method.args]
-    return BytecodeMethod(
-        method.code.max_locals,
-        method.code.max_stack,
-        method.code.disassemble(),
-        arg_types
-    )
+    if method.code is not None:
+        return BytecodeMethod(
+            method.code.max_locals,
+            method.code.max_stack,
+            method.code.disassemble(),
+            arg_types
+        )
+    else:
+        return BytecodeMethod(
+            0,
+            0,
+            [],
+            arg_types
+        )
 
 
 def convert_type(type_: jawa.util.descriptor.JVMType) -> Type:
