@@ -212,8 +212,14 @@ def test_throw_with_handler():
     machine.act(ThrowObject(instance))
 
     assert frames.size() == 2
-    assert frames.peek() is frame_with_handler
-    assert frames.peek().pc == handler_pc
+
+    top_frame = frames.peek()
+    assert top_frame is frame_with_handler
+    assert top_frame.pc == handler_pc
+
+    op_stack = top_frame.op_stack
+    assert op_stack.size() == 1
+    assert op_stack.peek() == instance
 
 
 def test_create_and_throw():

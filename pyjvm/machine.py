@@ -137,6 +137,7 @@ class Machine:
             class_name = frame.class_.constants[handler.catch_type].name.value
             type_match = is_value_instance_of(instance, class_as_descriptor(class_name), self.class_loader)
             if type_match:
+                frame.op_stack.push(instance)
                 frame.pc = handler.handler_pc
                 return
 
