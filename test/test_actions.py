@@ -10,8 +10,6 @@ from pyjvm.model.stack import Stack
 from pyjvm.utils.jawa_conversions import convert_class_file
 from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
 
-3
-
 
 def dummy_as_jvm_class():
     return convert_class_file(DUMMY_CLASS.class_file)
