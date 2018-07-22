@@ -106,3 +106,6 @@ class Machine:
             frame.locals.store(index, value)
 
         self.frames.push(frame)
+
+    def _return_void(self, action):
+        self.frames.pop()

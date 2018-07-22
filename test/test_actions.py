@@ -1,5 +1,5 @@
 from pyjvm.actions import IncrementProgramCounter, Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
-    StoreIntoArray, PutField, PutStatic, GoTo, Invoke
+    StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid
 from pyjvm.machine import Machine, Frame
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
@@ -10,9 +10,13 @@ from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
 DUMMY_AS_JVM_CLASS = convert_class_file(DUMMY_CLASS.class_file)
 
 
+def dummy_frame():
+    return Frame(convert_class_file(DUMMY_CLASS.class_file), Locals(5), Stack(), [])
+
+
 def dummy_machine():
     machine = Machine(dummy_loader())
-    frame = Frame(convert_class_file(DUMMY_CLASS.class_file), Locals(5), Stack(), [])
+    frame = dummy_frame()
     machine.frames.push(frame)
     return machine
 
@@ -140,3 +144,13 @@ def test_invoke():
 
     locals_ = stack.peek().locals
     assert locals_.load(0).type == DUMMY_CLASS.type
+
+
+def test_return_void():
+    machine = dummy_machine()
+    frames = machine.frames
+    frames.push(dummy_frame())
+    assert frames.size() == 2
+    machine.act(ReturnVoid())
+    assert frames.size() == 1
+    assert frames.peek().op_stack.size() == 0
