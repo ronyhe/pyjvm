@@ -1,28 +1,22 @@
-from pathlib import Path
-
-from jawa.cf import ClassFile
 from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.model.jvm_types import Integer
 
 
-def dump_class(path, echo):
-    path = Path(path)
-    with path.open(mode='rb') as file:
-        cf = ClassFile(file)
-        echo(f'{cf.this.name.value} : {cf.super_.name.value}')
-        for field in cf.fields:
-            echo(f'\t{field.name.value}: {field.type}')
-        for method in cf.methods:
-            echo(method)
-            if method.code is not None:
-                for instruction in method.code.disassemble():
-                    echo('\t' + str(instruction))
-                for ex in method.code.exception_table:
-                    print(ex)
-        echo()
-        for constant in cf.constants:
-            echo(constant)
+def dump_class(cf, echo):
+    echo(f'{cf.this.name.value} : {cf.super_.name.value}')
+    for field in cf.fields:
+        echo(f'\t{field.name.value}: {field.type}')
+    for method in cf.methods:
+        echo(method)
+        if method.code is not None:
+            for instruction in method.code.disassemble():
+                echo('\t' + str(instruction))
+            for ex in method.code.exception_table:
+                print(ex)
+    echo()
+    for constant in cf.constants:
+        echo(constant)
 
 
 def split_by_predicate(iterable, predicate):
