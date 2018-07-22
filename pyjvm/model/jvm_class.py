@@ -9,11 +9,20 @@ NAME_OF_STATIC_CONSTRUCTOR = 'clinit'
 
 
 @attr.s(frozen=True)
+class ExceptionHandler:
+    start_pc = attr.ib()
+    end_pc = attr.ib()
+    handler_pc = attr.ib()
+    catch_type = attr.ib()
+
+
+@attr.s(frozen=True)
 class BytecodeMethod:
     max_locals = attr.ib(converter=int)
     max_stack = attr.ib(converter=int)
     instructions = attr.ib(converter=tuple)
     args = attr.ib(converter=tuple)
+    exception_handlers = attr.ib(converter=tuple, default=tuple)
 
 
 @attr.s(frozen=True)
