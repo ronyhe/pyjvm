@@ -73,9 +73,9 @@ class Machine:
             except IndexError:
                 break
             else:
-                self.run_instruction(instruction)
+                self._run_instruction(instruction)
 
-    def run_instruction(self, instruction):
+    def _run_instruction(self, instruction):
         frame = self.frames.peek()
         inputs = InstructorInputs(
             instruction=instruction,
