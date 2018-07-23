@@ -49,14 +49,16 @@ def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
             method.code.max_locals,
             method.code.max_stack,
             method.code.disassemble(),
-            arg_types
+            arg_types,
+            name=method.name.value
         )
     else:
         return BytecodeMethod(
             0,
             0,
             [],
-            arg_types
+            arg_types,
+            name=method.name.value
         )
 
 

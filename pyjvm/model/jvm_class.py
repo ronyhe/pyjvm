@@ -34,6 +34,7 @@ class BytecodeMethod:
     instructions = attr.ib(converter=tuple)
     args = attr.ib(converter=tuple)
     exception_handlers = attr.ib(factory=Handlers)
+    name = attr.ib(default='no_method_name')
 
 
 @attr.s(frozen=True)

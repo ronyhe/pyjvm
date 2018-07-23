@@ -1,5 +1,5 @@
 from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter
+from pyjvm.actions import IncrementProgramCounter, Actions
 from pyjvm.instructions.instructions import bytecode, Instructor
 
 
@@ -21,7 +21,7 @@ class InvokeVirtual(Instructor):
         num_args = len(method.args) + self.args_to_add
         args = self.peek_many(num_args)
 
-        return IncrementProgramCounter.after(
+        return Actions(
             actions.Pop(num_args),
             actions.Invoke(class_name, method_name, args)
         )

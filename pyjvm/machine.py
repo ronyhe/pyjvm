@@ -19,7 +19,8 @@ class Frame:
             class_,
             Locals(method.max_locals),
             Stack(max_depth=method.max_stack),
-            method.instructions
+            method.instructions,
+            method_name=method.name
         )
 
     def __init__(self,
@@ -28,13 +29,15 @@ class Frame:
                  op_stack: Stack[JvmValue],
                  instructions: Iterable[Instruction],
                  handlers=Handlers(),
-                 pc=0):
+                 pc=0,
+                 method_name='no_method_name'):
         self.class_ = class_
         self.locals = _locals
         self.op_stack = op_stack
         self.instructions = tuple(instructions)
         self.handlers = handlers
         self.pc = pc
+        self.method_name = method_name
 
     def next_instruction(self):
         for ins in self.instructions:
@@ -49,11 +52,18 @@ class Unhandled(Exception):
         self.instance = instance
 
 
+def _default_echo(*args, **kwargs):
+    pass
+
+
 class Machine:
-    def __init__(self, class_loader: ClassLoader):
+    def __init__(self, class_loader: ClassLoader, echo=None):
         self.class_loader = class_loader
         self.class_loader.first_load_function = self._first_class_load
         self.frames = Stack()
+        self.echo = echo
+        if self.echo is None:
+            self.echo = _default_echo
 
     def run(self):
         while True:
@@ -62,16 +72,23 @@ class Machine:
                 instruction = frame.next_instruction()
             except IndexError:
                 break
-            inputs = InstructorInputs(
-                instruction=instruction,
-                locals=frame.locals,
-                op_stack=frame.op_stack,
-                constants=frame.class_.constants,
-                loader=self.class_loader
-            )
-            actions = execute_instruction(inputs)
-            for action in actions:
-                self.act(action)
+            else:
+                self.run_instruction(instruction)
+
+    def run_instruction(self, instruction):
+        frame = self.frames.peek()
+        inputs = InstructorInputs(
+            instruction=instruction,
+            locals=frame.locals,
+            op_stack=frame.op_stack,
+            constants=frame.class_.constants,
+            loader=self.class_loader
+        )
+        actions = execute_instruction(inputs)
+        self.echo(f'{frame.class_.name}#{frame.method_name}, {instruction}')
+        for action in actions:
+            self.echo('\t' + str(action))
+            self.act(action)
 
     def act(self, action):
         action_class = action.__class__.__name__
@@ -137,11 +154,13 @@ class Machine:
     # noinspection PyUnusedLocal
     def _return_void(self, action):
         self.frames.pop()
+        self._increment_program_counter(None)
 
     def _return_result(self, action):
         frames = self.frames
         frames.pop()
         frames.peek().op_stack.push(action.result)
+        self._increment_program_counter(None)
 
     def _throw_object(self, action):
         self._throw_instance(action.value)
@@ -191,9 +210,9 @@ def _to_snake_case(text):
     return ''.join(new_letters)
 
 
-def run(loader, main_class_name):
+def run(loader, main_class_name, echo=None):
     class_ = loader.get_the_class(main_class_name)
     frame = Frame.from_class_and_method(class_, class_.methods['main'])
-    machine = Machine(loader)
+    machine = Machine(loader, echo=echo)
     machine.frames.push(frame)
     machine.run()

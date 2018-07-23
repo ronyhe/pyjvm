@@ -60,9 +60,14 @@ def dump_class_from_jar(path, name):
 @click.command()
 @click.argument('main_class')
 @click.option('-cp', default='')
-def run(main_class, cp):
+@click.option('--report', is_flag=True)
+def run(main_class, cp, report):
     loader = TraditionalLoader(cp)
-    machine.run(loader, main_class)
+    if report:
+        echo = print
+    else:
+        echo = None
+    machine.run(loader, main_class, echo=echo)
 
 
 cli.add_command(run)
