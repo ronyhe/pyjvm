@@ -18,7 +18,8 @@ def dummy_as_jvm_class():
 
 
 def dummy_frame():
-    return Frame(convert_class_file(DUMMY_CLASS.class_file), Locals(5), Stack(), [Instruction.create('iload_0')])
+    random_non_empty_instruction_list = [Instruction.create('iload_0')]
+    return Frame(convert_class_file(DUMMY_CLASS.class_file), Locals(5), Stack(), random_non_empty_instruction_list)
 
 
 def dummy_machine():
