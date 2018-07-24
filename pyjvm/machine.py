@@ -67,11 +67,11 @@ class Machine:
 
     def run(self):
         while True:
-            frame = self.frames.peek()
             try:
+                frame = self.frames.peek()
                 instruction = frame.next_instruction()
             except IndexError:
-                break
+                return
             else:
                 self._run_instruction(instruction)
 
@@ -97,7 +97,10 @@ class Machine:
 
     # noinspection PyUnusedLocal
     def _increment_program_counter(self, action):
-        frame = self.frames.peek()
+        try:
+            frame = self.frames.peek()
+        except IndexError:
+            return
         current_instruction = frame.next_instruction()
         frame.pc = current_instruction.pos + 1
 
