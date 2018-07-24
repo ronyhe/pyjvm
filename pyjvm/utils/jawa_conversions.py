@@ -7,7 +7,8 @@ from jawa.cf import ClassFile
 from jawa.methods import Method
 
 from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey
-from pyjvm.model.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType
+from pyjvm.model.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType, \
+    RootObjectType
 from pyjvm.utils.utils import split_by_predicate
 
 _LETTERS_MAP = {
@@ -41,9 +42,16 @@ def convert_class_file(cf: ClassFile) -> JvmClass:
     static_fields = _fields_to_pairs(static_fields)
     instance_fields = _fields_to_pairs(instance_fields)
 
+    class_name = cf.this.name.value
+    is_root = class_name == RootObjectType.refers_to
+    if is_root:
+        parent_name = None
+    else:
+        parent_name = cf.super_.name.value
+
     return JvmClass(
-        cf.this.name.value,
-        cf.super_.name.value,
+        class_name,
+        parent_name,
         cf.constants,
         (face.name.value for face in cf.interfaces),
         instance_fields,
