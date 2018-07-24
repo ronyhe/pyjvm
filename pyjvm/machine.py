@@ -85,8 +85,8 @@ class Machine:
             constants=frame.class_.constants,
             loader=self.class_loader
         )
-        actions = execute_instruction(inputs)
         self.echo(f'{frame.class_.name}#{frame.method_name}, {instruction}')
+        actions = execute_instruction(inputs)
         for action in actions:
             self.echo('\t' + str(action))
             self.act(action)
