@@ -48,6 +48,12 @@ class JvmClass:
     static_fields = attr.ib(converter=dict, default=())
 
 
+@attr.s(frozen=True)
+class MethodKey:
+    name = attr.ib(type=str, converter=str)
+    descriptor = attr.ib(type=str, converter=str)
+
+
 class JvmObject:
     @classmethod
     def defaults(cls, field_specs):

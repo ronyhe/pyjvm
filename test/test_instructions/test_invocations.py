@@ -1,13 +1,15 @@
 from jawa.constants import ConstantPool
 
 from pyjvm.actions import Pop, Invoke
+from pyjvm.model.jvm_class import MethodKey
 from pyjvm.model.jvm_types import Integer
+from pyjvm.utils.jawa_conversions import key_from_method
 from test.utils import DUMMY_CLASS, constant_instruction, dummy_loader, \
     assert_instruction
 
 
 def test_invoke_virtual():
-    method_name = DUMMY_CLASS.method.name.value
+    key = key_from_method(DUMMY_CLASS.method)
     loader = dummy_loader()
 
     consts = ConstantPool()
@@ -24,6 +26,6 @@ def test_invoke_virtual():
         op_stack=[instance, argument],
         expected=[
             Pop(2),
-            Invoke(class_name, method_name, [instance, argument])
+            Invoke(class_name, key, [instance, argument])
         ]
     )

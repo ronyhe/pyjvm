@@ -9,7 +9,7 @@ from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_class import Handlers, ExceptionHandler
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
 from pyjvm.model.stack import Stack
-from pyjvm.utils.jawa_conversions import convert_class_file
+from pyjvm.utils.jawa_conversions import convert_class_file, key_from_method
 from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
 
 
@@ -138,12 +138,12 @@ def test_go_to():
 def test_invoke():
     machine = dummy_machine()
     class_name = DUMMY_CLASS.name
-    method_name = DUMMY_CLASS.method.name.value
+    method_key = key_from_method(DUMMY_CLASS.method)
     arguments = [machine.class_loader.default_instance(DUMMY_CLASS.name)]
 
     machine.act(Invoke(
         class_name,
-        method_name,
+        method_key,
         arguments
     ))
 
