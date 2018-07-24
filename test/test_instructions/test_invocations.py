@@ -2,7 +2,8 @@ from jawa.constants import ConstantPool
 
 from pyjvm.actions import Pop, Invoke
 from pyjvm.model.jvm_types import Integer
-from test.utils import DUMMY_CLASS, assert_incrementing_instruction, constant_instruction, dummy_loader
+from test.utils import DUMMY_CLASS, constant_instruction, dummy_loader, \
+    assert_instruction
 
 
 def test_invoke_virtual():
@@ -17,7 +18,7 @@ def test_invoke_virtual():
 
     argument = Integer.create_instance(31)
 
-    assert_incrementing_instruction(
+    assert_instruction(
         constants=consts,
         instruction=constant_instruction('invokevirtual', method_ref),
         op_stack=[instance, argument],

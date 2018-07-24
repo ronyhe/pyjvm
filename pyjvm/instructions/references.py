@@ -198,6 +198,15 @@ class GetStatic(Instructor):
     def execute(self):
         field_ref = self.operand_as_constant()
         field_name = field_ref.name_and_type.name.value
+
+        # I'm not sure what I'm missing here.
+        # This changes between test and actual class files, so I must be creating the field_ref the wrong way.
+        # But I still don't know how exactly.
+        try:
+            field_name = field_name.value
+        except AttributeError:
+            pass
+
         class_name = field_ref.class_.name.value
 
         value = self.loader.get_the_statics(class_name)[field_name]
