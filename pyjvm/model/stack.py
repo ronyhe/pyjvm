@@ -15,9 +15,12 @@ class Stack(Generic[T]):
         return self._values.pop(0)
 
     def push(self, value: T):
-        if self.max_depth is not None and len(self._values) == self.max_depth:
+        self._values.insert(0, value)
+        self._validate_size()
+
+    def _validate_size(self):
+        if self.max_depth is not None and len(self._values) > self.max_depth + 1:
             raise OverflowError('Max amount of values in stack, cannot add more')
-        return self._values.insert(0, value)
 
     def insert_at_offset(self, offset, value):
         if offset < 0:
@@ -27,6 +30,7 @@ class Stack(Generic[T]):
             raise IndexError(f'Cannot insert to stack at offset {offset} '
                              f'because the current size of the stack is {current_size}')
         self._values.insert(offset, value)
+        self._validate_size()
 
     def peek(self, index=0) -> T:
         return self._values[index]
