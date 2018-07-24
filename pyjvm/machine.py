@@ -6,7 +6,7 @@ from pyjvm.instructions.instructions import execute_instruction, InstructorInput
 from pyjvm.model.class_loaders import ClassLoader
 from pyjvm.model.frame_locals import Locals
 from pyjvm.model.hierarchies import is_value_instance_of
-from pyjvm.model.jvm_class import BytecodeMethod, JvmClass, Handlers
+from pyjvm.model.jvm_class import BytecodeMethod, JvmClass, Handlers, MethodKey
 from pyjvm.model.jvm_types import JvmValue
 from pyjvm.model.stack import Stack
 from pyjvm.utils.utils import class_as_descriptor
@@ -212,7 +212,9 @@ def _to_snake_case(text):
 
 def run(loader, main_class_name, echo=None):
     class_ = loader.get_the_class(main_class_name)
-    frame = Frame.from_class_and_method(class_, class_.methods['main'])
+    key = MethodKey('main', '([Ljava/lang/String;)V')
+    method = class_.methods[key]
+    frame = Frame.from_class_and_method(class_, method)
     machine = Machine(loader, echo=echo)
     machine.frames.push(frame)
     machine.run()
