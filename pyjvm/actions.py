@@ -81,7 +81,7 @@ class Pop(Action):
 @attr.s(frozen=True)
 class PushNewInstance(Action):
     class_ = attr.ib()
-    
+
     def __str__(self):
         return f'{self.__class__.__name__}({self.class_.name})'
 

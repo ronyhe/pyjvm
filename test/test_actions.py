@@ -1,5 +1,4 @@
 import pytest
-from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
     StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject, CreateAndThrow, \
@@ -10,7 +9,7 @@ from pyjvm.model.jvm_class import Handlers, ExceptionHandler
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType
 from pyjvm.model.stack import Stack
 from pyjvm.utils.jawa_conversions import convert_class_file, key_from_method
-from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT
+from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT, NON_EMPTY_INSTRUCTION_LIST
 
 
 def dummy_as_jvm_class():
@@ -18,8 +17,7 @@ def dummy_as_jvm_class():
 
 
 def dummy_frame():
-    random_non_empty_instruction_list = [Instruction.create('iload_0')]
-    return Frame(convert_class_file(DUMMY_CLASS.class_file), Locals(5), Stack(), random_non_empty_instruction_list)
+    return Frame(convert_class_file(DUMMY_CLASS.class_file), Locals(5), Stack(), NON_EMPTY_INSTRUCTION_LIST)
 
 
 def dummy_machine():

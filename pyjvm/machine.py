@@ -150,6 +150,8 @@ class Machine:
             frame.locals.store(index, value)
 
         self.frames.push(frame)
+        if len(method.instructions) < 1:
+            self._return_void(None)
 
     # noinspection PyUnusedLocal
     def _return_void(self, action):

@@ -16,6 +16,8 @@ SOME_INT = Integer.create_instance(2)
 _OP_STACK_KEY = 'op_stack'
 _INSTRUCTION_KEY = 'instruction'
 
+NON_EMPTY_INSTRUCTION_LIST = [Instruction.create('nop')]
+
 
 class _DummyClass:
     DESCRIPTOR = 'I'
@@ -29,7 +31,7 @@ class _DummyClass:
         self.type = ObjectReferenceType(self.name)
         self.method = self.class_file.methods.create('some_method', '(I)I', code=True)
         self.method.code.max_locals = 5
-        self.method.code.assemble([])
+        self.method.code.assemble(NON_EMPTY_INSTRUCTION_LIST)
 
     def create_field_ref(self, constants, field):
         return constants.create_field_ref(self.name, field.name, self.DESCRIPTOR)
