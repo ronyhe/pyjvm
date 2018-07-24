@@ -52,6 +52,7 @@ class Unhandled(Exception):
         self.instance = instance
 
 
+# noinspection PyUnusedLocal
 def _default_echo(*args, **kwargs):
     pass
 
@@ -218,6 +219,7 @@ def _to_snake_case(text):
 
 def run(loader, main_class_name, echo=None):
     class_ = loader.get_the_class(main_class_name)
+    # noinspection SpellCheckingInspection
     key = MethodKey('main', '([Ljava/lang/String;)V')
     method = class_.methods[key]
     frame = Frame.from_class_and_method(class_, method)
