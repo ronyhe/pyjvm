@@ -112,8 +112,6 @@ class CompType:
         else:
             type_ = type_or_value
 
-        if not type_.is_value:
-            raise TypeError(f'Only value types can be computational. The supplied type was {type_}')
         self.is_two = type_ in (Long, Double)
         self.is_one = not self.is_two
 
