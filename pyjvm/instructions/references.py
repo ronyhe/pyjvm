@@ -180,11 +180,23 @@ class PutField(Instructor):
         )
 
 
+def _name_from_field_ref(ref):
+    name = ref.name_and_type.name.value
+
+    # I'm not sure what I'm missing here.
+    # This changes between test and actual class files, so I must be creating the field_ref the wrong way.
+    # But I still don't know how exactly.
+    try:
+        return name.value
+    except AttributeError:
+        return name
+
+
 @bytecode('putstatic')
 class PutStatic(Instructor):
     def execute(self):
         field_ref = self.operand_as_constant()
-        field_name = field_ref.name_and_type.name.value.value
+        field_name = _name_from_field_ref(field_ref)
         class_name = field_ref.class_.name.value
         value = self.peek_op_stack()
         return IncrementProgramCounter.after(
@@ -197,16 +209,7 @@ class PutStatic(Instructor):
 class GetStatic(Instructor):
     def execute(self):
         field_ref = self.operand_as_constant()
-        field_name = field_ref.name_and_type.name.value
-
-        # I'm not sure what I'm missing here.
-        # This changes between test and actual class files, so I must be creating the field_ref the wrong way.
-        # But I still don't know how exactly.
-        try:
-            field_name = field_name.value
-        except AttributeError:
-            pass
-
+        field_name = _name_from_field_ref(field_ref)
         class_name = field_ref.class_.name.value
 
         value = self.loader.get_the_statics(class_name)[field_name]
