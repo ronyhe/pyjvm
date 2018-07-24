@@ -8,7 +8,7 @@ def dump_class(cf, echo):
     for field in cf.fields:
         echo(f'\t{field.name.value}: {field.type}')
     for method in cf.methods:
-        echo(method)
+        echo(f'{method} {method.descriptor.value}')
         if method.code is not None:
             for instruction in method.code.disassemble():
                 echo('\t' + str(instruction))
