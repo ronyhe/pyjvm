@@ -1,7 +1,6 @@
 from jawa.constants import ConstantPool
 
 from pyjvm.actions import Pop, Invoke
-from pyjvm.model.jvm_class import MethodKey
 from pyjvm.model.jvm_types import Integer
 from pyjvm.utils.jawa_conversions import key_from_method
 from test.utils import DUMMY_CLASS, constant_instruction, dummy_loader, \

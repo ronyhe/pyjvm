@@ -1,7 +1,6 @@
 from pyjvm import actions
 from pyjvm.actions import Actions
 from pyjvm.instructions.instructions import bytecode, Instructor
-from pyjvm.model.jvm_class import MethodKey
 from pyjvm.utils.jawa_conversions import key_from_method_ref
 
 
