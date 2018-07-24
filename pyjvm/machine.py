@@ -193,7 +193,8 @@ class Machine:
 
     def _first_class_load(self, class_):
         try:
-            method = class_.methods['clinit']
+            key = MethodKey('<clinit>', '()V')
+            method = class_.methods[key]
         except KeyError:
             return
         temp_stack = Stack()
