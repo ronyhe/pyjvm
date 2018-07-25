@@ -24,7 +24,35 @@ This project was written against the [JVM 8 spec](https://docs.oracle.com/javase
 
 Addressing these issues should not prove very difficult. Others are welcome to tackle them.
 In fact, this might prove a useful didactic task for students of various advanced topics.
- 
+
+### Installation
+This project is compliant with usual python conventions, so to install using a virtual env:
+```shell
+mkdir pyjvm
+cd pyjvm
+git clone https://github.com/ronyhe/pyjvm.git
+virtualenv venv
+. venv/bin/activate
+pip install .
+```
+Note that these steps assumes that the following are installed and available on the command line:
+
+- git
+- virtualenv
+- python3
+- pip
+
+### Usage
+```shell
+pyjvm run [OPTIONS] MAIN_CLASS
+```
+Where the options are:
+- -cp, (classpath) a colon separated list of class and jar files
+- --report, turns on basic tracing which will be written to stdout.
+Be sure to add a standard library to your classpath. This can usually found at *your/java/installation*/lib/rt.jar
+
+For more commands that are relevant to development and debugging refer to the documentation of pyjvm/main.py
+
 ### Acknowledgements
 There are dozens of people I learned from and dozens of tools I use every day. 
 Too many to list here, so I'll point out two that were especially relevant in this project. 
