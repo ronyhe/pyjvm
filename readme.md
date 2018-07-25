@@ -30,6 +30,6 @@ There are dozens of people I learned from and dozens of tools I use every day.
 Too many to list here, so I'll point out two that were especially relevant in this project. 
 I'd like to thank the creators and maintainers of:
 
-- The [JVM specification]((https://docs.oracle.com/javase/specs/jvms/se8/html/index.html)) (Oracle and previously Sun)
+- The [JVM specification](https://docs.oracle.com/javase/specs/jvms/se8/html/index.html) (Oracle and previously Sun)
 - The [jawa python library](https://github.com/TkTech/Jawa) (TkTech)
  
