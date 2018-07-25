@@ -49,6 +49,7 @@ pyjvm run [OPTIONS] MAIN_CLASS
 Where the options are:
 - -cp, (classpath) a colon separated list of class and jar files
 - --report, turns on basic tracing which will be written to stdout.
+
 Be sure to add a standard library to your classpath. This can usually found at *your/java/installation*/lib/rt.jar
 
 For more commands that are relevant to development and debugging refer to the documentation of pyjvm/main.py
