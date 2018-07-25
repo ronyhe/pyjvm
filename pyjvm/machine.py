@@ -150,12 +150,12 @@ class Machine:
         class_ = self.class_loader.get_the_class(action.class_name)
         method = class_.methods[action.method_key]
         frame = Frame.from_class_and_method(class_, method)
-        for index, value in enumerate(action.arguments):
-            frame.locals.store(index, value)
-
         self.frames.push(frame)
         if len(method.instructions) < 1:
             self._return_void(None)
+        else:
+            for index, value in enumerate(action.arguments):
+                frame.locals.store(index, value)
 
     # noinspection PyUnusedLocal
     def _return_void(self, action):

@@ -6,7 +6,7 @@ from jawa import constants
 from jawa.cf import ClassFile
 from jawa.methods import Method
 
-from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey
+from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey, JvmObject
 from pyjvm.model.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType, \
     RootObjectType
 from pyjvm.utils.utils import split_by_predicate
@@ -94,15 +94,34 @@ def convert_type(type_: jawa.util.descriptor.JVMType) -> Type:
     return _convert_type(*type_)
 
 
+def _convert_const_to_string_instance(const):
+    text = const.string.value
+    chars = [ord(c) for c in text]
+    char_array = ArrayReferenceType(Integer).create_instance(chars)
+    hash_value = hash(text) % (2 ** 32)
+    hash_ = Integer.create_instance(hash_value)
+    ref_type = ObjectReferenceType('java/lang/String')
+    return ref_type.create_instance(JvmObject({
+        'hash': hash_,
+        'value': char_array
+    }))
+
+
 def convert_constant(const):
+    const_type = type(const)
+
+    if const_type == jawa.constants.String:
+        return _convert_const_to_string_instance(const)
+
     types = {
         constants.Integer: Integer,
         constants.Float: Float,
         constants.Long: Long,
         constants.Double: Double,
     }
-    type_ = types[type(const)]
-    return type_.create_instance(const.value)
+
+    jvm_type = types[const_type]
+    return jvm_type.create_instance(const.value)
 
 
 def _convert_type(base, dimensions, name):

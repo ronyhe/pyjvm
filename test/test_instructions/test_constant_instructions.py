@@ -2,7 +2,8 @@ from jawa.constants import ConstantPool
 
 from pyjvm.actions import Push
 from pyjvm.instructions import constant_instructions
-from pyjvm.model.jvm_types import Integer, Double
+from pyjvm.model.jvm_class import JvmObject
+from pyjvm.model.jvm_types import Integer, Double, ObjectReferenceType, ArrayReferenceType
 from test.utils import assert_incrementing_instruction, constant_instruction, literal_instruction
 
 
@@ -44,5 +45,32 @@ def test_ldc():
         constants=constants,
         expected=[
             Push(Double.create_instance(value))
+        ]
+    )
+
+
+def test_string_constant():
+    text = 'some_text'
+    consts = ConstantPool()
+    const = consts.create_string(text)
+
+    chars = [ord(c) for c in text]
+    char_array = ArrayReferenceType(Integer).create_instance(chars)
+    hash_value = hash(text) % (2 ** 32)
+    hash_ = Integer.create_instance(hash_value)
+
+    reference_type = ObjectReferenceType('java/lang/String')
+    jvm_object = JvmObject({
+        'hash': hash_,
+        'value': char_array
+    })
+
+    assert_incrementing_instruction(
+        instruction=constant_instruction('ldc', const),
+        constants=consts,
+        expected=[
+            Push(
+                reference_type.create_instance(jvm_object)
+            )
         ]
     )
