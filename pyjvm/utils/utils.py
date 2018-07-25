@@ -42,6 +42,10 @@ def constant_operand(const):
     return Operand(OperandTypes.CONSTANT_INDEX, const.index)
 
 
+def local_operand(index):
+    return Operand(OperandTypes.LOCAL_INDEX, index)
+
+
 def pull_pairs(flat):
     it = iter(flat)
     return zip(it, it)

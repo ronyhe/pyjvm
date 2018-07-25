@@ -1,9 +1,8 @@
-import functools
 import operator
 
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter
-from pyjvm.instructions.instructions import bytecode_dict, Instructor
+from pyjvm.instructions.instructions import bytecode_dict, Instructor, bytecode
 from pyjvm.model.jvm_types import Integer, Long, Float, Double
 
 TYPE_LETTERS = {
@@ -54,7 +53,6 @@ OPERATORS = (
     MathOperation.all_types('rem', operator.mod),
 
     MathOperation.all_types('neg', operator.neg, operands=1),
-    MathOperation('inc', functools.partial(operator.add, 1), [Integer], operands=1),
 
     MathOperation.integral_types('shl', operator.lshift),
     MathOperation.integral_types('shr', operator.rshift),
@@ -89,4 +87,16 @@ class BinaryMath(Instructor):
         return IncrementProgramCounter.after(
             actions.Pop(self.ops),
             actions.Push(result)
+        )
+
+
+@bytecode('iinc')
+class Increment(Instructor):
+    def execute(self):
+        local_index, amount_to_add = [op.value for op in self.instruction.operands]
+        original_value = self.locals.load(local_index).value
+        new_value = original_value + amount_to_add
+        new_instance = Integer.create_instance(new_value)
+        return IncrementProgramCounter.after(
+            actions.Push(new_instance)
         )

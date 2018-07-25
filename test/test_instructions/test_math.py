@@ -1,6 +1,10 @@
+from jawa.util.bytecode import Instruction
+
 from pyjvm.actions import Pop, Push
 from pyjvm.instructions.math import OPERATORS
+from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_types import Integer
+from pyjvm.utils.utils import local_operand, literal_operand
 from test.utils import assert_incrementing_instruction
 
 
@@ -34,11 +38,22 @@ def test_neg():
 
 
 def test_iinc():
+    original_value = 8
+    local_index = 2
+    amount_to_add = 5
+
+    locals_ = Locals(local_index + 1)
+    locals_.store(local_index, Integer.create_instance(original_value))
+
+    instruction = Instruction.create('iinc', [
+        local_operand(local_index),
+        literal_operand(amount_to_add)
+    ])
+
     assert_incrementing_instruction(
-        instruction='iinc',
-        op_stack=[Integer.create_instance(2)],
+        instruction=instruction,
+        locals=locals_,
         expected=[
-            Pop(),
-            Push(Integer.create_instance(3))
+            Push(Integer.create_instance(original_value + amount_to_add))
         ]
     )
