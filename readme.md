@@ -42,6 +42,8 @@ Note that these steps assumes that the following are installed and available on 
 - python3
 - pip
 
+Once installed you can run pytest to validate your installation.
+
 ### Usage
 ```shell
 pyjvm run [OPTIONS] MAIN_CLASS
@@ -53,6 +55,22 @@ Where the options are:
 Be sure to add a standard library to your classpath. This can usually found at *your/java/installation*/lib/rt.jar
 
 For more commands that are relevant to development and debugging refer to the documentation of pyjvm/main.py
+
+### High Level Architecture
+The Machine in machine.py creates Frame objects that represent methods.
+It loops through the frame's instructions and sends them to instructions/instructions.py, which dispatches it to
+Instructor instances.
+The Instructors produce instances of Action that the machine executes.
+
+For example, let's assume that the current instruction is 'iload_0'.
+This instruction should take a value, the one that resides in index 0 of the current frame's locals array.
+It should push that value onto the the current frame's operand stack.
+
+Thus, it will produce the following actions:
+- Push(\<the value>)
+- IncrementProgramCounter()
+
+Which the machine will then execute. 
 
 ### Acknowledgements
 There are dozens of people I learned from and dozens of tools I use every day. 
