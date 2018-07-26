@@ -26,11 +26,21 @@ def _create_instruction_dict():
     return dic
 
 
+# A dictionary from instruction names to pairs of types, (source_type, target_type)
 CONVERSION_DICT = _create_instruction_dict()
 
 
 @bytecode_dict(CONVERSION_DICT)
 class Convert(Instructor):
+    """Perform numeric conversions on stack values
+
+    Our job is easy here since:
+     - The underlying python type for all integral types is int.
+     - The Float and Double type convert their arguments
+
+    All we have to do is send the top-of-stack value to the correct type.
+    """
+
     # noinspection PyUnusedLocal
     def __init__(self, inputs, source, target):
         super().__init__(inputs)
