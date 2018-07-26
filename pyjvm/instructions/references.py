@@ -9,6 +9,8 @@ from pyjvm.utils.utils import class_as_descriptor
 
 @bytecode('instanceof')
 class InstanceOf(Instructor):
+    """Pushes Integer value 1 if top-of-stack is an instance of the provided class, else, pushes Integer value 0"""
+
     def execute(self):
         constant_index = self.operand_as_int()
         constant = self.constants[constant_index]
@@ -33,6 +35,8 @@ class InstanceOf(Instructor):
 
 @bytecode('checkcast')
 class CheckCast(Instructor):
+    """Throws CheckCastException if top-of-stack is not an instance of the provided class"""
+
     def execute(self):
         constant_index = self.operand_as_int()
         constant = self.constants[constant_index]
@@ -48,6 +52,8 @@ class CheckCast(Instructor):
 
 @bytecode('arraylength')
 class ArrayLength(Instructor):
+    """Returns an Integer value representing the length of the array at top-of-stack"""
+
     def execute(self):
         array = self.peek_op_stack()
         if array.is_null:
@@ -63,6 +69,13 @@ class ArrayLength(Instructor):
 
 
 class CreateNewArray(Instructor):
+    """Creates a new array and pushes it onto the stack
+
+    The size of the array is popped of the stack.
+    The type of the array is found via the abstract method `_get_type'.
+    The array is populated with instances of the default value for the type.
+    """
+
     def execute(self):
         type_ = self._get_type()
         size = self.peek_op_stack().value
@@ -82,6 +95,12 @@ class CreateNewArray(Instructor):
 
 @bytecode('newarray')
 class NewValueArray(CreateNewArray):
+    """Creates a new array of primitive type
+
+    The type is provided in the instruction as number.
+    See ../utils/value_array_type_indicators.py for more information
+    """
+
     def _get_type(self):
         type_indicator = self.operand_as_int()
         type_ = value_array_type_indicators.type_by_indicator(type_indicator)
@@ -89,7 +108,9 @@ class NewValueArray(CreateNewArray):
 
 
 @bytecode('anewarray')
-class NewValueArray(CreateNewArray):
+class NewRefArray(CreateNewArray):
+    """Creates a new array of reference type instances"""
+
     def _get_type(self):
         index = self.operand_as_int()
         const = self.constants[index]
@@ -100,6 +121,12 @@ class NewValueArray(CreateNewArray):
 
 @bytecode('multianewarray')
 class NewMultiArray(Instructor):
+    """Creates a new multidimensional array
+
+    The amount of dimensions is provided in the instruction operands.
+    The size of each dimension is popped off the stack
+    """
+
     def execute(self):
         class_ = self.operand_as_constant()
         class_name = class_.name.value
@@ -124,6 +151,8 @@ class NewMultiArray(Instructor):
 
 @bytecode('athrow')
 class Throw(Instructor):
+    """Pop an exception off the stack and throw it"""
+
     def execute(self):
         obj = self.peek_op_stack()
         if obj.is_null:
@@ -138,6 +167,8 @@ class Throw(Instructor):
 
 @bytecode('new')
 class New(Instructor):
+    """Push a new instance of the provided class onto the stack"""
+
     def execute(self):
         class_constant_index = self.operand_as_int()
         class_constant = self.constants[class_constant_index]
@@ -150,6 +181,11 @@ class New(Instructor):
 
 @bytecode('getfield')
 class GetField(Instructor):
+    """Push the value that is currently stored in a field
+
+    The field is resolved by taking an index into the constant pool from the instruction operands.
+    """
+
     def execute(self):
         field_ref = self.operand_as_constant()
         name = field_ref.name_and_type.name.value
@@ -166,6 +202,11 @@ class GetField(Instructor):
 
 @bytecode('putfield')
 class PutField(Instructor):
+    """Pop stack and store value in field
+
+    The field is resolved by taking an index into the constant pool from the instruction operands.
+    """
+
     def execute(self):
         field_ref = self.operand_as_constant()
         name = field_ref.name_and_type.name.value.value
@@ -185,7 +226,8 @@ def _name_from_field_ref(ref):
     name = ref.name_and_type.name.value
 
     # I'm not sure what I'm missing here.
-    # This changes between test and actual class files, so I must be creating the field_ref the wrong way.
+    # This changes between test and actual class files,
+    # so I must be creating the field_ref the wrong way in the tests.
     # But I still don't know how exactly.
     try:
         return name.value
@@ -195,6 +237,11 @@ def _name_from_field_ref(ref):
 
 @bytecode('putstatic')
 class PutStatic(Instructor):
+    """Pop stack and store value in static field
+
+    The field is resolved by taking an index into the constant pool from the instruction operands.
+    """
+
     def execute(self):
         field_ref = self.operand_as_constant()
         field_name = _name_from_field_ref(field_ref)
@@ -208,6 +255,11 @@ class PutStatic(Instructor):
 
 @bytecode('getstatic')
 class GetStatic(Instructor):
+    """Push the value that is currently stored in a static field
+
+    The field is resolved by taking an index into the constant pool from the instruction operands.
+    """
+
     def execute(self):
         field_ref = self.operand_as_constant()
         field_name = _name_from_field_ref(field_ref)
@@ -220,6 +272,13 @@ class GetStatic(Instructor):
 
 
 def create_levels(levels, base_factory):
+    """Create a multidimensional array
+
+    :param levels: An Iterable if ints representing the size of each level
+    :param base_factory: A nullary function that returns a new instance of the basic unit of the array
+    :return: Nested lists
+    """
+
     def loop(current, rest):
         if len(rest) == 0:
             return [base_factory() for _ in range(current)]
