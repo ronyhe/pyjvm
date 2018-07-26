@@ -36,6 +36,35 @@ def _single_iterable_byte_code_dict(specs):
     ]
 })
 class DuplicationInstructor(Instructor):
+    """Duplicate a certain amount of values from the top of the stack
+
+    The exact behaviour of these instructions differ according to the values on the stack.
+    More specifically the so called computational type of those values (see section 2.11.1 of the JVM 8 spec).
+
+    To avoid repetition, this Instructor takes a `specs` argument which is an iterable.
+    Each spec is a 3-tuple:
+        - A string of '1's and '2's, indicating whether the value at that stack position should be comp type 1 or 2
+          The top of the stack is on the left of this string
+        - The amount of values to duplicate from the top if the string matches the current situation
+        - An offset from the top at which the duplicated items should be inserted
+
+    These specs will be checked in order and if one matches - it will execute.
+    If none match a ValueError will be raised.
+
+    For example, the spec `('11', 1, 2)` does not match this stack:
+        - Long 0 (top)
+        - Integer 1
+        - ... rest of stack
+    Because Long is of computational type 2.
+    However this spec `('21', 1, 2)` does match, and will produce the following stack:
+        - Long 0 (top)
+        - Integer 1
+        - Long 0
+        - Integer 1
+        - ... rest of stack
+
+    """
+
     def __init__(self, inputs, specs):
         super().__init__(inputs)
         self.specs = list(specs)
@@ -67,6 +96,8 @@ class DuplicationInstructor(Instructor):
 @bytecode('pop', 1)
 @bytecode('pop2', 2)
 class Pop(Instructor):
+    """Pops `amount` of values from top-of-stack"""
+
     def __init__(self, inputs, amount):
         super().__init__(inputs)
         self.amount = amount
@@ -79,6 +110,8 @@ class Pop(Instructor):
 
 @bytecode('swap')
 class Swap(Instructor):
+    """Swaps top-of-stack with the value directly beneath it"""
+
     def execute(self):
         return IncrementProgramCounter.after(
             actions.Pop(2),
