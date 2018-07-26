@@ -1,3 +1,19 @@
+""" Helper classes for handling lookupswitch and tableswitch instructions
+
+The specification for these instructions is quite complex.
+Reiterating it here in full seems redundant and error prone, for the full spec see JVM 8 spec section 6.5:
+    - lookupswitch at https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.lookupswitch
+    - tableswitch at https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.tableswitch
+
+However, this complexity led me to create these classes which implement the following interface:
+    - `from_instruction(cls, instruction)` which creates an instance from an instruction (class method)
+    - `create_instruction(self, position=None)` which does the opposite (useful for testing)
+    - `find_offset(self, value)` which returns the correct offset of the jump (useful for implementing the instruction)
+
+Hopefully, these classes will ease the implementation of test and instruction handling.
+See control.py and test/test_instructions/test_control.py for usage examples.
+"""
+
 import itertools
 from collections import OrderedDict
 
@@ -7,35 +23,6 @@ from pyjvm.utils.utils import literal_operand, pull_pairs
 
 LOOKUP_SWITCH = 'lookupswitch'
 TABLE_SWITCH = 'tableswitch'
-
-
-def _int_value(v):
-    try:
-        return v.value
-    except AttributeError:
-        return int(v)
-
-
-def _create_operands(values):
-    return [literal_operand(v) for v in values]
-
-
-def _create_instruction(name, pos, operands):
-    ops = _create_operands(operands)
-    instruction = Instruction.create(name, ops)
-    if pos is not None:
-        # noinspection PyProtectedMember
-        instruction = instruction._replace(pos=pos)
-    return instruction
-
-
-def _ints_from_instruction(instruction):
-    return [int(o.value) for o in instruction.operands]
-
-
-def _validate_instruction_name(instruction, name):
-    if not instruction.mnemonic == name:
-        raise ValueError(f'A {name} object can only be created from a {name} instruction')
 
 
 class LookupSwitch:
@@ -99,3 +86,32 @@ class TableSwitch:
         _validate_instruction_name(instruction, TABLE_SWITCH)
         default, low, high, *offsets = _ints_from_instruction(instruction)
         return cls(default, offsets)
+
+
+def _int_value(v):
+    try:
+        return v.value
+    except AttributeError:
+        return int(v)
+
+
+def _create_operands(values):
+    return [literal_operand(v) for v in values]
+
+
+def _create_instruction(name, pos, operands):
+    ops = _create_operands(operands)
+    instruction = Instruction.create(name, ops)
+    if pos is not None:
+        # noinspection PyProtectedMember
+        instruction = instruction._replace(pos=pos)
+    return instruction
+
+
+def _ints_from_instruction(instruction):
+    return [int(o.value) for o in instruction.operands]
+
+
+def _validate_instruction_name(instruction, name):
+    if not instruction.mnemonic == name:
+        raise ValueError(f'A {name} object can only be created from a {name} instruction')
