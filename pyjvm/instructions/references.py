@@ -26,6 +26,7 @@ class InstanceOf(Instructor):
             result = Integer.create_instance(0)
 
         return IncrementProgramCounter.after(
+            actions.Pop(),
             actions.Push(result)
         )
 

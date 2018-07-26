@@ -36,6 +36,7 @@ def test_instance_of():
     assert_incrementing_instruction(
         op_stack=[NULL_VALUE],
         expected=[
+            Pop(),
             Push(FALSE)
         ],
         **args
