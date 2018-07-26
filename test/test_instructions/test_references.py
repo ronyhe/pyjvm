@@ -8,7 +8,7 @@ from pyjvm.model.jvm_class import JvmObject
 from pyjvm.model.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, NULL_OBJECT
 from pyjvm.utils import value_array_type_indicators
 from pyjvm.utils.jawa_conversions import convert_class_file
-from pyjvm.utils.utils import TRUE, FALSE, constant_operand, literal_operand
+from pyjvm.utils.utils import TRUE, FALSE, constant_operand, literal_operand, field_name_from_field_ref
 from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME, \
     constant_instruction, literal_instruction, dummy_loader
 
@@ -225,10 +225,11 @@ def test_new():
 def test_get_field():
     consts = ConstantPool()
     field_ref = DUMMY_CLASS.instance_field_ref(consts)
+    field_name = field_name_from_field_ref(field_ref)
 
     value = Integer.create_instance(50)
     fields = {
-        DUMMY_CLASS.instance_field.name: value
+        field_name: value
     }
     obj = DUMMY_CLASS.type.create_instance(JvmObject(fields))
 
@@ -246,10 +247,11 @@ def test_get_field():
 def test_put_field():
     consts = ConstantPool()
     field_ref = DUMMY_CLASS.instance_field_ref(consts)
+    field_name = field_name_from_field_ref(field_ref)
 
     value = Integer.create_instance(50)
     fields = {
-        DUMMY_CLASS.instance_field.name: Integer.create_instance(Integer.default_value)
+        field_name: Integer.create_instance(Integer.default_value)
     }
     obj = DUMMY_CLASS.type.create_instance(JvmObject(fields))
 
@@ -268,26 +270,29 @@ def test_put_static():
     consts = ConstantPool()
     field_ref = DUMMY_CLASS.class_field_ref(consts)
     value = Integer.create_instance(45)
+    field_name = field_name_from_field_ref(field_ref)
+
     assert_incrementing_instruction(
         constants=consts,
         instruction=constant_instruction('putstatic', field_ref),
         op_stack=[value],
         expected=[
             Pop(),
-            PutStatic(field_ref.class_.name.value, field_ref.name_and_type.name.value.value, value)
+            PutStatic(field_ref.class_.name.value, field_name, value)
         ]
     )
 
 
 def test_get_static():
     class_name = DUMMY_CLASS.name
-    field_name = DUMMY_CLASS.class_field.name.value
+
     loader = dummy_loader()
     consts = ConstantPool()
+    field_ref = DUMMY_CLASS.class_field_ref(consts)
+    field_name = field_name_from_field_ref(field_ref)
 
     value = Integer.create_instance(67)
     loader.get_the_statics(class_name)[field_name] = value
-    field_ref = DUMMY_CLASS.class_field_ref(consts)
 
     assert_incrementing_instruction(
         loader=loader,

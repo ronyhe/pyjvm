@@ -4,7 +4,7 @@ from pyjvm.instructions.instructions import bytecode, Instructor
 from pyjvm.model.hierarchies import is_value_instance_of
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
 from pyjvm.utils import value_array_type_indicators
-from pyjvm.utils.utils import class_as_descriptor
+from pyjvm.utils.utils import class_as_descriptor, field_name_from_field_ref
 
 
 @bytecode('instanceof')
@@ -188,7 +188,7 @@ class GetField(Instructor):
 
     def execute(self):
         field_ref = self.operand_as_constant()
-        name = field_ref.name_and_type.name.value
+        name = field_name_from_field_ref(field_ref)
         obj = self.peek_op_stack()
         if obj.is_null:
             return actions.throw_null_pointer()
@@ -209,7 +209,7 @@ class PutField(Instructor):
 
     def execute(self):
         field_ref = self.operand_as_constant()
-        name = field_ref.name_and_type.name.value.value
+        name = field_name_from_field_ref(field_ref)
         value = self.peek_op_stack(0)
         obj = self.peek_op_stack(1)
 
@@ -222,19 +222,6 @@ class PutField(Instructor):
         )
 
 
-def _name_from_field_ref(ref):
-    name = ref.name_and_type.name.value
-
-    # I'm not sure what I'm missing here.
-    # This changes between test and actual class files,
-    # so I must be creating the field_ref the wrong way in the tests.
-    # But I still don't know how exactly.
-    try:
-        return name.value
-    except AttributeError:
-        return name
-
-
 @bytecode('putstatic')
 class PutStatic(Instructor):
     """Pop stack and store value in static field
@@ -244,7 +231,7 @@ class PutStatic(Instructor):
 
     def execute(self):
         field_ref = self.operand_as_constant()
-        field_name = _name_from_field_ref(field_ref)
+        field_name = field_name_from_field_ref(field_ref)
         class_name = field_ref.class_.name.value
         value = self.peek_op_stack()
         return IncrementProgramCounter.after(
@@ -262,7 +249,7 @@ class GetStatic(Instructor):
 
     def execute(self):
         field_ref = self.operand_as_constant()
-        field_name = _name_from_field_ref(field_ref)
+        field_name = field_name_from_field_ref(field_ref)
         class_name = field_ref.class_.name.value
 
         value = self.loader.get_the_statics(class_name)[field_name]

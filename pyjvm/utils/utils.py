@@ -60,3 +60,14 @@ def bool_to_num(b):
         return TRUE
     else:
         return FALSE
+
+
+def field_name_from_field_ref(ref):
+    # I'm not sure what I'm missing here.
+    # The behaviour differs between tests and actual class files which suggest that I'm not creating the field refs
+    # properly in the tests. But I've yet to figure out the problem.
+    name = ref.name_and_type.name.value
+    try:
+        return name.value
+    except AttributeError:
+        return name
