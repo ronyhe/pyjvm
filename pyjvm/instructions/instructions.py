@@ -106,7 +106,7 @@ class Instructor:
         self.loader = inputs.loader
 
     def execute(self):
-        """Emit `Actions` or an `Action` that correspond to the `instruction`"""
+        """Return `Actions` or an `Action` that correspond to the `instruction`"""
         raise NotImplementedError()
 
     def operand_as_int(self, index=0):
