@@ -111,6 +111,9 @@ class MathInstructor(Instructor):
      - Send them to `op`
      - Wrap the result as an instance of `type_`
      - Push the wrapped result
+
+    Note that these operations are not compliant with the spec.
+    They directly use python math operations, completely ignoring the JVM overflow rules and exceptions.
     """
 
     def __init__(self, inputs, op, type_, ops):
