@@ -1,3 +1,6 @@
+"""Functions for establishing instance-of relationships
+
+"""
 from jawa.util.descriptor import field_descriptor
 
 from pyjvm.model.class_loaders import ClassLoader
@@ -5,14 +8,16 @@ from pyjvm.model.jvm_types import JvmValue, Type
 from pyjvm.utils.jawa_conversions import convert_type
 
 
-def is_value_instance_of(instance: JvmValue, descriptor_for_possible_parent: str, loader: ClassLoader) -> bool:
+def is_value_instance_of(instance: JvmValue, descriptor: str, loader: ClassLoader) -> bool:
+    """Return a bool representing whether `instance` is an instance of the class represented by `descriptor`"""
     if instance.is_null:
         raise ValueError('Cannot instance_of check null value')
 
-    return is_type_instance_of(instance.type, descriptor_for_possible_parent, loader)
+    return does_type_derive_from(instance.type, descriptor, loader)
 
 
-def is_type_instance_of(instance_type: Type, descriptor_for_possible_parent: str, loader: ClassLoader) -> bool:
+def does_type_derive_from(instance_type: Type, descriptor_for_possible_parent: str, loader: ClassLoader) -> bool:
+    """Return a bool representing whether `instance_type` derives from the class represented by `descriptor`"""
     if instance_type.is_value:
         raise ValueError('Cannot instance_of check value types. Only references')
 
@@ -26,13 +31,20 @@ class _Checker:
 
     def is_instance_of(self, instance_type, possible_parent_type):
         if instance_type.is_array_reference and possible_parent_type.is_array_reference:
+            # For arrays, perform the query on their underlying types
             return self.is_instance_of(instance_type.refers_to, possible_parent_type.refers_to)
         elif instance_type.is_class_reference and possible_parent_type.is_class_reference:
-            return self._is_class_instance_of_class(instance_type, possible_parent_type)
+            return self._does_type_derive_from(instance_type, possible_parent_type)
         else:
             return False
 
-    def _is_class_instance_of_class(self, instance_type, possible_parent_type):
+    def _does_type_derive_from(self, instance_type, possible_parent_type):
+        # `instance_type` is an instance of `possible_parent_type` if and only if
+        # possible parent type exists in the set of all the types `instance_type` derives from.
+        # That set includes:
+        # This class
+        # The interfaces this class implements, and their super interfaces
+        # The set for this class' super class
         instance_class_name = instance_type.refers_to
         instance_class = self.loader.get_the_class(instance_class_name)
         instance_interfaces = instance_class.interfaces

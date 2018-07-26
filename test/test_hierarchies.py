@@ -1,6 +1,6 @@
 from jawa.constants import ConstantPool
 
-from pyjvm.model.hierarchies import is_type_instance_of
+from pyjvm.model.hierarchies import does_type_derive_from
 from pyjvm.model.jvm_class import JvmClass
 from pyjvm.model.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
 from pyjvm.utils.utils import class_as_descriptor
@@ -13,7 +13,7 @@ _DUMMY_SUB_DESCRIPTOR = class_as_descriptor(DUMMY_SUB_CLASS_NAME)
 def instance_test(type_, descriptor, loader=None):
     if loader is None:
         loader = dummy_loader()
-    return is_type_instance_of(type_, descriptor, loader)
+    return does_type_derive_from(type_, descriptor, loader)
 
 
 def test_simple_instance_of():
