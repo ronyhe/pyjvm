@@ -1,3 +1,15 @@
+"""The command line gateway to the system
+
+This module uses the click library (http://click.pocoo.org) to provide the following commands:
+ - ``pyjvm instruction_report``: Displays information regarding the system's support for jvm instructions.
+ - ``pyjvm action_report``: Displays the Action sub classes that exist in the system
+ - ``pyjvm dump_class``: Displays ClassFile information that proves helpful during development.
+   Compliments the javap functionality
+ - ``pyjvm dump_class_from_jar``: Similar to dump_class but provides the ability to inspect classes inside JAR files
+ - ``pyjvm run``: Runs a JVM class.
+   Provides classpath functionality via an argument.
+   Provides basic tracing ability via a flag.
+"""
 from pathlib import Path
 
 import click
@@ -14,6 +26,11 @@ from pyjvm.utils import utils
 
 @click.group()
 def cli():
+    """The main command
+
+    This command exists as a grouper for the other commands, which is why all other commands are sub-commands
+    of pyjvm.
+    """
     pass
 
 
