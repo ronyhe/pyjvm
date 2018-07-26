@@ -136,9 +136,9 @@ class MathInstructor(Instructor):
 class Increment(Instructor):
     """Implements the iinc instruction
 
-    The instruction loads a value from locals at an index that's provided as an operand
+    The instruction loads a value from locals at an index that's provided as an operand.
     It adds another value to it, also provided as an operand.
-    And then it pushes the result
+    Then, it pushes the result.
     """
 
     def execute(self):
