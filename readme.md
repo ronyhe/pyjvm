@@ -17,10 +17,11 @@ This might be true, but an implementation already exists for this purpose: [Meta
 This project was written against the [JVM 8 spec](https://docs.oracle.com/javase/specs/jvms/se8/html/index.html), except:
 
 - It does not implement the invokedynamic instruction
-- It does not obey JVM the arithmetic overflow rules of the spec. Instead it uses python math operations directly.
+- It does not obey JVM arithmetic overflow rules. Instead it uses python math operations directly.
 - It does little to no verification of class files
 - It does little to no verification of instruction preconditions
 - It rarely complies with the exceptions that instructions should throw
+- It does not implement native methods
 
 Addressing these issues should not prove very difficult. Others are welcome to tackle them.
 In fact, this might prove a useful didactic task for students of various advanced topics.
@@ -35,7 +36,7 @@ virtualenv venv
 . venv/bin/activate
 pip install .
 ```
-Note that these steps assumes that the following are installed and available on the command line:
+Note that these steps assume that the following are installed and available on the command line:
 
 - git
 - virtualenv
@@ -49,12 +50,11 @@ Once installed you can run pytest to validate your installation.
 pyjvm run [OPTIONS] MAIN_CLASS
 ```
 Where the options are:
-- -cp, (classpath) a colon separated list of class and jar files
-- --report, turns on basic tracing which will be written to stdout.
+- `-cp` (classpath) a colon separated list of class and jar files
+- `--report` turns on basic tracing which will be written to stdout.
 
-Be sure to add a standard library to your classpath. This can usually found at *your/java/installation*/lib/rt.jar
-
-For more commands that are relevant to development and debugging refer to the documentation of pyjvm/main.py
+Be sure to add a standard library to your classpath. This can usually be found at *your/java/installation*/lib/rt.jar
+There are other commands that are relevant to development and debugging, see pyjvm/main.py.
 
 ### High Level Architecture
 The Machine in machine.py creates Frame objects that represent methods.
