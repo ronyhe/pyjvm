@@ -1,8 +1,8 @@
 """
-This module implements a dispatch mechanism to execute JVM instruction.
+This module implements a dispatch mechanism to execute JVM instructions.
 It also defines several tools that are used across instructions.
 
-At a high level, it provides a registry for `Instructor` instance, and several utility functions for subscribing to it.
+At a high level, it provides a registry for `Instructor` instances, and several utility functions for subscribing to it.
 When `execute_instruction` is called, it dispatches it to the correct Instructor via the registry and returns the
 resulting `Actions`
 
