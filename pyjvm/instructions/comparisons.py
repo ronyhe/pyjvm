@@ -1,8 +1,3 @@
-"""
-Instructors for comparison instructions
-
-
-"""
 import operator
 
 from pyjvm import actions
