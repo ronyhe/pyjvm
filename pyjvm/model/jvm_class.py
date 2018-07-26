@@ -4,8 +4,16 @@ import attr
 
 from pyjvm.model.jvm_types import JvmValue
 
-# noinspection SpellCheckingInspection
-NAME_OF_STATIC_CONSTRUCTOR = 'clinit'
+
+@attr.s(frozen=True)
+class JvmClass:
+    name = attr.ib()
+    name_of_base = attr.ib()
+    constants = attr.ib()
+    interfaces = attr.ib(converter=tuple, default=())
+    fields = attr.ib(converter=dict, default=())
+    methods = attr.ib(converter=dict, default=())
+    static_fields = attr.ib(converter=dict, default=())
 
 
 @attr.s(frozen=True)
@@ -35,17 +43,6 @@ class BytecodeMethod:
     args = attr.ib(converter=tuple)
     exception_handlers = attr.ib(factory=Handlers)
     name = attr.ib(default='no_method_name')
-
-
-@attr.s(frozen=True)
-class JvmClass:
-    name = attr.ib()
-    name_of_base = attr.ib()
-    constants = attr.ib()
-    interfaces = attr.ib(converter=tuple, default=())
-    fields = attr.ib(converter=dict, default=())
-    methods = attr.ib(converter=dict, default=())
-    static_fields = attr.ib(converter=dict, default=())
 
 
 @attr.s(frozen=True)
