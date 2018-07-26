@@ -83,7 +83,7 @@ def bytecode_list(names):
 class InstructorInputs:
     """The inputs that a basic Instructor expects.
 
-    Sub classes can recieve other arguments using the usual method mechanisms
+    Sub classes can receive other arguments using the usual method mechanisms
     """
 
     # noinspection PyShadowingBuiltins
@@ -96,6 +96,8 @@ class InstructorInputs:
 
 
 class Instructor:
+    """An abstract class that translates an `Instruction` into `Actions`"""
+
     def __init__(self, inputs):
         self.instruction = inputs.instruction
         self.locals = inputs.locals
@@ -104,23 +106,29 @@ class Instructor:
         self.loader = inputs.loader
 
     def execute(self):
+        """Emit `Actions` or an `Action` that correspond to the `instruction`"""
         raise NotImplementedError()
 
     def operand_as_int(self, index=0):
+        """Return an `int` value from the literal `operand` at `index`"""
         return int(self.instruction.operands[index].value)
 
     def operand_as_constant(self, index=0):
-        index = self.operand_as_int(index)
-        return self.constants[index]
+        """Return a constant using the operand at `index` as an index into the `self.constants`"""
+        const_index = self.operand_as_int(index)
+        return self.constants[const_index]
 
     def peek_op_stack(self, *args, **kwargs):
+        """Return top-of-stack"""
         return self.op_stack.peek(*args, **kwargs)
 
     def peek_many(self, amount):
+        """Return the `amount` first objects on the stack"""
         return [self.peek_op_stack(i) for i in range(amount)]
 
 
 def execute_instruction(inputs):
+    """Return `Actions` that simulate the execution of `inputs.instruction`"""
     instruction_name = inputs.instruction.mnemonic
     executor = _registry.get(instruction_name, inputs)
     action_or_actions = executor.execute()
@@ -131,6 +139,7 @@ def execute_instruction(inputs):
 
 
 def get_implemented_instructions():
+    """Return the names of the instructions that were registered"""
     return _registry.keys()
 
 
@@ -143,6 +152,8 @@ def get_implemented_instructions():
     'impdep2'
 ])
 class NoOp(Instructor):
+    """Do nothing when executing these instructions"""
+
     def execute(self):
         return IncrementProgramCounter()
 
@@ -155,10 +166,17 @@ class NoOp(Instructor):
     'wide'
 ])
 class InstructionNotImplemented(Instructor):
+    """Raise an error when encountering these instructions"""
+
     def execute(self):
         name = self.instruction.mnemonic
         raise NotImplementedError(f'The {name} instruction is not implemented by this jvm')
 
+
+# The `Instructor` sub classes use elements defined in this module.
+# So they have to be imported after those definitions.
+# However, when a user imports this module, they expect the `execute_instruction` to actually work.
+# That's why we import the instruction modules here and not, as is convention, at the top.
 
 # noinspection PyUnresolvedReferences
 from pyjvm.instructions import loads_and_stores
