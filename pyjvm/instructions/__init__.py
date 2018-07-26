@@ -3,6 +3,8 @@
 The file instructions.py implements the dispatch mechanism and
 some utilities that are shared across instruction implementations.
 
+Since that's where the dispatch mechanism resides, there is no obvious reason for clients to use other files directly.
+
 The file switches.py defines helper classes for the tableswitch and lookupswitch instructions.
 
 Excluding those files, all other files in the package define `instructions.Instructor` instances and register them
