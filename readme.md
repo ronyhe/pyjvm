@@ -43,7 +43,7 @@ Note that these steps assume that the following are installed and available on t
 - python3
 - pip
 
-Once installed you can run pytest to validate your installation.
+Once installed you can run `pytest` to validate your installation.
 
 ### Usage
 ```shell
