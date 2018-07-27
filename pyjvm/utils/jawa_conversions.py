@@ -1,3 +1,4 @@
+"""Function for converting from instance of types from the jawa library to pyjvm runtime types"""
 from typing import Iterable
 
 import jawa.methods
@@ -38,6 +39,7 @@ def _convert_methods_to_mapping(jawa_methods: Iterable[Method]):
 
 
 def convert_class_file(cf: ClassFile) -> JvmClass:
+    """Convert a ClassFile to a JvmClass"""
     static_fields, instance_fields = split_by_predicate(cf.fields, lambda f: f.access_flags.get('acc_static'))
     static_fields = _fields_to_pairs(static_fields)
     instance_fields = _fields_to_pairs(instance_fields)
@@ -61,16 +63,19 @@ def convert_class_file(cf: ClassFile) -> JvmClass:
 
 
 def key_from_method(method):
+    """Extract a MethodKey from a jawa method"""
     return MethodKey(method.name.value, method.descriptor.value)
 
 
 def key_from_method_ref(ref):
+    """Extract a MethodKey from a jawa method reference constant"""
     name = ref.name_and_type.name.value
     descriptor = ref.name_and_type.descriptor.value
     return MethodKey(name, descriptor)
 
 
 def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
+    """Convert a jawa method to a BytecodeMethod"""
     arg_types = [convert_type(t) for t in method.args]
     if method.code is not None:
         return BytecodeMethod(
@@ -91,6 +96,7 @@ def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
 
 
 def convert_type(type_: jawa.util.descriptor.JVMType) -> Type:
+    """Convert a jawa JvmType to a Type"""
     return _convert_type(*type_)
 
 
@@ -108,6 +114,7 @@ def _convert_const_to_string_instance(const):
 
 
 def convert_constant(const):
+    """Convert a jawa constant from a ConstantPool to a JvmValue"""
     const_type = type(const)
 
     if const_type == jawa.constants.String:
