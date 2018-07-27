@@ -1,3 +1,8 @@
+"""Functions for converting types to indicators and vice versa
+
+The JVM array instructions indicate value types using specific integers.
+See instructions/references.py for usage examples.
+"""
 from pyjvm.model.jvm_types import Integer, Long, Float, Double
 
 _BY_TYPE = {
@@ -17,8 +22,10 @@ _BY_INDICATOR.update({
 
 
 def indicator_by_type(type_):
+    """Return the int that corresponds to `type_`"""
     return _BY_TYPE[type_]
 
 
 def type_by_indicator(indicator):
+    """Return the type that corresponds to `indicator`"""
     return _BY_INDICATOR[indicator]
