@@ -13,6 +13,8 @@ from pyjvm.utils.utils import class_as_descriptor
 
 
 class Frame:
+    """A runtime execution frame"""
+
     @classmethod
     def from_class_and_method(cls, class_: JvmClass, method: BytecodeMethod):
         return cls(
@@ -40,6 +42,7 @@ class Frame:
         self.method_name = method_name
 
     def next_instruction(self):
+        """Return the first instruction with `pos` greater or equal to `self.pc`"""
         for ins in self.instructions:
             if ins.pos >= self.pc:
                 return ins
@@ -48,6 +51,8 @@ class Frame:
 
 
 class Unhandled(Exception):
+    """An JVM exception propagated all the way up"""
+
     def __init__(self, instance):
         self.instance = instance
 
@@ -58,7 +63,28 @@ def _default_echo(*args, **kwargs):
 
 
 class Machine:
+    """A JVM
+
+    In other words, an object that runs JVM class files.
+
+    See the `act` method documentation for information in how actions are dispatched to their corresponding method.
+
+    Many of the action methods are `self` explanatory when taken together with the corresponding Action sub class.
+    See action.py for more information.
+    See what I did there? With the `self`? lol
+
+    The actions `Invoke`, `ThrowObject` and `CreateAndThrow` need not be used with the `IncrementProgramCounter` action.
+    See the corresponding methods `_invoke`, `_throw_object` and `_create_and_throw` for the implementation details
+    that handle the program counter in these situations.
+    """
+
     def __init__(self, class_loader: ClassLoader, echo=None):
+        """Return a new Machine instance
+
+        Note that Machine will change the `class_loader.first_load_function`
+        :param class_loader: the ClassLoader this machine should use
+        :param echo: A `print` like function for reports during execution
+        """
         self.class_loader = class_loader
         self.class_loader.first_load_function = self._first_class_load
         self.frames = Stack()
@@ -67,16 +93,19 @@ class Machine:
             self.echo = _default_echo
 
     def run(self):
+        """Start running"""
         while True:
             try:
                 frame = self.frames.peek()
                 instruction = frame.next_instruction()
             except IndexError:
+                # If there are no more frames, or no more instructions - we're done
                 return
             else:
                 self._run_instruction(instruction)
 
     def _run_instruction(self, instruction):
+        """Translate `instruction` into `Actions` and execute them"""
         frame = self.frames.peek()
         inputs = InstructorInputs(
             instruction=instruction,
@@ -92,6 +121,14 @@ class Machine:
             self.act(action)
 
     def act(self, action):
+        """Execute `action`
+
+        The action's type name will be translated to snake case and prefixed with an underscore.
+        The method with the snake cased name will be called using the action.
+        For example:
+         - The action `IncrementProgramCounter()` will be converted to the name '_increment_program_counter'
+         - The call will be `self._increment_program_counter(action)`
+        """
         action_class = action.__class__.__name__
         snake_case = _to_snake_case(action_class)
         getattr(self, snake_case)(action)
@@ -115,6 +152,12 @@ class Machine:
             self.frames.peek().op_stack.pop()
 
     def _push_new_instance(self, action):
+        """Push a new class instance on to the current frame's op stack
+
+        There is no need to call the `<init>` constructor (or determine which one to call).
+        The compiler should follow this action with the appropriate call.
+        So we will only need to initialize the instance fields to their default values according to type.
+        """
         class_ = action.class_
         instance = self._create_instance(class_.name)
         self.frames.peek().op_stack.push(instance)
@@ -147,6 +190,15 @@ class Machine:
         self.frames.peek().pc = action.target
 
     def _invoke(self, action):
+        """Invoke a method
+
+        The structure of Machine makes this simple.
+        We just create a frame for the method and push onto the frame stack.
+        The next time the Machine fetches an instruction to execute
+        it will find the first instruction of the new method.
+
+        Don't forget to populate the frame's Locals array with the parameters.
+        """
         class_ = self.class_loader.get_the_class(action.class_name)
         method = class_.methods[action.method_key]
         frame = Frame.from_class_and_method(class_, method)
@@ -159,10 +211,19 @@ class Machine:
 
     # noinspection PyUnusedLocal
     def _return_void(self, action):
+        """Return from the current frame without a value and increment the program counter"""
         self.frames.pop()
         self._increment_program_counter(None)
 
     def _return_result(self, action):
+        """Return from the current frame with a value and increment the program counter
+
+        This is achieved like this:
+         - Take the value from the current frame's op stack
+         - Pop the frame stack. Now the current frame has changed
+         - Push the value onto the new current frame's op stack
+         - Increment the program counter
+        """
         frames = self.frames
         frames.pop()
         frames.peek().op_stack.push(action.result)
@@ -177,6 +238,13 @@ class Machine:
         self._throw_instance(instance)
 
     def _throw_instance(self, instance):
+        """Throw an exception instance
+
+        We do this recursively:
+        If the current frame has a relevant handler we jump to its handler_pc.
+        If not we pop the current frame, and repeat the process for the new current frame using a recursive call.
+        If there are no more frames to pop this exception is unhandled and execution should stop.
+        """
         frames = self.frames
         frame = frames.peek()
         handlers = frame.handlers.find_handlers(frame.pc)
@@ -198,6 +266,12 @@ class Machine:
         return self.class_loader.default_instance(class_name)
 
     def _first_class_load(self, class_):
+        """Perform class loading operations
+
+        When a class is accessed for the first time we need to:
+         - Initialize the static fields to their default values
+         - Call the `<clinit>` method for the class
+        """
         try:
             key = MethodKey('<clinit>', '()V')
             method = class_.methods[key]
@@ -218,6 +292,12 @@ def _to_snake_case(text):
 
 
 def run(loader, main_class_name, echo=None):
+    """Run the class named `main_class_name` using `loader`
+
+    :param loader: ClassLoader, the loader to use
+    :param main_class_name: str, the name of the main class
+    :param echo: a print-like method that, if provided, will be used for tracing execution
+    """
     class_ = loader.get_the_class(main_class_name)
     # noinspection SpellCheckingInspection
     key = MethodKey('main', '([Ljava/lang/String;)V')
