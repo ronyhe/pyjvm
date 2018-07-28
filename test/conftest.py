@@ -30,4 +30,5 @@ def std_loader(request):
             raise Exception('Please supply --std_lib for proper testing ')
         _STD_LOADER = TraditionalLoader(path)
 
+    _STD_LOADER.first_load_function = None
     return _STD_LOADER
