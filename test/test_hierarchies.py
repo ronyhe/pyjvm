@@ -1,66 +1,57 @@
-from jawa.constants import ConstantPool
+"""Test the functionality of relationship queries in hierarchies.py
 
+These tests rely heavily on the relationship of three classes in the java/io package:
+`FileOutputStream` derives from `OutputStream` which implements `Closeable`
+"""
 from pyjvm.model.hierarchies import does_type_derive_from, simple_instance_check
-from pyjvm.model.jvm_class import JvmClass
-from pyjvm.model.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
+from pyjvm.model.jvm_types import ObjectReferenceType, ArrayReferenceType
 from pyjvm.utils.utils import class_as_descriptor
-from test.utils import DUMMY_SUB_CLASS_NAME, DUMMY_CLASS, dummy_loader
+from test.utils import DUMMY_CLASS, dummy_loader
 
-_DUMMY_DESCRIPTOR = class_as_descriptor(DUMMY_CLASS.name)
-_DUMMY_SUB_DESCRIPTOR = class_as_descriptor(DUMMY_SUB_CLASS_NAME)
-
-
-def instance_test(type_, descriptor, loader=None):
-    if loader is None:
-        loader = dummy_loader()
-    return does_type_derive_from(type_, descriptor, loader)
+_IO = 'java/io/'
+OUTPUT_STREAM = _IO + 'OutputStream'
+FILE_OUTPUT_STREAM = _IO + 'FileOutputStream'
+CLOSEABLE = _IO + 'Closeable'
 
 
-def test_simple_instance_of():
-    assert instance_test(DUMMY_CLASS.type, _DUMMY_DESCRIPTOR)
-
-
-def test_parent_not_instance_of_child():
-    assert not instance_test(DUMMY_CLASS.type, _DUMMY_SUB_DESCRIPTOR)
-
-
-def test_child_is_instance_of_parent():
-    assert instance_test(ObjectReferenceType(DUMMY_SUB_CLASS_NAME), _DUMMY_DESCRIPTOR)
-
-
-def test_instance_of_interface():
-    interface_name = 'Interface'
-    implementor_name = 'Implementor'
-    root_name = RootObjectType.refers_to
-
-    interface = JvmClass(
-        interface_name,
-        root_name,
-        ConstantPool()
+def test_instance_of_class():
+    assert does_type_derive_from(
+        DUMMY_CLASS.type,
+        class_as_descriptor(DUMMY_CLASS.name),
+        dummy_loader()
     )
 
-    implementor = JvmClass(
-        implementor_name,
-        root_name,
-        ConstantPool(),
-        interfaces=(interface_name,)
+
+def test_parent_not_instance_of_child(std_loader):
+    assert not simple_instance_check(OUTPUT_STREAM, FILE_OUTPUT_STREAM, std_loader)
+
+
+def test_child_is_instance_of_parent(std_loader):
+    assert simple_instance_check(FILE_OUTPUT_STREAM, OUTPUT_STREAM, std_loader)
+
+
+def test_instance_of_interface(std_loader):
+    assert simple_instance_check(OUTPUT_STREAM, CLOSEABLE, std_loader)
+
+
+def test_instance_of_array(std_loader):
+    base_type = ObjectReferenceType(OUTPUT_STREAM)
+    array_type = ArrayReferenceType(base_type)
+
+    descriptor = _add_dimensions_to_descriptor(
+        class_as_descriptor(OUTPUT_STREAM)
     )
 
-    loader = dummy_loader()
-    loader.classes[interface_name] = interface
-    loader.classes[implementor_name] = implementor
-
-    assert instance_test(ObjectReferenceType(implementor_name), class_as_descriptor(interface_name), loader)
-
-
-def test_instance_of_array():
-    array_of_dummies = ArrayReferenceType(ObjectReferenceType(DUMMY_CLASS.name))
-    assert instance_test(array_of_dummies, '[' + _DUMMY_DESCRIPTOR)
+    assert does_type_derive_from(
+        array_type,
+        descriptor,
+        std_loader
+    )
 
 
 def test_instance_of_parent_interface(std_loader):
-    # In the java/io package the class FileOutputStream extends OutputStream
-    # And OutputStream implement the Closeable interface.
-    # So FileOutputStream, the sub class, should be an instance of Closable,
-    # the interface implemented by the super class
     assert simple_instance_check('java/io/FileOutputStream', 'java/io/Closeable', std_loader)
+
+
+def _add_dimensions_to_descriptor(descriptor, dimensions=1):
+    return '[' * dimensions + descriptor
