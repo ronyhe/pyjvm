@@ -77,13 +77,15 @@ def key_from_method_ref(ref):
 def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
     """Convert a jawa method to a BytecodeMethod"""
     arg_types = [convert_type(t) for t in method.args]
+    is_native = method.access_flags.get('acc_native')
     if method.code is not None:
         return BytecodeMethod(
             method.code.max_locals,
             method.code.max_stack,
             method.code.disassemble(),
             arg_types,
-            name=method.name.value
+            name=method.name.value,
+            is_native=is_native
         )
     else:
         return BytecodeMethod(
@@ -91,7 +93,8 @@ def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
             0,
             [],
             arg_types,
-            name=method.name.value
+            name=method.name.value,
+            is_native=is_native
         )
 
 

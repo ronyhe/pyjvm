@@ -57,6 +57,11 @@ class Unhandled(Exception):
         self.instance = instance
 
 
+class NativeNotSupported(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
 # noinspection PyUnusedLocal
 def _default_echo(*args, **kwargs):
     pass
@@ -201,6 +206,10 @@ class Machine:
         """
         class_ = self.class_loader.get_the_class(action.class_name)
         method = class_.methods[action.method_key]
+        if method.is_native:
+            raise NativeNotSupported(
+                f'Cannot invoke method {class_.name}#{method.name} because native methods are not supported'
+            )
         frame = Frame.from_class_and_method(class_, method)
         self.frames.push(frame)
         if len(method.instructions) < 1:

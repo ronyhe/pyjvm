@@ -20,7 +20,7 @@ from jawa.util.bytecode import Instruction
 from pyjvm.actions import Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
     StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject, CreateAndThrow, \
     IncrementProgramCounter
-from pyjvm.machine import Machine, Frame, Unhandled
+from pyjvm.machine import Machine, Frame, Unhandled, NativeNotSupported
 from pyjvm.model.class_loaders import FixedClassLoader
 from pyjvm.model.jvm_class import Handlers, ExceptionHandler, JvmClass, MethodKey, BytecodeMethod
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType, RootObjectType, ObjectReferenceType
@@ -252,15 +252,13 @@ def test_create_and_throw():
 
 def test_native_method(std_loader):
     machine = Machine(std_loader)
-    pass
-    # machine.class_loader.get_the_class('java/lang/System')
-    # action = Invoke(
-    #     'java/lang/System',
-    #     MethodKey(
-    #         'currentTimeMillis',
-    #         '()J'
-    #     ),
-    #     []
-    # )
-    # with pytest.raises(NativeNotSupported):
-    #     machine.act(action)
+    action = Invoke(
+        'java/lang/System',
+        MethodKey(
+            'currentTimeMillis',
+            '()J'
+        ),
+        []
+    )
+    with pytest.raises(NativeNotSupported):
+        machine.act(action)
