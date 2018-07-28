@@ -50,7 +50,7 @@ def test_instance_of_array(std_loader):
 
 
 def test_instance_of_parent_interface(std_loader):
-    assert simple_instance_check('java/io/FileOutputStream', 'java/io/Closeable', std_loader)
+    assert simple_instance_check(FILE_OUTPUT_STREAM, CLOSEABLE, std_loader)
 
 
 def _add_dimensions_to_descriptor(descriptor, dimensions=1):
