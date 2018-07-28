@@ -3,7 +3,7 @@ from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COM
     BINARY_REFERENCE_COMPARISONS, unary_op
 from pyjvm.model.jvm_types import Integer, NULL_OBJECT, ArrayReferenceType, ObjectReferenceType
 from pyjvm.utils.utils import bool_to_num
-from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction
+from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction, NPE_CLASS_NAME
 
 
 def test_comparisons():
@@ -63,7 +63,7 @@ def test_reference_binary_branch_comparisons(std_loader):
     offset = 7
     source = 4
 
-    npe = 'java/lang/NullPointerException'
+    npe = NPE_CLASS_NAME
     instance = std_loader.default_instance(npe).value
     values = [instance, instance]
 

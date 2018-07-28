@@ -19,6 +19,9 @@ _INSTRUCTION_KEY = 'instruction'
 
 NON_EMPTY_INSTRUCTION_LIST = [Instruction.create('nop')]
 
+NPE_CLASS_NAME = 'java/lang/NullPointerException'
+CHECK_CAST_CLASS_NAME = 'java/lang/CheckCastException'
+
 
 class _DummyClass:
     DESCRIPTOR = 'I'

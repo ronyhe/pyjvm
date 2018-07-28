@@ -4,25 +4,29 @@ from jawa.util.bytecode import Instruction
 from pyjvm.actions import Push, ThrowObject, PushNewInstance, PutField, PutStatic, throw_null_pointer, Pop, \
     throw_negative_array_size, throw_check_cast
 from pyjvm.instructions.references import create_levels
-from pyjvm.model.jvm_class import JvmObject
-from pyjvm.model.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, NULL_OBJECT
+from pyjvm.model.class_loaders import FixedClassLoader
+from pyjvm.model.jvm_class import JvmObject, JvmClass
+from pyjvm.model.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, NULL_OBJECT, ObjectReferenceType, \
+    RootObjectType
 from pyjvm.utils import value_array_type_indicators
-from pyjvm.utils.jawa_conversions import convert_class_file
-from pyjvm.utils.utils import TRUE, FALSE, constant_operand, literal_operand, field_name_from_field_ref
-from test.utils import assert_incrementing_instruction, DUMMY_CLASS, assert_instruction, DUMMY_SUB_CLASS_NAME, \
-    constant_instruction, literal_instruction, dummy_loader
+from pyjvm.utils.utils import TRUE, FALSE, constant_operand, literal_operand
+from test.utils import assert_incrementing_instruction, assert_instruction, constant_instruction, \
+    literal_instruction, NPE_CLASS_NAME, CHECK_CAST_CLASS_NAME
 
 
-def test_instance_of():
-    class_name = DUMMY_CLASS.name
+def test_instance_of(std_loader):
+    class_name = NPE_CLASS_NAME
+    obj = std_loader.default_instance(class_name)
+
     consts = ConstantPool()
     const = consts.create_class(class_name)
+
     instruction = constant_instruction('instanceof', const)
-    obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
 
     args = {
         'instruction': instruction,
-        'constants': consts
+        'constants': consts,
+        'loader': std_loader
     }
 
     assert_incrementing_instruction(
@@ -43,24 +47,25 @@ def test_instance_of():
     )
 
 
-def test_check_cast():
-    class_name = DUMMY_CLASS.name
+def test_check_cast(std_loader):
+    class_name = NPE_CLASS_NAME
+    obj = std_loader.default_instance(NPE_CLASS_NAME)
+
     consts = ConstantPool()
     const = consts.create_class(class_name)
-    obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
 
     assert_incrementing_instruction(
         constants=consts,
         instruction=constant_instruction('checkcast', const),
         op_stack=[obj],
-        expected=[]
+        expected=[],
+        loader=std_loader
     )
 
 
 def test_check_null_cast():
-    class_name = DUMMY_CLASS.name
     consts = ConstantPool()
-    const = consts.create_class(class_name)
+    const = consts.create_class(NPE_CLASS_NAME)
 
     assert_incrementing_instruction(
         constants=consts,
@@ -70,17 +75,18 @@ def test_check_null_cast():
     )
 
 
-def test_negative_check_cast():
-    class_name = DUMMY_SUB_CLASS_NAME
+def test_negative_check_cast(std_loader):
+    # Obviously, NullPointerException is not an instance of CheckCastException
     consts = ConstantPool()
-    const = consts.create_class(class_name)
-    obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
+    const = consts.create_class(CHECK_CAST_CLASS_NAME)
+    obj = std_loader.default_instance(NPE_CLASS_NAME)
 
     assert_instruction(
         constants=consts,
         instruction=constant_instruction('checkcast', const),
         op_stack=[obj],
-        expected=[throw_check_cast()]
+        expected=[throw_check_cast()],
+        loader=std_loader
     )
 
 
@@ -125,8 +131,9 @@ def test_new_value_type_array():
 
 
 def test_new_ref_array():
-    type_ = DUMMY_CLASS.type
-    class_name = DUMMY_CLASS.name
+    class_name = NPE_CLASS_NAME
+    type_ = ObjectReferenceType(class_name)
+
     consts = ConstantPool()
     const = consts.create_class(class_name)
 
@@ -146,10 +153,12 @@ def test_new_ref_array():
 
 
 def test_multi_new_array():
-    type_ = DUMMY_CLASS.type
-    class_name = DUMMY_CLASS.name
+    class_name = NPE_CLASS_NAME
+    type_ = ObjectReferenceType(NPE_CLASS_NAME)
+
     consts = ConstantPool()
     const = consts.create_class(class_name)
+
     array_type = ArrayReferenceType(
         ArrayReferenceType(
             type_
@@ -198,7 +207,9 @@ def test_negative_array_size():
 
 
 def test_a_throw():
-    obj = DUMMY_CLASS.type.create_instance(JvmObject(dict()))
+    type_ = ObjectReferenceType(NPE_CLASS_NAME)
+    obj = type_.create_instance(JvmObject(dict()))
+
     assert_instruction(
         instruction='athrow',
         op_stack=[obj],
@@ -208,30 +219,31 @@ def test_a_throw():
     )
 
 
-def test_new():
+def test_new(std_loader):
     consts = ConstantPool()
-    const = consts.create_class(DUMMY_CLASS.name)
-    class_ = convert_class_file(DUMMY_CLASS.class_file)
+    const = consts.create_class(NPE_CLASS_NAME)
+    class_ = std_loader.get_the_class(NPE_CLASS_NAME)
 
     assert_incrementing_instruction(
         constants=consts,
         instruction=constant_instruction('new', const),
         expected=[
             PushNewInstance(class_)
-        ]
+        ],
+        loader=std_loader
     )
 
 
 def test_get_field():
     consts = ConstantPool()
-    field_ref = DUMMY_CLASS.instance_field_ref(consts)
-    field_name = field_name_from_field_ref(field_ref)
+    field_name = 'some_name'
+    field_ref = consts.create_field_ref(NPE_CLASS_NAME, field_name, 'I')
 
     value = Integer.create_instance(50)
     fields = {
         field_name: value
     }
-    obj = DUMMY_CLASS.type.create_instance(JvmObject(fields))
+    obj = ObjectReferenceType(NPE_CLASS_NAME).create_instance(JvmObject(fields))
 
     assert_incrementing_instruction(
         instruction=constant_instruction('getfield', field_ref),
@@ -245,15 +257,15 @@ def test_get_field():
 
 
 def test_put_field():
+    field_name = 'some_field'
     consts = ConstantPool()
-    field_ref = DUMMY_CLASS.instance_field_ref(consts)
-    field_name = field_name_from_field_ref(field_ref)
+    field_ref = consts.create_field_ref(NPE_CLASS_NAME, field_name, 'I')
 
     value = Integer.create_instance(50)
     fields = {
         field_name: Integer.create_instance(Integer.default_value)
     }
-    obj = DUMMY_CLASS.type.create_instance(JvmObject(fields))
+    obj = ObjectReferenceType(NPE_CLASS_NAME).create_instance(JvmObject(fields))
 
     assert_incrementing_instruction(
         instruction=constant_instruction('putfield', field_ref),
@@ -261,16 +273,18 @@ def test_put_field():
         op_stack=[value, obj],
         expected=[
             Pop(2),
-            PutField(obj, DUMMY_CLASS.instance_field.name.value, value)
+            PutField(obj, field_name, value)
         ]
     )
 
 
 def test_put_static():
+    field_name = 'some_name'
+
     consts = ConstantPool()
-    field_ref = DUMMY_CLASS.class_field_ref(consts)
+    field_ref = consts.create_field_ref(NPE_CLASS_NAME, field_name, 'I')
+
     value = Integer.create_instance(45)
-    field_name = field_name_from_field_ref(field_ref)
 
     assert_incrementing_instruction(
         constants=consts,
@@ -278,21 +292,25 @@ def test_put_static():
         op_stack=[value],
         expected=[
             Pop(),
-            PutStatic(field_ref.class_.name.value, field_name, value)
+            PutStatic(NPE_CLASS_NAME, field_name, value)
         ]
     )
 
 
 def test_get_static():
-    class_name = DUMMY_CLASS.name
+    field_name = 'some_name'
 
-    loader = dummy_loader()
     consts = ConstantPool()
-    field_ref = DUMMY_CLASS.class_field_ref(consts)
-    field_name = field_name_from_field_ref(field_ref)
+    field_ref = consts.create_field_ref(NPE_CLASS_NAME, field_name, 'I')
 
     value = Integer.create_instance(67)
-    loader.get_the_statics(class_name)[field_name] = value
+    loader = FixedClassLoader({
+        NPE_CLASS_NAME: JvmClass(NPE_CLASS_NAME, RootObjectType.refers_to, consts, static_fields={
+            field_name: Integer
+        })
+    })
+
+    loader.get_the_statics(NPE_CLASS_NAME)[field_name] = value
 
     assert_incrementing_instruction(
         loader=loader,
