@@ -7,34 +7,9 @@ from pyjvm.actions import Push, Pop, PushNewInstance, DuplicateTop, StoreInLocal
     IncrementProgramCounter
 from pyjvm.machine import Machine, Frame, Unhandled
 from pyjvm.model.class_loaders import FixedClassLoader
-from pyjvm.model.frame_locals import Locals
 from pyjvm.model.jvm_class import Handlers, ExceptionHandler, JvmClass, MethodKey, BytecodeMethod
 from pyjvm.model.jvm_types import Integer, ArrayReferenceType, RootObjectType, ObjectReferenceType
-from pyjvm.model.stack import Stack
-from pyjvm.utils.jawa_conversions import convert_class_file, key_from_method
-from test.utils import dummy_loader, DUMMY_CLASS, SOME_INT, NON_EMPTY_INSTRUCTION_LIST
-
-
-def dummy_as_jvm_class():
-    return convert_class_file(DUMMY_CLASS.class_file)
-
-
-def dummy_frame():
-    return Frame(convert_class_file(DUMMY_CLASS.class_file), Locals(5), Stack(), NON_EMPTY_INSTRUCTION_LIST)
-
-
-def dummy_machine():
-    machine = Machine(dummy_loader())
-    frame = dummy_frame()
-    machine.frames.push(frame)
-    return machine
-
-
-def act_on_dummy(action):
-    machine = dummy_machine()
-    machine.act(action)
-    return machine
-
+from test.utils import SOME_INT
 
 COMPLEX_CLASS_NAME = 'class_name'
 EXCEPTION_NAME = 'some_exception'
@@ -195,101 +170,66 @@ def test_go_to():
     assert not frame.pc == target
     machine.act(GoTo(target))
     assert frame.pc == target
-#
-#
-# def test_invoke():
-#     machine = dummy_machine()
-#     class_name = DUMMY_CLASS.name
-#     method_key = key_from_method(DUMMY_CLASS.method)
-#     arguments = [machine.class_loader.default_instance(DUMMY_CLASS.name)]
-#
-#     machine.act(Invoke(
-#         class_name,
-#         method_key,
-#         arguments
-#     ))
-#
-#     stack = machine.frames
-#     assert stack.size() == 2
-#
-#     locals_ = stack.peek().locals
-#     assert locals_.load(0).type == DUMMY_CLASS.type
-#
-#
-# def test_return_void():
-#     machine = dummy_machine()
-#     frames = machine.frames
-#     frames.push(dummy_frame())
-#     assert frames.size() == 2
-#     machine.act(ReturnVoid())
-#     assert frames.size() == 1
-#     assert frames.peek().op_stack.size() == 0
-#
-#
-# def test_return_result():
-#     machine = dummy_machine()
-#     frames = machine.frames
-#     frames.push(dummy_frame())
-#     machine.act(ReturnResult(SOME_INT))
-#     ops = frames.peek().op_stack
-#     assert frames.size() == 1
-#     assert ops.size() == 1
-#     assert ops.peek() == SOME_INT
-#
-#
-# def test_throw_object():
-#     machine = dummy_machine()
-#     instance = machine.class_loader.default_instance(DUMMY_CLASS.name)
-#     with pytest.raises(Unhandled):
-#         machine.act(ThrowObject(instance))
-#
-#
-# def test_throw_with_handler():
-#     machine = dummy_machine()
-#     class_ = dummy_as_jvm_class()
-#     class_constant = class_.constants.create_class(DUMMY_CLASS.name)
-#
-#     handler_pc = 8
-#     frame_with_handler = Frame(
-#         dummy_as_jvm_class(),
-#         Locals(5),
-#         Stack(),
-#         [],
-#         Handlers([
-#             ExceptionHandler(
-#                 start_pc=0,
-#                 end_pc=1,
-#                 handler_pc=handler_pc,
-#                 catch_type=class_constant.index
-#             )
-#         ])
-#     )
-#
-#     frame_that_throws = dummy_frame()
-#
-#     frames = machine.frames
-#     frames.push(frame_with_handler)
-#     frames.push(frame_that_throws)
-#
-#     instance = machine.class_loader.default_instance(DUMMY_CLASS.name)
-#     machine.act(ThrowObject(instance))
-#
-#     assert frames.size() == 2
-#
-#     top_frame = frames.peek()
-#     assert top_frame is frame_with_handler
-#     assert top_frame.pc == handler_pc
-#
-#     op_stack = top_frame.op_stack
-#     assert op_stack.size() == 1
-#     assert op_stack.peek() == instance
-#
-#
-# def test_create_and_throw():
-#     machine = dummy_machine()
-#     try:
-#         machine.act(CreateAndThrow(DUMMY_CLASS.name))
-#     except Unhandled as ex:
-#         assert ex.instance.type == DUMMY_CLASS.type
-#     else:
-#         pytest.fail()
+
+
+def test_invoke():
+    machine = complex_machine()
+    initial_frame_count = machine.frames.size()
+    machine.act(Invoke(
+        COMPLEX_CLASS_NAME,
+        METHOD_KEY,
+        [SOME_INT, SOME_INT, SOME_INT]
+    ))
+    assert machine.frames.size() == initial_frame_count + 1
+    local = machine.frames.peek().locals
+    for i in range(3):
+        assert local.load(i) == SOME_INT
+
+
+def test_return_void():
+    machine = complex_machine()
+    initial_frame_count = machine.frames.size()
+    machine.act(ReturnVoid())
+    assert machine.frames.size() == initial_frame_count - 1
+    assert machine.frames.peek().op_stack.size() == 0
+
+
+def test_return_result():
+    machine = complex_machine()
+    frames = machine.frames
+    initial_frame_count = frames.size()
+
+    machine.act(ReturnResult(SOME_INT))
+
+    assert frames.size() == initial_frame_count - 1
+    assert frames.peek().op_stack.peek() == SOME_INT
+
+
+def test_throw_object():
+    machine = complex_machine()
+    instance = machine.class_loader.default_instance(EXCEPTION_NAME)
+    with pytest.raises(Unhandled):
+        machine.act(ThrowObject(instance))
+
+
+def throw_with_handler():
+    machine = complex_machine()
+    frames = machine.frames
+    next_frame = frames.peek(1)
+
+    next_frame.pc = HANDLER.start_pc
+    instance = machine.class_loader.default_instance(EXCEPTION_NAME)
+    machine.act(ThrowObject(instance))
+
+    assert frames.peek() is next_frame
+    assert frames.peek().pc == HANDLER.handler_pc
+
+
+def test_create_and_throw():
+    machine = complex_machine()
+    try:
+        machine.act(CreateAndThrow(COMPLEX_CLASS_NAME))
+    except Unhandled as ex:
+        assert ex.instance.type.refers_to == COMPLEX_CLASS_NAME
+    else:
+        pytest.fail()
