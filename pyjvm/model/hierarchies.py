@@ -4,7 +4,7 @@
 from jawa.util.descriptor import field_descriptor
 
 from pyjvm.model.class_loaders import ClassLoader
-from pyjvm.model.jvm_types import JvmValue, Type
+from pyjvm.model.jvm_types import JvmValue, Type, ObjectReferenceType
 from pyjvm.utils.jawa_conversions import convert_type
 
 
@@ -23,6 +23,14 @@ def does_type_derive_from(instance_type: Type, descriptor_for_possible_parent: s
 
     descriptor_type = convert_type(field_descriptor(descriptor_for_possible_parent))
     return _Checker(loader).is_instance_of(instance_type, descriptor_type)
+
+
+def simple_instance_check(class_name: str, parent_name: str, loader: ClassLoader) -> bool:
+    """Return true if instance of the class named `class_name` are instances of the class named `parent_name`"""
+    return _Checker(loader).is_instance_of(
+        ObjectReferenceType(class_name),
+        ObjectReferenceType(parent_name)
+    )
 
 
 class _Checker:

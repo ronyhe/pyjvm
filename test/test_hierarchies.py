@@ -1,6 +1,6 @@
 from jawa.constants import ConstantPool
 
-from pyjvm.model.hierarchies import does_type_derive_from
+from pyjvm.model.hierarchies import does_type_derive_from, simple_instance_check
 from pyjvm.model.jvm_class import JvmClass
 from pyjvm.model.jvm_types import ObjectReferenceType, RootObjectType, ArrayReferenceType
 from pyjvm.utils.utils import class_as_descriptor
@@ -56,3 +56,11 @@ def test_instance_of_interface():
 def test_instance_of_array():
     array_of_dummies = ArrayReferenceType(ObjectReferenceType(DUMMY_CLASS.name))
     assert instance_test(array_of_dummies, '[' + _DUMMY_DESCRIPTOR)
+
+
+def test_instance_of_parent_interface(std_loader):
+    # In the java/io package the class FileOutputStream extends OutputStream
+    # And OutputStream implement the Closeable interface.
+    # So FileOutputStream, the sub class, should be an instance of Closable,
+    # the interface implemented by the super class
+    assert simple_instance_check('java/io/FileOutputStream', 'java/io/Closeable', std_loader)
