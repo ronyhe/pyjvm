@@ -1,30 +1,55 @@
 from jawa.constants import ConstantPool
+from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import Pop, Invoke
-from pyjvm.model.jvm_types import Integer
-from pyjvm.utils.jawa_conversions import key_from_method
-from test.utils import DUMMY_CLASS, constant_instruction, dummy_loader, \
-    assert_instruction
+from pyjvm.model.class_loaders import FixedClassLoader
+from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey
+from pyjvm.model.jvm_types import Integer, RootObjectType
+from test.utils import constant_instruction, assert_instruction, SOME_INT
 
 
-def test_invoke_virtual():
-    key = key_from_method(DUMMY_CLASS.method)
-    loader = dummy_loader()
+def test_invoke_v():
+    method_name = 'method_name'
+    class_name = 'class_name'
 
     consts = ConstantPool()
-    method_ref = DUMMY_CLASS.method_ref(consts)
+    descriptor = '(II)V'
+    key = MethodKey(method_name, descriptor)
+    no_op = Instruction.create('nop')
 
-    class_name = DUMMY_CLASS.name
+    method = BytecodeMethod(
+        max_locals=5,
+        max_stack=5,
+        instructions=[no_op, no_op],
+        args=[Integer, Integer],
+        name=method_name
+    )
+
+    jvm_class = JvmClass(
+        class_name,
+        RootObjectType.refers_to,
+        consts,
+        methods={
+            key: method
+        }
+    )
+
+    method_ref = consts.create_method_ref(class_name, method_name, descriptor)
+    instruction = constant_instruction('invokevirtual', method_ref)
+    loader = FixedClassLoader({
+        class_name: jvm_class
+    })
+
     instance = loader.default_instance(class_name)
-
-    argument = Integer.create_instance(31)
-
+    arg_value = SOME_INT
+    arguments = [instance, arg_value, arg_value]
     assert_instruction(
         constants=consts,
-        instruction=constant_instruction('invokevirtual', method_ref),
-        op_stack=[instance, argument],
+        loader=loader,
+        instruction=instruction,
+        op_stack=arguments,
         expected=[
-            Pop(2),
-            Invoke(class_name, key, [instance, argument])
+            Pop(3),
+            Invoke(class_name, key, arguments)
         ]
     )
