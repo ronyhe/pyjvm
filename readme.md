@@ -77,6 +77,10 @@ A standard library is also needed to run the project's test suite. The path is p
 pytest std_lib=path/to/std/lib/jar_file.jar
 ``` 
 
+On my machine the project was tested against the OpenJDK 8 standard library.
+However, unless the class file to run is out of the ordinary,
+any fairly modern standard library version will probably work.
+
 ### High Level Architecture
 The Machine in machine.py creates Frame objects that represent methods.
 It loops through the frame's instructions and sends them to instructions/instructions.py, which dispatches it to
