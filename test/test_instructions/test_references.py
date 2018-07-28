@@ -15,35 +15,36 @@ from test.utils import assert_incrementing_instruction, assert_instruction, cons
 
 
 def test_instance_of(std_loader):
-    class_name = NPE_CLASS_NAME
-    obj = std_loader.default_instance(class_name)
-
+    obj = std_loader.default_instance(NPE_CLASS_NAME)
     consts = ConstantPool()
-    const = consts.create_class(class_name)
-
+    const = consts.create_class(NPE_CLASS_NAME)
     instruction = constant_instruction('instanceof', const)
 
-    args = {
-        'instruction': instruction,
-        'constants': consts,
-        'loader': std_loader
-    }
-
     assert_incrementing_instruction(
+        instruction=instruction,
+        constants=consts,
+        loader=std_loader,
         op_stack=[obj],
         expected=[
             Push(TRUE)
-        ],
-        **args
+        ]
     )
 
+
+def test_not_instance_of(std_loader):
+    consts = ConstantPool()
+    const = consts.create_class(NPE_CLASS_NAME)
+    instruction = constant_instruction('instanceof', const)
+
     assert_incrementing_instruction(
+        instruction=instruction,
+        constants=consts,
+        loader=std_loader,
         op_stack=[NULL_VALUE],
         expected=[
             Pop(),
             Push(FALSE)
-        ],
-        **args
+        ]
     )
 
 

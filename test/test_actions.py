@@ -248,3 +248,19 @@ def test_create_and_throw():
         assert ex.instance.type.refers_to == COMPLEX_CLASS_NAME
     else:
         pytest.fail()
+
+
+def test_native_method(std_loader):
+    machine = Machine(std_loader)
+    pass
+    # machine.class_loader.get_the_class('java/lang/System')
+    # action = Invoke(
+    #     'java/lang/System',
+    #     MethodKey(
+    #         'currentTimeMillis',
+    #         '()J'
+    #     ),
+    #     []
+    # )
+    # with pytest.raises(NativeNotSupported):
+    #     machine.act(action)
