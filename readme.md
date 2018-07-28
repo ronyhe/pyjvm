@@ -28,7 +28,7 @@ In fact, this might prove a useful didactic task for students of various advance
 
 ### Installation
 This project is compliant with usual python conventions, so to install using a virtual env:
-```shell
+```bash
 mkdir pyjvm
 cd pyjvm
 git clone https://github.com/ronyhe/pyjvm.git
@@ -43,18 +43,39 @@ Note that these steps assume that the following are installed and available on t
 - python3
 - pip
 
-Once installed you can run `pytest` to validate your installation.
+Once installed you can run `pytest std_lib=path/to/std/lib/jar_file.jar` to validate your installation.
+See the standard library section of this document for more.
 
 ### Usage
-```shell
+```bash
 pyjvm run [OPTIONS] MAIN_CLASS
 ```
 Where the options are:
 - `-cp` (classpath) a colon separated list of class and jar files
 - `--report` turns on basic tracing which will be written to stdout.
 
-Be sure to add a standard library to your classpath. This can usually be found at *your/java/installation*/lib/rt.jar
+Be sure to add a standard library to your classpath. See the standard library section of this document for more. This can usually be found at *your/java/installation*/lib/rt.jar
 There are other commands that are relevant to development and debugging, see pyjvm/main.py.
+
+### Java Standard Library
+All non trivial Java class files will need access to a standard library.
+In fact, many trivial ones will need it as well.
+Perhaps surprisingly, even when running class files that were compiled from other JVM languages 
+a Java standard library is needed.
+
+This is due to the fact that parts of the JVM specification itself rely on it.
+For example, when trying to fetch from a null array reference, the spec states that the exception to throw is
+`java/lang/NullPointerException`.
+
+For these reasons, users should probably provide a Java standard library on their class path when running class files.
+Usually this can be found at `path/of/your/java/installation/lib/rt.jar`.
+If a user does not find it there, they can download one 
+or check the web for information regarding their particular installation.
+
+A standard library is also needed to run the project's test suite. The path is provided as a command line argument:
+```bash
+pytest std_lib=path/to/std/lib/jar_file.jar
+``` 
 
 ### High Level Architecture
 The Machine in machine.py creates Frame objects that represent methods.
