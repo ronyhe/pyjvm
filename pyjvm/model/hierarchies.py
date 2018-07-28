@@ -47,14 +47,8 @@ class _Checker:
             return False
 
     def _does_type_derive_from(self, instance_type, possible_parent_type):
-        # `instance_type` is an instance of `possible_parent_type` if and only if
-        # possible parent type exists in the set of all the types `instance_type` derives from.
-        # That set includes:
-        # This class
-        # The interfaces this class implements, and their super interfaces
-        # The set for this class' super class
-        instance_class_name = instance_type.refers_to
-        instance_class = self.loader.get_the_class(instance_class_name)
-        instance_interfaces = instance_class.interfaces
-        possible_roots = list(instance_interfaces) + [instance_class_name]
-        return any(possible_parent_type.refers_to in self.loader.get_ancestors(root) for root in possible_roots)
+        """Return True if `possible_parent_type` is in the ancestor set of `instance_typ`
+
+        See class_loaders.py for a complete definition of the ancestor set.
+        """
+        return possible_parent_type.refers_to in self.loader.ancestor_set(instance_type.refers_to)

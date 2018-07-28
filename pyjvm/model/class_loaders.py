@@ -80,7 +80,7 @@ class ClassLoader:
         """Get the statics instead of the entry, equivalent to loader[name].statics"""
         return self[name].statics
 
-    def get_ancestors(self, class_name):
+    def super_classes(self, class_name):
         """Return a set of the names of all the superclasses the class has
 
         The set includes the `class_name` itself and the root class java/lang/Object
@@ -97,7 +97,7 @@ class ClassLoader:
 
         return acc
 
-    def collect_fields_in_ancestors(self, class_name):
+    def collect_fields_in_super_classes(self, class_name):
         """Return a dictionary of the fields in the class hierarchy
 
         This means the fields all classes that are returned from `get_ancestors`.
@@ -111,12 +111,37 @@ class ClassLoader:
 
         return acc
 
+    def ancestor_set(self, class_name):
+        """Return a set of all possible parents as relevant for instance-of relationships
+
+        An instance of class A is an instance-of a class B if and only if the B
+        exists in the set of all classes the A derives from.
+        We'll call that set the ancestor set and define it recursively. It contains:
+         - A
+         - The ancestor set for all interfaces that A implements
+         - The ancestor set for A's base class, unless A is already the root class (java/lang/Object)
+        See hierarchies.py for a complete definition
+        """
+
+        def loop(name, the_set):
+            the_class = self.get_the_class(name)
+            the_set.add(name)
+            for interface in the_class.interfaces:
+                the_set.update(self.ancestor_set(interface))
+            name_of_base = the_class.name_of_base
+            if name == RootObjectType.refers_to or name_of_base is None:
+                return the_set
+            else:
+                return loop(name_of_base, the_set)
+
+        return loop(class_name, set())
+
     def default_instance(self, class_name):
         """Returns an instance of the class with all fields initialized to their type's default value
 
         See model.jvm_types.py for more information regarding types and their defaults.
         """
-        fields = self.collect_fields_in_ancestors(class_name)
+        fields = self.collect_fields_in_super_classes(class_name)
         obj = JvmObject.defaults(fields)
 
         type_ = ObjectReferenceType(class_name)

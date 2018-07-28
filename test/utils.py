@@ -6,7 +6,8 @@ from pyjvm.actions import IncrementProgramCounter
 from pyjvm.instructions.instructions import InstructorInputs, execute_instruction
 from pyjvm.model.class_loaders import FixedClassLoader
 from pyjvm.model.frame_locals import Locals
-from pyjvm.model.jvm_types import Integer, ObjectReferenceType
+from pyjvm.model.jvm_class import JvmClass
+from pyjvm.model.jvm_types import Integer, ObjectReferenceType, RootObjectType
 from pyjvm.model.stack import Stack
 from pyjvm.utils.jawa_conversions import convert_class_file
 from pyjvm.utils.utils import literal_operand, constant_operand
@@ -57,7 +58,8 @@ DUMMY_CLASS = _DummyClass()
 def dummy_loader():
     return FixedClassLoader({
         DUMMY_CLASS.name: convert_class_file(DUMMY_CLASS.class_file),
-        DUMMY_SUB_CLASS_NAME: convert_class_file(ClassFile.create(DUMMY_SUB_CLASS_NAME, DUMMY_CLASS.name))
+        DUMMY_SUB_CLASS_NAME: convert_class_file(ClassFile.create(DUMMY_SUB_CLASS_NAME, DUMMY_CLASS.name)),
+        RootObjectType.refers_to: JvmClass(RootObjectType.refers_to, None, ConstantPool())
     })
 
 
