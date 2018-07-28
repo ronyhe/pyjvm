@@ -1,3 +1,18 @@
+"""Test that the Action instances have the correct effects on a Machine
+
+Some of the actions require a complete run configuration with relating attributes.
+For example, to test exception throwing, the class of the exception instance muse be available in the class loader.
+However, actual standard library classes are too complex to manage in these tests.
+One needs to scan the library to find classes that specifically adhere to the test criteria.
+And even if we find them, they'll have a lot of incidental information.
+
+This is the reason for the fairly large amounts of constants at the top of the module.
+They defined a complete JvmClass and ClassLoader configuration that answers the need of all the tests in the module.
+
+While this may seem a bit intimidating at first,
+it is completely declarative, and will (hopefully) become obvious once one gets to know
+the types in the system.
+"""
 import pytest
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
