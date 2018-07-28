@@ -1,10 +1,9 @@
 from pyjvm.actions import Pop, Push, GoTo
 from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
     BINARY_REFERENCE_COMPARISONS, unary_op
-from pyjvm.model.jvm_types import Integer, NULL_OBJECT
+from pyjvm.model.jvm_types import Integer, NULL_OBJECT, ArrayReferenceType, ObjectReferenceType
 from pyjvm.utils.utils import bool_to_num
-from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction, DUMMY_CLASS, \
-    dummy_loader
+from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction
 
 
 def test_comparisons():
@@ -60,23 +59,27 @@ def test_unary_branch_comparisons():
         _test_branch_comp(name, source, offset, [value], Integer, unary_op(op))
 
 
-def test_reference_binary_branch_comparisons():
+def test_reference_binary_branch_comparisons(std_loader):
     offset = 7
     source = 4
-    instance = dummy_loader().default_instance(DUMMY_CLASS.name)
+
+    npe = 'java/lang/NullPointerException'
+    instance = std_loader.default_instance(npe).value
     values = [instance, instance]
 
     for name, op in BINARY_REFERENCE_COMPARISONS.items():
-        _test_branch_comp(name, source, offset, values, DUMMY_CLASS.type, op)
+        _test_branch_comp(name, source, offset, values, ObjectReferenceType(npe), op)
 
 
 def test_if_null():
     offset = 10
     source = 3
+    value = ArrayReferenceType(Integer).create_instance(NULL_OBJECT)
+
     # noinspection PyProtectedMember
     assert_instruction(
         instruction=literal_instruction('ifnull', offset)._replace(pos=source),
-        op_stack=[DUMMY_CLASS.type.create_instance(NULL_OBJECT)],
+        op_stack=[value],
         expected=[
             Pop(),
             GoTo(source + offset)
