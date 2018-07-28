@@ -102,14 +102,15 @@ class ClassLoader:
 
         This means the fields all classes that are returned from `get_ancestors`.
         """
-        acc = dict()
-        name = class_name
-        while not name == RootObjectType.refers_to:
-            the_class = self.get_the_class(name)
-            acc.update(the_class.fields)
-            name = the_class.name_of_base
+        dic = {}
+        for sup in self.super_classes(class_name):
+            if not sup == RootObjectType.refers_to:
+                class_ = self.get_the_class(sup)
+                for name, type_ in class_.fields.items():
+                    if name not in dic:
+                        dic[name] = type_
 
-        return acc
+        return dic
 
     def ancestor_set(self, class_name):
         """Return a set of all possible parents as relevant for instance-of relationships
