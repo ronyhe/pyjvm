@@ -1,3 +1,4 @@
+"""Test utilities"""
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
@@ -19,12 +20,20 @@ NON_EMPTY_INSTRUCTION_LIST = [Instruction.create('nop')]
 NPE_CLASS_NAME = 'java/lang/NullPointerException'
 CHECK_CAST_CLASS_NAME = 'java/lang/CheckCastException'
 
-    
+
 def dummy_loader():
     return FixedClassLoader({})
 
 
 class DefaultInputs(InstructorInputs):
+    """An `InstructorInputs` with sensible defaults
+
+    This is useful for tests where no all the inputs are relevant.
+    The instruction input must always be present, but the others can be omitted.
+    The omitted ones will be created using the factory functions in the `DEFAULTS` dictionary.
+
+    Note that the op_stack can be provided as any iterable and it will ve converted to a Stack.
+    """
     DEFAULTS = {
         'locals': lambda: Locals(5),
         _OP_STACK_KEY: Stack,
@@ -51,6 +60,10 @@ class DefaultInputs(InstructorInputs):
 
 
 def assert_instruction(expected=None, **kwargs):
+    """Assert that executing the instruction returns the `expected` Actions
+
+    The `**kwargs` will be passed to a `DefaultInputs` instance.
+    """
     if expected is None:
         expected = []
     args = dict(kwargs)
@@ -67,6 +80,10 @@ def assert_instruction(expected=None, **kwargs):
 
 
 def assert_incrementing_instruction(expected=None, **kwargs):
+    """Assert that executing the instruction returns the `expected` Actions along with an IncrementProgramCounter
+
+    The `**kwargs` will be passed to a `DefaultInputs` instance.
+    """
     if expected is None:
         expected = []
     expected.append(IncrementProgramCounter)
@@ -74,8 +91,10 @@ def assert_incrementing_instruction(expected=None, **kwargs):
 
 
 def constant_instruction(name, constant):
+    """Return an instruction named `name` that has exactly one CONSTANT_INDEX operand for the index of `constant`"""
     return Instruction.create(name, [constant_operand(constant)])
 
 
 def literal_instruction(name, literal):
+    """Return an instruction named `name` that has exactly one LITERAL operand with the value `literal`"""
     return Instruction.create(name, [literal_operand(literal)])
