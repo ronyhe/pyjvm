@@ -6,7 +6,6 @@ These tests rely heavily on the relationship of three classes in the java/io pac
 from pyjvm.model.hierarchies import does_type_derive_from, simple_instance_check
 from pyjvm.model.jvm_types import ObjectReferenceType, ArrayReferenceType
 from pyjvm.utils.utils import class_as_descriptor
-from test.utils import DUMMY_CLASS, dummy_loader
 
 _IO = 'java/io/'
 OUTPUT_STREAM = _IO + 'OutputStream'
@@ -14,11 +13,11 @@ FILE_OUTPUT_STREAM = _IO + 'FileOutputStream'
 CLOSEABLE = _IO + 'Closeable'
 
 
-def test_instance_of_class():
+def test_instance_of_class(std_loader):
     assert does_type_derive_from(
-        DUMMY_CLASS.type,
-        class_as_descriptor(DUMMY_CLASS.name),
-        dummy_loader()
+        ObjectReferenceType(FILE_OUTPUT_STREAM),
+        class_as_descriptor(FILE_OUTPUT_STREAM),
+        std_loader
     )
 
 
