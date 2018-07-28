@@ -172,6 +172,7 @@ class InstructionNotImplemented(Instructor):
         name = self.instruction.mnemonic
         raise NotImplementedError(f'The {name} instruction is not implemented by this jvm')
 
+
 # Uh-Oh, we broke a rule.
 # The `Instructor` sub classes use elements defined in this module.
 # So they have to be imported after those definitions.

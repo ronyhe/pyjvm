@@ -3,7 +3,7 @@
 The main point is to add a command line argument for testing.
 Namely a path to a Java Standard Library.
 I don't know much about py.test internals, so this is copied almost verbatim from the py.test documentation.
-See 
+See https://docs.pytest.org/en/latest/example/simple.html
 """
 
 import pytest
