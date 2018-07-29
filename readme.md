@@ -22,6 +22,11 @@ This project was written against the [JVM 8 spec](https://docs.oracle.com/javase
 - It does little to no verification of instruction preconditions
 - It rarely complies with the exceptions that instructions should throw
 - It does not implement native methods
+- It does not implement the jsr and ret instructions
+
+Note that the jsr and ret instructions are, to my understanding, largely obsolete.
+Modern Java compiler do not emit them (although other JVM languages might) and the specification discourages their use.
+See [this stackoverflow discutssion](https://stackoverflow.com/a/21150629). 
 
 Addressing these issues should not prove very difficult. Others are welcome to tackle them.
 In fact, this might prove a useful didactic task for students of various advanced topics.
