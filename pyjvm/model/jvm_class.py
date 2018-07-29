@@ -82,6 +82,7 @@ class BytecodeMethod:
     args = attr.ib(converter=tuple)
     exception_handlers = attr.ib(factory=Handlers)
     name = attr.ib(default='no_method_name')
+    descriptor = attr.ib(default='no_descriptor')
     is_native = attr.ib(default=False, converter=bool)
 
 

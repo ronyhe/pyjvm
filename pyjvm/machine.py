@@ -22,17 +22,21 @@ class Frame:
             Locals(method.max_locals),
             Stack(max_depth=method.max_stack),
             method.instructions,
-            method_name=method.name
+            method_name=method.name,
+            method_descriptor=method.descriptor
         )
 
-    def __init__(self,
-                 class_: JvmClass,
-                 _locals: Locals,
-                 op_stack: Stack[JvmValue],
-                 instructions: Iterable[Instruction],
-                 handlers=Handlers(),
-                 pc=0,
-                 method_name='no_method_name'):
+    def __init__(
+            self,
+            class_: JvmClass,
+            _locals: Locals,
+            op_stack: Stack[JvmValue],
+            instructions: Iterable[Instruction],
+            handlers=Handlers(),
+            pc=0,
+            method_name='no_method_name',
+            method_descriptor='no_descriptor'
+    ):
         self.class_ = class_
         self.locals = _locals
         self.op_stack = op_stack
@@ -40,6 +44,7 @@ class Frame:
         self.handlers = handlers
         self.pc = pc
         self.method_name = method_name
+        self.method_descriptor = method_descriptor
 
     def next_instruction(self):
         """Return the first instruction with `pos` greater or equal to `self.pc`"""
@@ -119,7 +124,7 @@ class Machine:
             constants=frame.class_.constants,
             loader=self.class_loader
         )
-        self.echo(f'{frame.class_.name}#{frame.method_name}, {instruction}')
+        self.echo(f'{frame.class_.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
         actions = execute_instruction(inputs)
         for action in actions:
             self.echo('\t' + str(action))

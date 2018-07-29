@@ -32,7 +32,7 @@ class InvokeVirtual(Instructor):
         class_ = self.loader.get_the_class(class_name)
         method = class_.methods[key]
         num_args = len(method.args) + self.args_to_add
-        args = self.peek_many(num_args)
+        args = reversed(self.peek_many(num_args))
 
         return Actions(
             actions.Pop(num_args),

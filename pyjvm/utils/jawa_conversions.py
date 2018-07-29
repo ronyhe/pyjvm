@@ -85,6 +85,7 @@ def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
             method.code.disassemble(),
             arg_types,
             name=method.name.value,
+            descriptor=method.descriptor.value,
             is_native=is_native
         )
     else:

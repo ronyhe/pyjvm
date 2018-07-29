@@ -43,11 +43,12 @@ def test_invoke_v():
     instance = loader.default_instance(class_name)
     arg_value = SOME_INT
     arguments = [instance, arg_value, arg_value]
+    reversed_arguments = list(reversed(arguments))
     assert_instruction(
         constants=consts,
         loader=loader,
         instruction=instruction,
-        op_stack=arguments,
+        op_stack=reversed_arguments,
         expected=[
             Pop(3),
             Invoke(class_name, key, arguments)

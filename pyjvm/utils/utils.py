@@ -48,7 +48,10 @@ def split_by_predicate(iterable, predicate):
 
 def class_as_descriptor(name):
     """Return the JVM descriptor for the class `name`"""
-    return 'L' + name + ';'
+    if not name.endswith(';'):
+        return 'L' + name + ';'
+    else:
+        return name
 
 
 def literal_operand(value):
