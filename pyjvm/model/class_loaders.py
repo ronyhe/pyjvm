@@ -81,18 +81,18 @@ class ClassLoader:
         return self[name].statics
 
     def super_classes(self, class_name):
-        """Return a set of the names of all the superclasses the class has
+        """Return a list of the names of all the superclasses the class has.
 
-        The set includes the `class_name` itself and the root class java/lang/Object
+        The list goes from bottom to top. Presumably, it will always begin with the class itself and always end
+        with java/lang/Object.
         """
-        acc = set()
+        acc = [class_name]
         # noinspection PyUnresolvedReferences
-        acc.add(class_name)
         curr = class_name
         while not curr == RootObjectType.refers_to:
             the_class = self.get_the_class(curr)
             next_name = the_class.name_of_base
-            acc.add(next_name)
+            acc.append(next_name)
             curr = next_name
 
         return acc
@@ -136,6 +136,16 @@ class ClassLoader:
                 return loop(name_of_base, the_set)
 
         return loop(class_name, set())
+
+    def resolve_method(self, class_name, method_key):
+        for name in self.super_classes(class_name):
+            class_ = self.get_the_class(name)
+            try:
+                return class_.methods[method_key]
+            except KeyError:
+                pass
+
+        raise KeyError(f'Cannot resolve method {class_name}#{method_key.name}{method_key.descriptor}')
 
     def default_instance(self, class_name):
         """Returns an instance of the class with all fields initialized to their type's default value

@@ -198,20 +198,27 @@ class Machine:
         """Invoke a method
 
         The structure of Machine makes this simple.
-        We just create a frame for the method and push onto the frame stack.
+        We just create a frame for the method and push it onto the frame stack.
         The next time the Machine fetches an instruction to execute
         it will find the first instruction of the new method.
 
         Don't forget to populate the frame's Locals array with the parameters.
         """
-        class_ = self.class_loader.get_the_class(action.class_name)
-        method = class_.methods[action.method_key]
+        class_name = action.class_name
+        method_key = action.method_key
+
+        loader = self.class_loader
+        class_ = loader.get_the_class(class_name)
+        method = loader.resolve_method(class_name, method_key)
+
         if method.is_native:
             raise NativeNotSupported(
                 f'Cannot invoke method {class_.name}#{method.name} because native methods are not supported'
             )
+
         frame = Frame.from_class_and_method(class_, method)
         self.frames.push(frame)
+
         if len(method.instructions) < 1:
             self._return_void(None)
         else:
