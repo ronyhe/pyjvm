@@ -37,8 +37,11 @@ virtualenv venv
 python -m pip install .
 ```
 
-Once installed you can run `pytest std_lib=path/to/std/lib/jar_file.jar` to validate your installation.
-See the standard library section of this document for more.
+Once installed you can run the tests to validate your installation:
+```bash
+pytest std_lib=path/to/std/lib/jar_file.jar
+```
+See the standard library section of this document to understand the `std_lib` command line variable.
 
 ### Usage
 ```bash
@@ -48,7 +51,8 @@ Where the options are:
 - `-cp` (classpath) a colon separated list of class and jar files
 - `--report` turns on basic tracing which will be written to stdout.
 
-Be sure to add a standard library to your classpath. See the standard library section of this document for more. This can usually be found at *your/java/installation*/lib/rt.jar
+Be sure to add a standard library to your classpath. See the standard library section of this document for more. 
+
 There are other commands that are relevant to development and debugging, see pyjvm/main.py.
 
 ### Java Standard Library
