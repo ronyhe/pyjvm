@@ -53,7 +53,7 @@ See the standard library section of this document to understand the `std_lib` co
 pyjvm run [OPTIONS] MAIN_CLASS
 ```
 Where the options are:
-- `-cp` (classpath) a colon separated list of class and jar files
+- `-cp` (classpath) a colon separated list of class and jar/zip files. Similar to the Java CLASSPATH variable.
 - `--report` turns on basic tracing which will be written to stdout.
 
 Be sure to add a standard library to your classpath. See the standard library section of this document for more. 
@@ -66,23 +66,38 @@ In fact, many trivial ones will need it as well.
 Perhaps surprisingly, even when running class files that were compiled from other JVM languages 
 a Java standard library is needed.
 
-This is due to the fact that parts of the JVM specification itself rely on it.
+That's because the JVM specification itself relies on it.
 For example, when trying to fetch from a null array reference, the spec states that the exception to throw is
 `java/lang/NullPointerException`.
 
 For these reasons, users should probably provide a Java standard library on their class path when running class files.
-Usually this can be found at `path/of/your/java/installation/lib/rt.jar`.
-If a user does not find it there, they can download one 
-or check the web for information regarding their particular installation.
-
-A standard library is also needed to run the project's test suite. The path is provided as a command line argument:
+You'll have to provide one if you want to run the tests:
 ```bash
 pytest std_lib=path/to/std/lib/jar_file.jar
 ``` 
 
-On my machine the project was tested against the OpenJDK 8 standard library.
-However, unless the class file to run is out of the ordinary,
-any fairly modern standard library version will probably work.
+So where to find one?
+
+If you have a JDK installed there's usually a jar file at `path/of/java/installation/jre/lib/rt.jar`.
+If it's not there, you can check the web for information regarding your particular installation.
+
+But that's not ideal, there is a **better way**.
+
+The problem is that traditional standard libraries, like open-JDK and the Oracle JDK, rely heavily
+on native methods. And, as you might recall, this implementation doesn't support them.
+This creates a high probability that your class files won't be able to execute even simple tasks.
+
+I recommend the [GNU classpath project](https://www.gnu.org/software/classpath/), 
+which is a standard library implementation that's specifically designed for alternative JVMs.
+It's reliance on native functionality is minimal which makes it a great fit.
+
+On the technical side, it's structured to ease JVM implementation, so a possible evolution for this project 
+is to fully include it as the pyjvm's standard library. 
+
+Tip: If you're having trouble building GNU classpath on your machine try passing the --disable-jni flag
+to the ./configure program, which disables the compilation of native methods. They're prone to build problems
+and are irrelevant for a JVM that won't execute them anyway. 
+
 
 ### High Level Architecture
 The Machine in machine.py creates Frame objects that represent methods.
