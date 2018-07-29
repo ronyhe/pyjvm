@@ -91,8 +91,8 @@ I recommend the [GNU classpath project](https://www.gnu.org/software/classpath/)
 which is a standard library implementation that's specifically designed for alternative JVMs.
 It's reliance on native functionality is minimal which makes it a great fit.
 
-On the technical side, it's structured to ease JVM implementation, so a possible evolution for this project 
-is to fully include it as the pyjvm's standard library. 
+On the technical side, it's structured to with JVM implementation in mind. 
+So a possible evolution for this project is to fully include it as pyjvm's standard library. 
 
 Tip: If you're having trouble building GNU classpath on your machine try passing the --disable-jni flag
 to the ./configure program, which disables the compilation of native methods. They're prone to build problems
