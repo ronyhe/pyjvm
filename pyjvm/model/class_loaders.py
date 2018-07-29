@@ -83,8 +83,11 @@ class ClassLoader:
     def super_classes(self, class_name):
         """Return a list of the names of all the superclasses the class has.
 
-        The list goes from bottom to top. Presumably, it will always begin with the class itself and always end
-        with java/lang/Object.
+        The list goes from bottom to top.
+        Presumably, for any class that is actually found, the resulting list will always:
+         - Have size 1 or greater. `len(self.super_classes(name)) > = 1`
+         - Start with the class itself.
+         - End with java/lang/Object.
         """
         acc = [class_name]
         # noinspection PyUnresolvedReferences
@@ -94,6 +97,13 @@ class ClassLoader:
             next_name = the_class.name_of_base
             acc.append(next_name)
             curr = next_name
+
+        if len(acc) < 1:
+            raise ValueError('super classes are expected to have at least one item')
+        if not acc[0] == class_name:
+            raise ValueError('super classes are expected to begin with the class that was queried upon')
+        if not acc[-1] == RootObjectType.refers_to:
+            raise ValueError('super_class are expected to end with the root type java/lang/Object')
 
         return acc
 
