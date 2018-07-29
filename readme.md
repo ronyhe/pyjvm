@@ -27,21 +27,15 @@ Addressing these issues should not prove very difficult. Others are welcome to t
 In fact, this might prove a useful didactic task for students of various advanced topics.
 
 ### Installation
-This project is compliant with usual python conventions, so to install using a virtual env:
+This project is compliant with usual python conventions.
+So assuming python 3.6+ and virtualenv are installed:
 ```bash
-mkdir pyjvm
-cd pyjvm
 git clone https://github.com/ronyhe/pyjvm.git
+cd pyjvm
 virtualenv venv
 . venv/bin/activate
-pip install .
+python -m pip install .
 ```
-Note that these steps assume that the following are installed and available on the command line:
-
-- git
-- virtualenv
-- python3
-- pip
 
 Once installed you can run `pytest std_lib=path/to/std/lib/jar_file.jar` to validate your installation.
 See the standard library section of this document for more.
