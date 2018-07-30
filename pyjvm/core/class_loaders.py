@@ -4,11 +4,6 @@ from pyjvm.core.jvm_types import RootObjectType, ObjectReferenceType, JvmObject
 from pyjvm.utils.jawa_conversions import convert_class_file
 
 
-def _name_and_default_value(pair):
-    name, type_ = pair
-    return name, type_.create_instance(type_.default_value)
-
-
 class LoaderEntry:
     """An object that represents a JVM class at runtime
 
@@ -195,3 +190,8 @@ class TraditionalLoader(ClassLoader):
         cf = self._jawa_loader[name]
         class_ = convert_class_file(cf)
         return class_
+
+
+def _name_and_default_value(pair):
+    name, type_ = pair
+    return name, type_.create_instance(type_.default_value)

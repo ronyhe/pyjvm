@@ -19,11 +19,6 @@ class NativeNotSupported(Exception):
         super().__init__(message)
 
 
-# noinspection PyUnusedLocal
-def _default_echo(*args, **kwargs):
-    pass
-
-
 class Machine:
     """A JVM
 
@@ -267,6 +262,11 @@ class Machine:
 def _to_snake_case(text):
     new_letters = [c if c.islower() else '_' + c.lower() for c in text]
     return ''.join(new_letters)
+
+
+# noinspection PyUnusedLocal
+def _default_echo(*args, **kwargs):
+    pass
 
 
 def run(loader, main_class_name, echo=None):

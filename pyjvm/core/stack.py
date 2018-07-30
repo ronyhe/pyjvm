@@ -30,10 +30,6 @@ class Stack(Generic[T]):
         self._values.insert(0, value)
         self._validate_size()
 
-    def _validate_size(self):
-        if self.max_depth is not None and len(self._values) > self.max_depth + 1:
-            raise OverflowError('Max amount of values in stack, cannot add more')
-
     def insert_at_offset(self, offset, value):
         """Insert `value` directly at `offset` from top
 
@@ -65,3 +61,7 @@ class Stack(Generic[T]):
     def __iter__(self):
         """Return an iterator yielding the values in this stack"""
         return iter(self._values)
+
+    def _validate_size(self):
+        if self.max_depth is not None and len(self._values) > self.max_depth + 1:
+            raise OverflowError('Max amount of values in stack, cannot add more')
