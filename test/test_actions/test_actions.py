@@ -72,12 +72,16 @@ def complex_machine():
             name=EXCEPTION_NAME,
             name_of_base=RootObjectType.refers_to,
             constants=ConstantPool()
+        ),
+        RootObjectType.refers_to: JvmClass(
+            name=RootObjectType.refers_to,
+            name_of_base=None,
+            constants=ConstantPool()
         )
     }))
     for _ in range(2):
-        machine.frames.push(
-            Frame.from_class_and_method(COMPLEX_CLASS, METHOD)
-        )
+        frame = Frame.from_class_and_method(COMPLEX_CLASS, METHOD)
+        machine.frames.push(frame)
     return machine
 
 
@@ -227,7 +231,7 @@ def test_throw_object():
         machine.act(ThrowObject(instance))
 
 
-def throw_with_handler():
+def test_throw_with_handler():
     machine = complex_machine()
     frames = machine.frames
     next_frame = frames.peek(1)

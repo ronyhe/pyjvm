@@ -7,7 +7,7 @@ from jawa import constants
 from jawa.cf import ClassFile
 from jawa.methods import Method
 
-from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey, JvmObject
+from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey, JvmObject, Handlers, ExceptionHandler
 from pyjvm.model.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType, \
     RootObjectType
 from pyjvm.utils.utils import split_by_predicate
@@ -86,7 +86,15 @@ def convert_method(method: jawa.methods.Method) -> BytecodeMethod:
             arg_types,
             name=method.name.value,
             descriptor=method.descriptor.value,
-            is_native=is_native
+            is_native=is_native,
+            exception_handlers=Handlers([
+                ExceptionHandler(
+                    ex.start_pc,
+                    ex.end_pc,
+                    ex.handler_pc,
+                    ex.catch_type
+                ) for ex in method.code.exception_table
+            ])
         )
     else:
         return BytecodeMethod(

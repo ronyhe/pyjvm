@@ -23,7 +23,8 @@ class Frame:
             Stack(max_depth=method.max_stack),
             method.instructions,
             method_name=method.name,
-            method_descriptor=method.descriptor
+            method_descriptor=method.descriptor,
+            exception_handlers=method.exception_handlers
         )
 
     def __init__(
@@ -32,19 +33,19 @@ class Frame:
             _locals: Locals,
             op_stack: Stack[JvmValue],
             instructions: Iterable[Instruction],
-            handlers=Handlers(),
             pc=0,
             method_name='no_method_name',
-            method_descriptor='no_descriptor'
+            method_descriptor='no_descriptor',
+            exception_handlers=Handlers
     ):
         self.class_ = class_
         self.locals = _locals
         self.op_stack = op_stack
         self.instructions = tuple(instructions)
-        self.handlers = handlers
         self.pc = pc
         self.method_name = method_name
         self.method_descriptor = method_descriptor
+        self.exception_handlers = exception_handlers
 
     def next_instruction(self):
         """Return the first instruction with `pos` greater or equal to `self.pc`"""
@@ -268,9 +269,9 @@ class Machine:
         """
         frames = self.frames
         frame = frames.peek()
-        handlers = frame.handlers.find_handlers(frame.pc)
+        handlers = frame.exception_handlers.find_handlers(frame.pc)
         for handler in handlers:
-            class_name = frame.class_.constants[handler.catch_type].name.value
+            class_name = handler.catch_type
             type_match = is_value_instance_of(instance, class_as_descriptor(class_name), self.class_loader)
             if type_match:
                 frame.op_stack.push(instance)
