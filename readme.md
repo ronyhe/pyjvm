@@ -13,6 +13,55 @@ The existing implementations are better in terms of security, compliance and per
 Some might suggest that it's a good platform for experimentation with jvm features and modifications.
 This might be true, but an implementation already exists for this purpose: [Metascala](https://github.com/lihaoyi/Metascala)
 
+
+### Installation
+This project is compliant with usual python conventions.
+So assuming python 3.6+ and virtualenv are installed:
+```bash
+git clone https://github.com/ronyhe/pyjvm.git
+cd pyjvm
+virtualenv venv
+. venv/bin/activate
+python -m pip install .
+```
+
+Once installed you can run the tests to validate your installation:
+```bash
+pytest std_lib=path/to/std/lib/jar_file.jar
+```
+See the standard library section of this document to understand the `std_lib` command line variable.
+
+
+### Usage
+```bash
+pyjvm run [OPTIONS] MAIN_CLASS
+```
+Where the options are:
+- `-cp` (classpath) a colon separated list of class and jar/zip files. Similar to the Java CLASSPATH variable.
+- `--report` turns on basic tracing which will be written to stdout.
+
+Be sure to add a standard library to your classpath. See the standard library section of this document for more. 
+
+There are other commands that are relevant to development and debugging, see pyjvm/main.py.
+
+
+### High Level Architecture
+The Machine in machine.py creates Frame objects that represent methods.
+It loops through the frame's instructions and sends them to instructions/instructions.py, which dispatches it to
+Instructor instances.
+The Instructors produce instances of Action that the machine executes.
+
+For example, let's assume that the current instruction is 'iload_0'.
+This instruction should take a value, the one that resides in index 0 of the current frame's locals array.
+It should push that value onto the the current frame's operand stack.
+
+Thus, it will produce the following actions:
+- Push(\<the value>)
+- IncrementProgramCounter()
+
+Which the machine will then execute. 
+
+
 ### Where does this JVM diverge from the spec?
 This project was written against the [JVM 8 spec](https://docs.oracle.com/javase/specs/jvms/se8/html/index.html), except:
 
@@ -32,35 +81,6 @@ In fact, this might prove a useful didactic task for students of various advance
 Modern Java compilers do not emit them (although other JVM languages might) and the specification discourages their use.
 See [this stackoverflow discussion](https://stackoverflow.com/a/21150629). 
 
-
-### Installation
-This project is compliant with usual python conventions.
-So assuming python 3.6+ and virtualenv are installed:
-```bash
-git clone https://github.com/ronyhe/pyjvm.git
-cd pyjvm
-virtualenv venv
-. venv/bin/activate
-python -m pip install .
-```
-
-Once installed you can run the tests to validate your installation:
-```bash
-pytest std_lib=path/to/std/lib/jar_file.jar
-```
-See the standard library section of this document to understand the `std_lib` command line variable.
-
-### Usage
-```bash
-pyjvm run [OPTIONS] MAIN_CLASS
-```
-Where the options are:
-- `-cp` (classpath) a colon separated list of class and jar/zip files. Similar to the Java CLASSPATH variable.
-- `--report` turns on basic tracing which will be written to stdout.
-
-Be sure to add a standard library to your classpath. See the standard library section of this document for more. 
-
-There are other commands that are relevant to development and debugging, see pyjvm/main.py.
 
 ### Java Standard Library
 All non trivial Java class files will need access to a standard library.
@@ -100,22 +120,6 @@ Tip: If you're having trouble building GNU classpath on your machine try passing
 to the ./configure program, which disables the compilation of native methods. They're prone to build problems
 and are irrelevant for a JVM that won't execute them anyway. 
 
-
-### High Level Architecture
-The Machine in machine.py creates Frame objects that represent methods.
-It loops through the frame's instructions and sends them to instructions/instructions.py, which dispatches it to
-Instructor instances.
-The Instructors produce instances of Action that the machine executes.
-
-For example, let's assume that the current instruction is 'iload_0'.
-This instruction should take a value, the one that resides in index 0 of the current frame's locals array.
-It should push that value onto the the current frame's operand stack.
-
-Thus, it will produce the following actions:
-- Push(\<the value>)
-- IncrementProgramCounter()
-
-Which the machine will then execute. 
 
 ### Acknowledgements
 There are dozens of people I learned from and dozens of tools I use every day. 
