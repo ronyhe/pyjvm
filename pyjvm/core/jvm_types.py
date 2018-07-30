@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 class Type:
     def __init__(self, name, *, default_value, refers_to=None,
                  needs_two_slots=False, is_array_reference=False):
@@ -132,3 +135,31 @@ def min_max_by_type(type_):
 
 RootObjectType = ObjectReferenceType('java/lang/Object')
 NULL_VALUE = RootObjectType.create_instance(NULL_OBJECT)
+
+
+class JvmObject:
+    """The value of a reference class instance at runtime
+
+    To be used in conjunction with a JvmType, as the value for reference types.
+
+    fields: Mapping[name, JvmType], the names and types of the fields in this object's class
+    """
+
+    @classmethod
+    def defaults(cls, field_specs):
+        """Return a new JvmObject with all fields initialized to their default values"""
+        return cls(
+            (name, type_.create_instance(type_.default_value)) for name, type_ in dict(field_specs).items()
+        )
+
+    def __init__(self, fields):
+        self.fields: Dict[str, JvmValue] = dict(fields)
+
+    def __eq__(self, other):
+        try:
+            return other.fields == self.fields
+        except AttributeError:
+            return False
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__}>'

@@ -1,7 +1,6 @@
 from jawa.classloader import ClassLoader as JawaLoader
 
-from pyjvm.core.jvm_class import JvmObject
-from pyjvm.core.jvm_types import RootObjectType, ObjectReferenceType
+from pyjvm.core.jvm_types import RootObjectType, ObjectReferenceType, JvmObject
 from pyjvm.utils.jawa_conversions import convert_class_file
 
 

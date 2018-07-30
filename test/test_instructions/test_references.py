@@ -4,9 +4,9 @@ from jawa.util.bytecode import Instruction
 from pyjvm.core.actions import Push, ThrowObject, PushNewInstance, PutField, PutStatic, throw_null_pointer, Pop, \
     throw_negative_array_size, throw_check_cast
 from pyjvm.core.class_loaders import FixedClassLoader
-from pyjvm.core.jvm_class import JvmObject, JvmClass
+from pyjvm.core.jvm_class import JvmClass
 from pyjvm.core.jvm_types import Integer, NULL_VALUE, ArrayReferenceType, NULL_OBJECT, ObjectReferenceType, \
-    RootObjectType
+    RootObjectType, JvmObject
 from pyjvm.instructions.references import create_levels
 from pyjvm.utils import value_array_type_indicators
 from pyjvm.utils.utils import TRUE, FALSE, constant_operand, literal_operand
