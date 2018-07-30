@@ -107,3 +107,8 @@ def field_name_from_field_ref(ref):
         return name.value
     except AttributeError:
         return name
+
+
+def named_tuple_replace(instance, **kwargs):
+    # noinspection PyProtectedMember
+    return instance._replace(**kwargs)

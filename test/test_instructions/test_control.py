@@ -2,6 +2,7 @@ from pyjvm.core.actions import ReturnResult, ReturnVoid, GoTo, Pop
 from pyjvm.core.jvm_types import Integer
 from pyjvm.instructions.control import RETURN_RESULT_INSTRUCTIONS
 from pyjvm.instructions.switches import LookupSwitch, TableSwitch
+from pyjvm.utils.utils import named_tuple_replace
 from test.utils import assert_instruction, literal_instruction
 
 
@@ -31,7 +32,8 @@ def test_go_to():
     offset = 4
     source = 10
     # noinspection PyProtectedMember
-    instruction = literal_instruction('goto', offset)._replace(pos=source)
+    instruction = literal_instruction('goto', offset)
+    instruction = named_tuple_replace(instruction, pos=source)
     target = offset + source
 
     assert_instruction(

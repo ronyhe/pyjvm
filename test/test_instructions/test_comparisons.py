@@ -2,7 +2,7 @@ from pyjvm.core.actions import Pop, Push, GoTo
 from pyjvm.core.jvm_types import Integer, NULL_OBJECT, ArrayReferenceType, ObjectReferenceType
 from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
     BINARY_REFERENCE_COMPARISONS, unary_op
-from pyjvm.utils.utils import bool_to_num
+from pyjvm.utils.utils import bool_to_num, named_tuple_replace
 from test.utils import assert_incrementing_instruction, assert_instruction, literal_instruction, NPE_CLASS_NAME
 
 
@@ -27,10 +27,11 @@ def _test_branch_comp(name, source, offset, values, type_, op):
         actual_offset = 1
     target = source + actual_offset
 
+    instruction = literal_instruction(name, offset)
+    instruction = named_tuple_replace(instruction, pos=source)
     try:
-        # noinspection PyProtectedMember
         assert_instruction(
-            instruction=literal_instruction(name, offset)._replace(pos=source),
+            instruction=instruction,
             op_stack=[type_.create_instance(v) for v in values],
             expected=[
                 Pop(len(values)),
@@ -76,9 +77,10 @@ def test_if_null():
     source = 3
     value = ArrayReferenceType(Integer).create_instance(NULL_OBJECT)
 
-    # noinspection PyProtectedMember
+    instruction = literal_instruction('ifnull', offset)
+    instruction = named_tuple_replace(instruction, pos=source)
     assert_instruction(
-        instruction=literal_instruction('ifnull', offset)._replace(pos=source),
+        instruction=instruction,
         op_stack=[value],
         expected=[
             Pop(),

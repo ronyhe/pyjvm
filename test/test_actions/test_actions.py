@@ -25,6 +25,7 @@ from pyjvm.core.frame import Frame
 from pyjvm.core.jvm_class import Handlers, ExceptionHandler, JvmClass, MethodKey, BytecodeMethod
 from pyjvm.core.jvm_types import Integer, ArrayReferenceType, RootObjectType, ObjectReferenceType
 from pyjvm.core.machine import Machine, Unhandled, NativeNotSupported
+from pyjvm.utils.utils import named_tuple_replace
 from test.utils import SOME_INT
 
 COMPLEX_CLASS_NAME = 'class_name'
@@ -44,7 +45,9 @@ HANDLER = ExceptionHandler(
 METHOD = BytecodeMethod(
     name='method_name',
     descriptor='(II)V',
-    instructions=[Instruction.create('nop')._replace(pos=i) for i in range(5)],
+    instructions=[
+        named_tuple_replace(Instruction.create('nop'), pos=i) for i in range(5)
+    ],
     max_locals=5,
     max_stack=15,
     args=[Integer, Integer],

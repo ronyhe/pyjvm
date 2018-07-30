@@ -19,7 +19,7 @@ from collections import OrderedDict
 
 from jawa.util.bytecode import Instruction
 
-from pyjvm.utils.utils import literal_operand, pull_pairs
+from pyjvm.utils.utils import literal_operand, pull_pairs, named_tuple_replace
 
 LOOKUP_SWITCH = 'lookupswitch'
 TABLE_SWITCH = 'tableswitch'
@@ -103,8 +103,7 @@ def _create_instruction(name, pos, operands):
     ops = _create_operands(operands)
     instruction = Instruction.create(name, ops)
     if pos is not None:
-        # noinspection PyProtectedMember
-        instruction = instruction._replace(pos=pos)
+        instruction = named_tuple_replace(instruction, pos=pos)
     return instruction
 
 
