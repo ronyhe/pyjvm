@@ -73,10 +73,10 @@ class Machine:
             instruction=instruction,
             locals=frame.locals,
             op_stack=frame.op_stack,
-            constants=frame.class_.constants,
+            constants=frame.jvm_class.constants,
             loader=self.class_loader
         )
-        self.echo(f'{frame.class_.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
+        self.echo(f'{frame.jvm_class.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
         actions = execute_instruction(inputs)
         for action in actions:
             self.echo('\t' + str(action))
