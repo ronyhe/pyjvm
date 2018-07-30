@@ -27,10 +27,7 @@ class Type:
         return JvmValue(self, value)
 
     def __repr__(self):
-        fields = 'default_value', 'refers_to', 'needs_two_slots'
-        mapping = [(name, getattr(self, name)) for name in fields]
-        values_text = ', '.join(f'{name}={value}' for name, value in mapping)
-        return f'{self.__class__.__name__}({self.name}, {values_text})'
+        return f'{self.__class__.__name__}(refers_to={self.refers_to})'
 
     def __str__(self):
         return self.name
