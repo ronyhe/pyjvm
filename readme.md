@@ -119,7 +119,7 @@ For more on this see the [GNU classpath vm integration page](https://www.gnu.org
 
 Tip: If you're having trouble building GNU classpath on your machine try passing the --disable-jni flag
 to the ./configure program, which disables the compilation of native methods. They're prone to build problems
-and are irrelevant for a JVM that won't execute them anyway. 
+and are irrelevant for a JVM that won't execute them anyway.
 
 
 ### Acknowledgements
