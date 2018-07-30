@@ -76,10 +76,10 @@ class Machine:
             constants=frame.jvm_class.constants,
             loader=self.class_loader
         )
-        self.echo(f'{frame.jvm_class.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
+        self._echo(f'{frame.jvm_class.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
         actions = execute_instruction(inputs)
         for action in actions:
-            self.echo('\t' + str(action))
+            self._echo('  ' + str(action))
             self.act(action)
 
     def act(self, action):
@@ -257,6 +257,11 @@ class Machine:
         self.frames = temp_stack
         self.run()
         self.frames = old_stack
+
+    def _echo(self, text):
+        depth = self.frames.size()
+        prefix = '|  ' * depth
+        self.echo(prefix + str(text))
 
 
 def _to_snake_case(text):
