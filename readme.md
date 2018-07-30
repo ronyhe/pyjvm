@@ -47,7 +47,7 @@ There are other commands that are relevant to development and debugging, see pyj
 
 ### High Level Architecture
 The Machine in machine.py creates Frame objects that represent methods.
-It loops through the frame's instructions and sends them to instructions/instructions.py, which dispatches it to
+It loops through the frame's instructions and sends them to instructions/instructions.py, which dispatches them to
 Instructor instances.
 The Instructors produce instances of Action that the machine executes.
 
@@ -69,15 +69,18 @@ This project was written against the [JVM 8 spec](https://docs.oracle.com/javase
 - It does not obey JVM arithmetic overflow rules. Instead it uses python math operations directly.
 - It does little to no verification of class files
 - It does little to no verification of instruction preconditions
-- It rarely complies with the exceptions that instructions should throw
+- It rarely complies with the exceptions that instructions should throw*.
 - It does not implement native methods
-- It does not implement the jsr and ret instructions*
+- It does not implement the jsr and ret instructions**
 
 
 Others are welcome to tackle these issues if they wish.
 In fact, this might prove a useful didactic task for students of various advanced topics.
 
-*Note that the jsr and ret instructions are, to my understanding, largely obsolete.
+*Most (but not all) of the exceptions that instructions should throw are related to faulty class files.
+ These cases are security features that aren't relevant to a non-production VM. 
+
+**Note that the jsr and ret instructions are, to my understanding, largely obsolete.
 Modern Java compilers do not emit them (although other JVM languages might) and the specification discourages their use.
 See [this stackoverflow discussion](https://stackoverflow.com/a/21150629). 
 
