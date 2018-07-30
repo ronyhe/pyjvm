@@ -115,13 +115,9 @@ def _convert_type(base, dimensions, name):
 
 def _atom_type(base, name):
     if base == 'L':
-        return _class(name)
+        return ObjectReferenceType(name)
     else:
         return _LETTERS_MAP[base.upper()]
-
-
-def _class(name):
-    return ObjectReferenceType(name)
 
 
 def _field_to_pair(field):
@@ -193,4 +189,3 @@ def _convert_const_to_string_instance(const):
         'hash': hash_,
         'value': char_array
     }))
-    
