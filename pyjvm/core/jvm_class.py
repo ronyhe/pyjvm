@@ -2,7 +2,7 @@ from typing import Dict
 
 import attr
 
-from pyjvm.model.jvm_types import JvmValue
+from pyjvm.core.jvm_types import JvmValue
 
 
 @attr.s(frozen=True)

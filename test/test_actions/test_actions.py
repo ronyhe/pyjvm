@@ -20,10 +20,10 @@ from jawa.util.bytecode import Instruction
 from pyjvm.actions import Push, Pop, PushNewInstance, DuplicateTop, StoreInLocals, \
     StoreIntoArray, PutField, PutStatic, GoTo, Invoke, ReturnVoid, ReturnResult, ThrowObject, CreateAndThrow, \
     IncrementProgramCounter
+from pyjvm.core.class_loaders import FixedClassLoader
+from pyjvm.core.jvm_class import Handlers, ExceptionHandler, JvmClass, MethodKey, BytecodeMethod
+from pyjvm.core.jvm_types import Integer, ArrayReferenceType, RootObjectType, ObjectReferenceType
 from pyjvm.machine import Machine, Frame, Unhandled, NativeNotSupported
-from pyjvm.model.class_loaders import FixedClassLoader
-from pyjvm.model.jvm_class import Handlers, ExceptionHandler, JvmClass, MethodKey, BytecodeMethod
-from pyjvm.model.jvm_types import Integer, ArrayReferenceType, RootObjectType, ObjectReferenceType
 from test.utils import SOME_INT
 
 COMPLEX_CLASS_NAME = 'class_name'

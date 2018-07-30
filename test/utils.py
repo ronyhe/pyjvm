@@ -3,11 +3,11 @@ from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import IncrementProgramCounter
+from pyjvm.core.class_loaders import FixedClassLoader
+from pyjvm.core.frame_locals import Locals
+from pyjvm.core.jvm_types import Integer
+from pyjvm.core.stack import Stack
 from pyjvm.instructions.instructions import InstructorInputs, execute_instruction
-from pyjvm.model.class_loaders import FixedClassLoader
-from pyjvm.model.frame_locals import Locals
-from pyjvm.model.jvm_types import Integer
-from pyjvm.model.stack import Stack
 from pyjvm.utils.utils import literal_operand, constant_operand
 
 SOME_INT = Integer.create_instance(2)

@@ -1,7 +1,7 @@
 """Miscellaneous useful functions"""
 from jawa.util.bytecode import Operand, OperandTypes
 
-from pyjvm.model.jvm_types import Integer
+from pyjvm.core.jvm_types import Integer
 
 
 def dump_class(cf, echo):

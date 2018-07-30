@@ -8,7 +8,7 @@ See https://docs.pytest.org/en/latest/example/simple.html
 
 import pytest
 
-from pyjvm.model.class_loaders import TraditionalLoader
+from pyjvm.core.class_loaders import TraditionalLoader
 
 
 # noinspection SpellCheckingInspection

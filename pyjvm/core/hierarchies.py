@@ -3,8 +3,8 @@
 """
 from jawa.util.descriptor import field_descriptor
 
-from pyjvm.model.class_loaders import ClassLoader
-from pyjvm.model.jvm_types import JvmValue, Type, ObjectReferenceType
+from pyjvm.core.class_loaders import ClassLoader
+from pyjvm.core.jvm_types import JvmValue, Type, ObjectReferenceType
 from pyjvm.utils.jawa_conversions import convert_type
 
 

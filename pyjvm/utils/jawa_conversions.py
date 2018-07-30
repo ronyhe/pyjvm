@@ -15,8 +15,8 @@ from jawa import constants as jawa_constants
 from jawa.cf import ClassFile
 from jawa.methods import Method
 
-from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey, JvmObject, Handlers, ExceptionHandler
-from pyjvm.model.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType, \
+from pyjvm.core.jvm_class import JvmClass, BytecodeMethod, MethodKey, JvmObject, Handlers, ExceptionHandler
+from pyjvm.core.jvm_types import Type, Integer, Float, Long, Double, ArrayReferenceType, ObjectReferenceType, \
     RootObjectType
 from pyjvm.utils.utils import split_by_predicate
 

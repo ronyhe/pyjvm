@@ -19,8 +19,8 @@ from jawa.util.bytecode import opcode_table
 
 from pyjvm import machine
 from pyjvm.actions import Action
+from pyjvm.core.class_loaders import TraditionalLoader
 from pyjvm.instructions.instructions import get_implemented_instructions
-from pyjvm.model.class_loaders import TraditionalLoader
 from pyjvm.utils import utils
 
 

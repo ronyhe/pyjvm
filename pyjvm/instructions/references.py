@@ -1,8 +1,8 @@
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter, Actions
+from pyjvm.core.hierarchies import is_value_instance_of
+from pyjvm.core.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
 from pyjvm.instructions.instructions import bytecode, Instructor
-from pyjvm.model.hierarchies import is_value_instance_of
-from pyjvm.model.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
 from pyjvm.utils import value_array_type_indicators
 from pyjvm.utils.utils import class_as_descriptor, field_name_from_field_ref
 

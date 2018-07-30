@@ -3,8 +3,8 @@
 These tests rely heavily on the relationship of three classes in the java/io package:
 `FileOutputStream` derives from `OutputStream` which implements `Closeable`
 """
-from pyjvm.model.hierarchies import does_type_derive_from, simple_instance_check
-from pyjvm.model.jvm_types import ObjectReferenceType, ArrayReferenceType
+from pyjvm.core.hierarchies import does_type_derive_from, simple_instance_check
+from pyjvm.core.jvm_types import ObjectReferenceType, ArrayReferenceType
 from pyjvm.utils.utils import class_as_descriptor
 
 _IO = 'java/io/'

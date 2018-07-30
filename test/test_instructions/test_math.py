@@ -1,9 +1,9 @@
 from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import Pop, Push
+from pyjvm.core.frame_locals import Locals
+from pyjvm.core.jvm_types import Integer
 from pyjvm.instructions.math import OPERATORS
-from pyjvm.model.frame_locals import Locals
-from pyjvm.model.jvm_types import Integer
 from pyjvm.utils.utils import local_operand, literal_operand
 from test.utils import assert_incrementing_instruction
 

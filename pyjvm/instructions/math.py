@@ -2,8 +2,8 @@ import operator
 
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter
+from pyjvm.core.jvm_types import Integer, Long, Float, Double
 from pyjvm.instructions.instructions import bytecode_dict, Instructor, bytecode
-from pyjvm.model.jvm_types import Integer, Long, Float, Double
 
 TYPE_LETTERS = {
     Integer: 'i',

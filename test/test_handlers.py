@@ -1,7 +1,7 @@
 from jawa.attributes.code import CodeException
 from jawa.cf import ClassFile
 
-from pyjvm.model.jvm_class import ExceptionHandler, Handlers
+from pyjvm.core.jvm_class import ExceptionHandler, Handlers
 from pyjvm.utils.jawa_conversions import convert_class_file, key_from_method
 from test.utils import NPE_CLASS_NAME
 

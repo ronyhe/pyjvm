@@ -3,7 +3,7 @@
 The JVM array instructions indicate value types using specific integers.
 See instructions/references.py for usage examples.
 """
-from pyjvm.model.jvm_types import Integer, Long, Float, Double
+from pyjvm.core.jvm_types import Integer, Long, Float, Double
 
 _BY_TYPE = {
     Integer: 10,

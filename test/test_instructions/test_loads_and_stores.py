@@ -1,6 +1,6 @@
 from pyjvm.actions import StoreInLocals, Pop, StoreIntoArray, Push, throw_null_pointer
-from pyjvm.model.frame_locals import Locals
-from pyjvm.model.jvm_types import ArrayReferenceType, Integer, NULL_VALUE
+from pyjvm.core.frame_locals import Locals
+from pyjvm.core.jvm_types import ArrayReferenceType, Integer, NULL_VALUE
 from test.utils import SOME_INT, assert_incrementing_instruction, assert_instruction, literal_instruction
 
 

@@ -1,9 +1,9 @@
 from jawa.constants import ConstantPool
 
 from pyjvm.actions import Push
+from pyjvm.core.jvm_class import JvmObject
+from pyjvm.core.jvm_types import Integer, Double, ObjectReferenceType, ArrayReferenceType
 from pyjvm.instructions import constant_instructions
-from pyjvm.model.jvm_class import JvmObject
-from pyjvm.model.jvm_types import Integer, Double, ObjectReferenceType, ArrayReferenceType
 from test.utils import assert_incrementing_instruction, constant_instruction, literal_instruction
 
 

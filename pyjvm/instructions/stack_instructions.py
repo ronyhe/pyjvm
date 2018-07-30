@@ -1,7 +1,7 @@
 from pyjvm import actions
 from pyjvm.actions import IncrementProgramCounter
+from pyjvm.core.jvm_types import CompType
 from pyjvm.instructions.instructions import Instructor, bytecode, bytecode_dict
-from pyjvm.model.jvm_types import CompType
 
 
 def _single_iterable_byte_code_dict(specs):

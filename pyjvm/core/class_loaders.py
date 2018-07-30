@@ -1,7 +1,7 @@
 from jawa.classloader import ClassLoader as JawaLoader
 
-from pyjvm.model.jvm_class import JvmObject
-from pyjvm.model.jvm_types import RootObjectType, ObjectReferenceType
+from pyjvm.core.jvm_class import JvmObject
+from pyjvm.core.jvm_types import RootObjectType, ObjectReferenceType
 from pyjvm.utils.jawa_conversions import convert_class_file
 
 
@@ -160,7 +160,7 @@ class ClassLoader:
     def default_instance(self, class_name):
         """Returns an instance of the class with all fields initialized to their type's default value
 
-        See model.jvm_types.py for more information regarding types and their defaults.
+        See core.jvm_types.py for more information regarding types and their defaults.
         """
         fields = self.collect_fields_in_super_classes(class_name)
         obj = JvmObject.defaults(fields)

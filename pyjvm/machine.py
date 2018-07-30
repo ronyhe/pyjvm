@@ -2,13 +2,13 @@ from typing import Iterable
 
 from jawa.util.bytecode import Instruction
 
+from pyjvm.core.class_loaders import ClassLoader
+from pyjvm.core.frame_locals import Locals
+from pyjvm.core.hierarchies import is_value_instance_of
+from pyjvm.core.jvm_class import BytecodeMethod, JvmClass, Handlers, MethodKey
+from pyjvm.core.jvm_types import JvmValue
+from pyjvm.core.stack import Stack
 from pyjvm.instructions.instructions import execute_instruction, InstructorInputs
-from pyjvm.model.class_loaders import ClassLoader
-from pyjvm.model.frame_locals import Locals
-from pyjvm.model.hierarchies import is_value_instance_of
-from pyjvm.model.jvm_class import BytecodeMethod, JvmClass, Handlers, MethodKey
-from pyjvm.model.jvm_types import JvmValue
-from pyjvm.model.stack import Stack
 from pyjvm.utils.utils import class_as_descriptor
 
 

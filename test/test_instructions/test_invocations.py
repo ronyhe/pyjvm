@@ -2,9 +2,9 @@ from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
 from pyjvm.actions import Pop, Invoke
-from pyjvm.model.class_loaders import FixedClassLoader
-from pyjvm.model.jvm_class import JvmClass, BytecodeMethod, MethodKey
-from pyjvm.model.jvm_types import Integer, RootObjectType
+from pyjvm.core.class_loaders import FixedClassLoader
+from pyjvm.core.jvm_class import JvmClass, BytecodeMethod, MethodKey
+from pyjvm.core.jvm_types import Integer, RootObjectType
 from test.utils import constant_instruction, assert_instruction, SOME_INT
 
 
