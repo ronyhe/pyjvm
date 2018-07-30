@@ -100,22 +100,23 @@ def convert_method(method: jawa.methods.Method, constants) -> BytecodeMethod:
             handlers = Handlers([_create_handler(ex, constants) for ex in code.exception_table])
 
         return BytecodeMethod(
-            code.max_locals,
-            code.max_stack,
-            code.disassemble(),
-            arg_types,
             name=method.name.value,
             descriptor=method.descriptor.value,
+            instructions=code.disassemble(),
+            max_locals=code.max_locals,
+            max_stack=code.max_stack,
+            args=arg_types,
             is_native=is_native,
             exception_handlers=handlers
         )
     else:
         return BytecodeMethod(
-            0,
-            0,
-            [],
-            arg_types,
             name=method.name.value,
+            descriptor=method.descriptor.value,
+            instructions=[],
+            max_locals=0,
+            max_stack=0,
+            args=arg_types,
             is_native=is_native
         )
 

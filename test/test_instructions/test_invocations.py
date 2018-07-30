@@ -18,11 +18,12 @@ def test_invoke_v():
     no_op = Instruction.create('nop')
 
     method = BytecodeMethod(
+        name='method_name',
+        descriptor='(II)V',
         max_locals=5,
         max_stack=5,
         instructions=[no_op, no_op],
         args=[Integer, Integer],
-        name=method_name
     )
 
     jvm_class = JvmClass(

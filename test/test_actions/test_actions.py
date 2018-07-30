@@ -40,13 +40,14 @@ HANDLER = ExceptionHandler(
     catch_type=EXCEPTION_NAME
 )
 
-# noinspection PyProtectedMember
 METHOD = BytecodeMethod(
+    name='method_name',
+    descriptor='(II)V',
+    instructions=[Instruction.create('nop')._replace(pos=i) for i in range(5)],
     max_locals=5,
     max_stack=15,
-    instructions=[Instruction.create('nop')._replace(pos=i) for i in range(5)],
-    exception_handlers=Handlers([HANDLER]),
-    args=[Integer, Integer]
+    args=[Integer, Integer],
+    exception_handlers=Handlers([HANDLER])
 )
 
 COMPLEX_CLASS = JvmClass(

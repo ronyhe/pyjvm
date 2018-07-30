@@ -69,21 +69,22 @@ class Handlers:
 class BytecodeMethod:
     """A JVM method
 
+    name: str, this method's name
+    descriptor: str, this method's descriptor
+    instructions: Iterable[Instruction], the instructions for this method
     max_locals: int, the size of the Locals array
     max_stack: int, the maximum size of the frame's op stack
-    instructions: Iterable[Instruction], the instructions for this method
     args: Iterable[JvmType], the types of arguments this method expects.
     exception_handler: Handlers, the exception handlers of the method. Defaults to an empty Handlers object.
-    name: str, this method's name
     """
+    name = attr.ib(converter=str)
+    descriptor = attr.ib(converter=str)
+    instructions = attr.ib(converter=tuple)
     max_locals = attr.ib(converter=int)
     max_stack = attr.ib(converter=int)
-    instructions = attr.ib(converter=tuple)
     args = attr.ib(converter=tuple)
-    exception_handlers = attr.ib(factory=Handlers)
-    name = attr.ib(default='no_method_name')
-    descriptor = attr.ib(default='no_descriptor')
     is_native = attr.ib(default=False, converter=bool)
+    exception_handlers = attr.ib(factory=Handlers)
 
 
 @attr.s(frozen=True)
