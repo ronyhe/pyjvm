@@ -1,7 +1,7 @@
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
-from pyjvm.actions import Pop, Invoke
+from pyjvm.core.actions import Pop, Invoke
 from pyjvm.core.class_loaders import FixedClassLoader
 from pyjvm.core.jvm_class import JvmClass, BytecodeMethod, MethodKey
 from pyjvm.core.jvm_types import Integer, RootObjectType

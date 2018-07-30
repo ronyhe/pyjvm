@@ -1,6 +1,6 @@
 from jawa.constants import ConstantPool
 
-from pyjvm.actions import Push
+from pyjvm.core.actions import Push
 from pyjvm.core.jvm_class import JvmObject
 from pyjvm.core.jvm_types import Integer, Double, ObjectReferenceType, ArrayReferenceType
 from pyjvm.instructions import constant_instructions

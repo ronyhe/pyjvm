@@ -1,4 +1,4 @@
-from pyjvm.actions import Pop, Push, GoTo
+from pyjvm.core.actions import Pop, Push, GoTo
 from pyjvm.core.jvm_types import Integer, NULL_OBJECT, ArrayReferenceType, ObjectReferenceType
 from pyjvm.instructions.comparisons import BOOLEAN_COMPARISONS, UNARY_BRANCH_COMPARISONS, BINARY_BRANCH_COMPARISONS, \
     BINARY_REFERENCE_COMPARISONS, unary_op

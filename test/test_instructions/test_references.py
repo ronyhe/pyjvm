@@ -1,7 +1,7 @@
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
-from pyjvm.actions import Push, ThrowObject, PushNewInstance, PutField, PutStatic, throw_null_pointer, Pop, \
+from pyjvm.core.actions import Push, ThrowObject, PushNewInstance, PutField, PutStatic, throw_null_pointer, Pop, \
     throw_negative_array_size, throw_check_cast
 from pyjvm.core.class_loaders import FixedClassLoader
 from pyjvm.core.jvm_class import JvmObject, JvmClass

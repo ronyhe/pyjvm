@@ -1,4 +1,4 @@
-from pyjvm.actions import Push, Pop
+from pyjvm.core.actions import Push, Pop
 from pyjvm.instructions.conversions import CONVERSION_DICT
 from test.utils import assert_incrementing_instruction
 

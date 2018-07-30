@@ -2,7 +2,7 @@
 from jawa.constants import ConstantPool
 from jawa.util.bytecode import Instruction
 
-from pyjvm.actions import IncrementProgramCounter
+from pyjvm.core.actions import IncrementProgramCounter
 from pyjvm.core.class_loaders import FixedClassLoader
 from pyjvm.core.frame_locals import Locals
 from pyjvm.core.jvm_types import Integer

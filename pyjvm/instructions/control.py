@@ -1,5 +1,5 @@
-from pyjvm import actions
-from pyjvm.actions import Actions
+from pyjvm.core import actions
+from pyjvm.core.actions import Actions
 from pyjvm.instructions.instructions import Instructor, bytecode_list, bytecode, bytecode_dict
 # noinspection SpellCheckingInspection
 from pyjvm.instructions.switches import LOOKUP_SWITCH, TABLE_SWITCH, TableSwitch, LookupSwitch

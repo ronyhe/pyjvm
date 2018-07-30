@@ -18,7 +18,7 @@ They leverage the `decorator` method of `ClassRegistry`, so refer to that class 
 """
 from collections import OrderedDict
 
-from pyjvm.actions import IncrementProgramCounter, Action, Actions
+from pyjvm.core.actions import IncrementProgramCounter, Action, Actions
 from pyjvm.utils.class_registry import ClassRegistry
 
 _registry = ClassRegistry()

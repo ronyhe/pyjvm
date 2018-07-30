@@ -1,5 +1,5 @@
-from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter
+from pyjvm.core import actions
+from pyjvm.core.actions import IncrementProgramCounter
 from pyjvm.core.jvm_types import Integer, NULL_VALUE, Long, Float, Double
 from pyjvm.instructions.instructions import Instructor, bytecode_dict, bytecode_list
 from pyjvm.utils.jawa_conversions import convert_constant

@@ -1,5 +1,5 @@
-from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter
+from pyjvm.core import actions
+from pyjvm.core.actions import IncrementProgramCounter
 from pyjvm.core.jvm_types import CompType
 from pyjvm.instructions.instructions import Instructor, bytecode, bytecode_dict
 

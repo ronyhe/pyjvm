@@ -1,4 +1,4 @@
-from pyjvm.actions import ReturnResult, ReturnVoid, GoTo, Pop
+from pyjvm.core.actions import ReturnResult, ReturnVoid, GoTo, Pop
 from pyjvm.core.jvm_types import Integer
 from pyjvm.instructions.control import RETURN_RESULT_INSTRUCTIONS
 from pyjvm.instructions.switches import LookupSwitch, TableSwitch

@@ -1,5 +1,5 @@
-from pyjvm import actions
-from pyjvm.actions import IncrementProgramCounter, Actions
+from pyjvm.core import actions
+from pyjvm.core.actions import IncrementProgramCounter, Actions
 from pyjvm.core.hierarchies import is_value_instance_of
 from pyjvm.core.jvm_types import Integer, ArrayReferenceType, ObjectReferenceType
 from pyjvm.instructions.instructions import bytecode, Instructor
