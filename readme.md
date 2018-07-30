@@ -116,6 +116,9 @@ It's reliance on native functionality is minimal which makes it a great fit.
 On the technical side, it's structured with JVM implementation in mind. 
 So a possible evolution for this project is to fully include GNU classpath as pyjvm's standard library.
 For more on this see the [GNU classpath vm integration page](https://www.gnu.org/software/classpath/docs/cp-vmintegration.html). 
+Another long-term solution is to convert the project to Jython 
+and use the reflection API of the underlying JVM to call standard library methods. 
+In a way, that would make the project [meta-circular](https://en.wikipedia.org/wiki/Meta-circular_evaluator).
 
 Tip: If you're having trouble building GNU classpath on your machine try passing the --disable-jni flag
 to the ./configure program, which disables the compilation of native methods. They're prone to build problems
