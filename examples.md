@@ -2,7 +2,6 @@
 Let's create the file Main.java. 
 We expect this class to store the int value 10 in the static variable `someInt`.
 ```java
-
 public class Main {
     public static int someInt = 5;
 
@@ -82,21 +81,21 @@ Near the end, you can see this line:
 PutStatic(class_name='Main', field_name='someInt', value=JvmValue(<Integer>, 10))
 ```
 So, our expectations were met. 
-When using pyjvm this class indeed stores the int value 10 in the static variable `someInt`.
+When using pyjvm, this class indeed stores the int value 10 in the static variable `someInt`.
 
 
 ### Something a bit more complex
 Let's change Main.java and recompile:
 ```java
 public class Main {
-	public static int someInt;
+    public static int someInt;
 
-	public static void main(String[] args) {
-		Main instance = new Main(5);
-		instance.add(3);
-		instance.add(2);
-		someInt = instance.getNum();
-	}
+    public static void main(String[] args) {
+        Main instance = new Main(5);
+        instance.add(3);
+        instance.add(2);
+        someInt = instance.getNum();
+    }
 
     private int num;
 
@@ -104,13 +103,13 @@ public class Main {
         this.num = num;
     }
 
-	public void add(int a) {
-		num += a;
-	}
+    public void add(int a) {
+        num += a;
+    }
 
-	public int getNum() {
-	    return num;
-	}
+    public int getNum() {
+        return num;
+    }
 }
 ```
 We still expect it to store 10 in `someInt`, but there's more going on here:
