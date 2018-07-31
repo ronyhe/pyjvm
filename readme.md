@@ -27,10 +27,8 @@ python -m pip install .
 
 Once installed you can run the tests to validate your installation:
 ```bash
-pytest std_lib=path/to/std/lib/jar_file.jar
+pytest
 ```
-See the standard library section of this document to understand the `std_lib` command line variable.
-
 
 ### Usage
 ```bash
@@ -39,10 +37,6 @@ pyjvm run [OPTIONS] MAIN_CLASS
 Where the options are:
 - `-cp` (classpath) a colon separated list of class and jar/zip files. Similar to the Java CLASSPATH variable.
 - `--report` turns on basic tracing which will be written to stdout.
-
-Be sure to add a standard library to your classpath. See the standard library section of this document for more. 
-
-There are other commands that are relevant to development and debugging, see pyjvm/main.py.
 
 
 ### High Level Architecture
@@ -86,46 +80,17 @@ See [this stackoverflow discussion](https://stackoverflow.com/a/21150629).
 
 
 ### Java Standard Library
-All non trivial Java class files will need access to a standard library.
-In fact, many trivial ones will need it as well.
-Perhaps surprisingly, even when running class files that were compiled from other JVM languages 
-a Java standard library is needed.
+Since there is no native method support, most standard library functionality will not be available.
+The project has a standard library mainly for useful class definitions. 
+Especially the builtin Java exceptions, some of which are included in the JVM specification itself.
 
-That's because the JVM specification itself relies on it.
-For example, when trying to fetch from a null array reference, the spec states that the exception to throw is
-`java/lang/NullPointerException`.
+The included implementation is the one provided 
+by the [GNU classpath project](https://www.gnu.org/software/classpath/).
+It's designed with alternative JVMs in mind, so adding full support could be a natural evolution for the pyjvm project. 
 
-For these reasons, users should probably provide a Java standard library on their class path when running class files.
-You'll have to provide one if you want to run the tests:
-```bash
-pytest std_lib=path/to/std/lib/jar_file.jar
-``` 
-
-So where to find one?
-
-If you have a JDK installed there's usually a jar file at `path/of/java/installation/jre/lib/rt.jar`.
-If it's not there, you can check the web for information regarding your particular installation.
-
-But that's not ideal, there is a **better way**.
-
-The problem is that traditional standard libraries, like open-JDK and the Oracle JDK, rely heavily
-on native methods. And, as you might recall, this implementation doesn't support them.
-This creates a high probability that your class files won't be able to execute even simple tasks.
-
-I recommend the [GNU classpath project](https://www.gnu.org/software/classpath/), 
-which is a standard library implementation that's specifically designed for alternative JVMs.
-It's reliance on native functionality is minimal which makes it a great fit.
-
-On the technical side, it's structured with JVM implementation in mind. 
-So a possible evolution for this project is to fully include GNU classpath as pyjvm's standard library.
-For more on this see the [GNU classpath vm integration page](https://www.gnu.org/software/classpath/docs/cp-vmintegration.html). 
-Another long-term solution is to convert the project to Jython 
-and use the reflection API of the underlying JVM to call standard library methods. 
+Another possible evolution is to convert the project to Jython.
+In that case we can use the reflection API of the underlying JVM to call standard library methods.
 In a way, that would make the project [meta-circular](https://en.wikipedia.org/wiki/Meta-circular_evaluator).
-
-Tip: If you're having trouble building GNU classpath on your machine try passing the --disable-jni flag
-to the ./configure program, which disables the compilation of native methods. They're prone to build problems
-and are irrelevant for a JVM that won't execute them anyway.
 
 
 ### Acknowledgements
