@@ -1,6 +1,8 @@
 pyjvm - A jvm implementation
 =====
 
+Want to see examples instead of this readme? [Go here](examples.md).
+
 ### Why do we need another jvm implementation?
 Simple answer: We don't. I made it purely for didactic purposes. 
 The existing implementations are better in terms of security, compliance and performance (to name a few).

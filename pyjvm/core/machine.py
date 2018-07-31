@@ -71,7 +71,7 @@ class Machine:
             constants=frame.jvm_class.constants,
             loader=self.class_loader
         )
-        
+
         self._echo(f'{frame.jvm_class.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
         actions = execute_instruction(inputs)
         for action in actions:
@@ -281,11 +281,12 @@ def run(loader, main_class_name, echo=None):
     :param main_class_name: str, the name of the main class
     :param echo: a print-like method that, if provided, will be used for tracing execution
     """
+    machine = Machine(loader, echo=echo)
+
     class_ = loader.get_the_class(main_class_name)
-    # noinspection SpellCheckingInspection
     key = MethodKey('main', '([Ljava/lang/String;)V')
     method = class_.methods[key]
     frame = Frame.from_class_and_method(class_, method)
-    machine = Machine(loader, echo=echo)
+
     machine.frames.push(frame)
     machine.run()
