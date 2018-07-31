@@ -2,6 +2,7 @@ from jawa.classloader import ClassLoader as JawaLoader
 
 from pyjvm.core.jvm_types import RootObjectType, ObjectReferenceType, JvmObject
 from pyjvm.utils.jawa_conversions import convert_class_file
+from pyjvm.utils.utils import path_to_std_lib_as_str
 
 
 class LoaderEntry:
@@ -183,8 +184,10 @@ class TraditionalLoader(ClassLoader):
 
     def __init__(self, cp_string):
         super().__init__()
-        # noinspection PyUnresolvedReferences
-        self._jawa_loader = JawaLoader(*cp_string.split(':'))
+        parts = [cp.strip() for cp in cp_string.split(':')]
+        parts = [cp for cp in parts if cp]
+        parts.insert(0, path_to_std_lib_as_str())
+        self._jawa_loader = JawaLoader(*parts)
 
     def _load_jvm_class(self, name):
         cf = self._jawa_loader[name]
