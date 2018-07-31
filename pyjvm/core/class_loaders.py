@@ -181,7 +181,10 @@ class FixedClassLoader(ClassLoader):
 class TraditionalLoader(ClassLoader):
     """A loader that loads classes from JAR and .class files according to Java classpath conventions
 
-    Delegates work to jawa.classloader.ClassLoader, refer to that class for more info
+    Delegates work to jawa.classloader.ClassLoader, refer to that class for more info.
+
+    Although there is no internal standard library support, this class implements a specific
+    native method which enables the construction of exception instances.
     """
 
     def __init__(self, cp_string):
