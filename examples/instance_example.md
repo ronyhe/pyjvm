@@ -1,91 +1,5 @@
-### Examples
-Let's create the file Main.java. 
-We expect this class to store the int value 10 in the static variable `someInt`.
-```java
-public class Main {
-    public static int someInt = 5;
-
-    public static void main(String[] args) {
-        someInt++;
-        someInt = someInt + 4;
-    }
-}
-```
-
-And compile it using a standard compiler.
-```bash
-javac Main.java
-```
-
-When we run it with tracing in pyjvm, like this:
-```bash
-pyjvm run Main -cp=$PWD --report
-```
-
-We get the following tracing output:
-```text
-|  Main#<clinit>()V, Instruction(mnemonic='iconst_5', opcode=8, operands=[], pos=0)
-|    Push(value=JvmValue(<Integer>, 5))
-|    IncrementProgramCounter()
-|  
-|  Main#<clinit>()V, Instruction(mnemonic='putstatic', opcode=179, operands=[Operand(op_type=<OperandTypes.CONSTANT_INDEX: 30>, value=2)], pos=1)
-|    Pop(amount=1)
-|    PutStatic(class_name='Main', field_name='someInt', value=JvmValue(<Integer>, 5))
-|    IncrementProgramCounter()
-|  
-|  Main#<clinit>()V, Instruction(mnemonic='return', opcode=177, operands=[], pos=4)
-|    ReturnVoid()
-
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='getstatic', opcode=178, operands=[Operand(op_type=<OperandTypes.CONSTANT_INDEX: 30>, value=2)], pos=0)
-|    Push(value=JvmValue(<Integer>, 5))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='iconst_1', opcode=4, operands=[], pos=3)
-|    Push(value=JvmValue(<Integer>, 1))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='iadd', opcode=96, operands=[], pos=4)
-|    Pop(amount=2)
-|    Push(value=JvmValue(<Integer>, 6))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='putstatic', opcode=179, operands=[Operand(op_type=<OperandTypes.CONSTANT_INDEX: 30>, value=2)], pos=5)
-|    Pop(amount=1)
-|    PutStatic(class_name='Main', field_name='someInt', value=JvmValue(<Integer>, 6))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='getstatic', opcode=178, operands=[Operand(op_type=<OperandTypes.CONSTANT_INDEX: 30>, value=2)], pos=8)
-|    Push(value=JvmValue(<Integer>, 6))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='iconst_4', opcode=7, operands=[], pos=11)
-|    Push(value=JvmValue(<Integer>, 4))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='iadd', opcode=96, operands=[], pos=12)
-|    Pop(amount=2)
-|    Push(value=JvmValue(<Integer>, 10))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='putstatic', opcode=179, operands=[Operand(op_type=<OperandTypes.CONSTANT_INDEX: 30>, value=2)], pos=13)
-|    Pop(amount=1)
-|    PutStatic(class_name='Main', field_name='someInt', value=JvmValue(<Integer>, 10))
-|    IncrementProgramCounter()
-|  
-|  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='return', opcode=177, operands=[], pos=16)
-|    ReturnVoid()
-```
-
-Near the end, you can see this line:
-```text
-PutStatic(class_name='Main', field_name='someInt', value=JvmValue(<Integer>, 10))
-```
-So, our expectations were met. 
-When using pyjvm, this class indeed stores the int value 10 in the static variable `someInt`.
-
-
 ### Something a bit more complex
-Let's change Main.java and recompile:
+Let's change Main.java from the [previous example](simple_example.md) and recompile:
 ```java
 public class Main {
     public static int someInt;
@@ -118,7 +32,12 @@ We still expect it to store 10 in `someInt`, but there's more going on here:
 - Method calls, with and without return values.
 - Method calls, with and without parameters.
 
-When we run it using the same command, we get:
+When we run it using the same command, we still see this action near the end:
+```text
+PutStatic(class_name='Main', field_name='someInt', value=JvmValue(<Integer>, 10))
+```
+
+You can see the general flow of method calls in the full output:
 ```text
 |  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='new', opcode=187, operands=[Operand(op_type=<OperandTypes.CONSTANT_INDEX: 30>, value=1)], pos=0)
 |    PushNewInstance(Main)
@@ -280,12 +199,3 @@ When we run it using the same command, we get:
 |  Main#main([Ljava/lang/String;)V, Instruction(mnemonic='return', opcode=177, operands=[], pos=26)
 |    ReturnVoid()
 ```
-There's a lot going on here, but two things are of note:
- - We can visually see the nesting of method calls
- - Again, the class performs its intended function
- 
-
-### Notes
-These examples:
-- Were compiled using the [OpenJDK](http://openjdk.java.net/) compiler version 1.8.0_171.
-- Use public static variables to prevent certain compiler optimizations that obfuscate some points.

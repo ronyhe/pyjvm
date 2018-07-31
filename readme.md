@@ -1,7 +1,7 @@
 pyjvm - A jvm implementation
 =====
 
-Want to see examples instead of this readme? [Go here](examples.md).
+Want to see examples instead of this readme? [Go here](examples/examples.md).
 
 ### Why do we need another jvm implementation?
 Simple answer: We don't. I made it purely for didactic purposes. 
