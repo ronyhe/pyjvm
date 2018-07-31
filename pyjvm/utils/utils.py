@@ -1,4 +1,6 @@
 """Miscellaneous useful functions"""
+from pathlib import Path
+
 from jawa.util.bytecode import Operand, OperandTypes
 
 from pyjvm.core.jvm_types import Integer
@@ -112,3 +114,14 @@ def field_name_from_field_ref(ref):
 def named_tuple_replace(instance, **kwargs):
     # noinspection PyProtectedMember
     return instance._replace(**kwargs)
+
+
+def path_to_std_lib() -> Path:
+    utils_file = Path(__file__)
+    utils_package = utils_file.parent
+    std_lib = utils_package.joinpath('glibj.zip')
+    return std_lib
+
+
+def path_to_std_lib_as_str():
+    return str(path_to_std_lib())
