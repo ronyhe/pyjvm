@@ -1,7 +1,7 @@
 ### Examples
  - [A simple example](simple_example.md)
  - [Slightly more, with instances](instance_example.md)
- - Even more, with exception handling
+ - [Even more, with exception handling](exception_example.md)
 
 Not that these examples:
 - Were compiled using the [OpenJDK](http://openjdk.java.net/) compiler version 1.8.0_171.
