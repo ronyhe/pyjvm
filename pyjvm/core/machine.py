@@ -8,7 +8,7 @@ from pyjvm.utils.utils import class_as_descriptor
 
 
 class Unhandled(Exception):
-    """An JVM exception propagated all the way up"""
+    """An JVM exception that propagated all the way up"""
 
     def __init__(self, instance):
         self.instance = instance
@@ -71,7 +71,7 @@ class Machine:
             constants=frame.jvm_class.constants,
             loader=self.class_loader
         )
-        self._echo(f'op_stack: {frame.op_stack._values}')
+        
         self._echo(f'{frame.jvm_class.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
         actions = execute_instruction(inputs)
         for action in actions:
