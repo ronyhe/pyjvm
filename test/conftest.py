@@ -1,22 +1,29 @@
 """Setup for using the py.test framework
 
-The main point is to add a command line argument for testing.
-Namely a path to a Java Standard Library.
-I don't know much about py.test internals, so this is copied almost verbatim from the py.test documentation.
-See https://docs.pytest.org/en/latest/example/simple.html
+The main function of this module is to provide a so-called test fixture for tests that need a standard library.
+To use this a test function need to declare the parameter `std_loader` and the test runner will take care of the rest.
+
+    .. code::
+
+        def test_something(std_lib)
+            pass
+
+This uses the py.test fixture features with which I am not very familiar.
+For more details see: https://docs.pytest.org/en/latest/example/simple.html
+
+For performance reasons, the loader is only created once, so tests that use it should take care
+to not change its mutable parts:
+ - The statics dictionary for classes
+ - The ConstantPool instance for classes
+
+To address this issue in the long term -
+the mutable parts of the loader should be extracted or have the ability to reset.
+
 """
 
 import pytest
 
 from pyjvm.core.class_loaders import TraditionalLoader
-
-
-# noinspection SpellCheckingInspection
-def pytest_addoption(parser):
-    parser.addoption(
-        "--std_lib", action="store", help="A path to a JAR file that contains the Java standard library"
-    )
-
 
 _STD_LOADER = None
 
@@ -25,10 +32,6 @@ _STD_LOADER = None
 def std_loader(request):
     global _STD_LOADER
     if _STD_LOADER is None:
-        path = request.config.getoption('--std_lib')
-        if not path:
-            raise Exception('Please supply --std_lib for proper testing ')
-        _STD_LOADER = TraditionalLoader(path)
+        _STD_LOADER = TraditionalLoader('')
 
-    _STD_LOADER.first_load_function = None
     return _STD_LOADER
