@@ -71,11 +71,14 @@ class Machine:
             constants=frame.jvm_class.constants,
             loader=self.class_loader
         )
+        self._echo(f'op_stack: {frame.op_stack._values}')
         self._echo(f'{frame.jvm_class.name}#{frame.method_name}{frame.method_descriptor}, {instruction}')
         actions = execute_instruction(inputs)
         for action in actions:
             self._echo('  ' + str(action))
             self.act(action)
+
+        self._echo('')
 
     def act(self, action):
         """Execute `action`
