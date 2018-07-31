@@ -38,12 +38,13 @@ Where the options are:
 - `-cp` (classpath) a colon separated list of class and jar/zip files. Similar to the Java CLASSPATH variable.
 - `--report` turns on basic tracing which will be written to stdout.
 
+There are other commands that are relevant to development and debugging, see [pyjvm/main.py](pyjvm/main.py).
 
 ### High Level Architecture
-The Machine in machine.py creates Frame objects that represent methods.
-It loops through the frame's instructions and sends them to instructions/instructions.py, which dispatches them to
-Instructor instances.
-The Instructors produce instances of Action that the machine executes.
+The [Machine](pyjvm/core/machine.py) creates [Frame](pyjvm/core/frame.py) objects that represent methods.
+It loops through the frame's instructions and sends them to [instructions.py](pyjvm/instructions/instructions.py), 
+which dispatches them to [Instructor](pyjvm/instructions/instructions.py) instances.
+The Instructors produce instances of [Action](pyjvm/core/actions.py) that the machine executes.
 
 For example, let's assume that the current instruction is 'iload_0'.
 This instruction should take a value, the one that resides in index 0 of the current frame's locals array.
@@ -98,6 +99,7 @@ There are dozens of people I learned from and dozens of tools I use every day.
 Too many to list here, so I'll point out two that were especially relevant in this project. 
 I'd like to thank the creators and maintainers of:
 
+- The [GNU classpath project](https://www.gnu.org/software/classpath/)
 - The [JVM specification](https://docs.oracle.com/javase/specs/jvms/se8/html/index.html) (Oracle and previously Sun)
 - The [jawa python library](https://github.com/TkTech/Jawa) (TkTech)
  
