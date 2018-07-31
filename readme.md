@@ -98,7 +98,7 @@ In a way, that would make the project [meta-circular](https://en.wikipedia.org/w
 
 ### Acknowledgements
 There are dozens of people I learned from and dozens of tools I use every day. 
-Too many to list here, so I'll point out two that were especially relevant in this project. 
+Too many to list here, so I'll point out three that were especially relevant in this project. 
 I'd like to thank the creators and maintainers of:
 
 - The [GNU classpath project](https://www.gnu.org/software/classpath/)
