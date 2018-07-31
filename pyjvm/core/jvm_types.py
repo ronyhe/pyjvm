@@ -120,23 +120,6 @@ _float_range = (10 ** 38) * 3.40282347
 _double_range = (10 ** 308) * 1.7976931348623157
 
 
-def min_max_by_type(type_):
-    if type_ == Integer:
-        return -2_147_483_648, 2_147_483_647
-    elif type_ == Long:
-        return -9_223_372_036_854_775_808, 9_223_372_036_854_775_807
-    elif type_ == Float:
-        return -_float_range, _float_range
-    elif type_ == Double:
-        return -_double_range, _double_range
-    else:
-        raise LookupError(f'Type {type_} does not have min or max values')
-
-
-RootObjectType = ObjectReferenceType('java/lang/Object')
-NULL_VALUE = RootObjectType.create_instance(NULL_OBJECT)
-
-
 class JvmObject:
     """The value of a reference class instance at runtime
 
@@ -163,3 +146,21 @@ class JvmObject:
 
     def __repr__(self):
         return f'<{self.__class__.__name__}>'
+
+
+def min_max_by_type(type_):
+    if type_ == Integer:
+        return -2_147_483_648, 2_147_483_647
+    elif type_ == Long:
+        return -9_223_372_036_854_775_808, 9_223_372_036_854_775_807
+    elif type_ == Float:
+        return -_float_range, _float_range
+    elif type_ == Double:
+        return -_double_range, _double_range
+    else:
+        raise LookupError(f'Type {type_} does not have min or max values')
+
+
+RootObjectType = ObjectReferenceType('java/lang/Object')
+
+NULL_VALUE = RootObjectType.create_instance(NULL_OBJECT)
