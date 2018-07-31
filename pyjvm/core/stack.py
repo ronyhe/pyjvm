@@ -54,6 +54,9 @@ class Stack(Generic[T]):
             raise ValueError('Peek amount must be >= 0')
         return self._values[:amount]
 
+    def clear(self):
+        self._values = []
+
     def size(self) -> int:
         """Return the amount of values that are currently stored in this stack"""
         return len(self._values)

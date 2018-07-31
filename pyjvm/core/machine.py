@@ -223,7 +223,9 @@ class Machine:
             class_name = handler.catch_type
             type_match = is_value_instance_of(instance, class_as_descriptor(class_name), self.class_loader)
             if type_match:
-                frame.op_stack.push(instance)
+                stack = frame.op_stack
+                stack.clear()
+                stack.push(instance)
                 frame.pc = handler.handler_pc
                 return
 

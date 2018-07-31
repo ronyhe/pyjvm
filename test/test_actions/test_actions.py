@@ -242,11 +242,17 @@ def test_throw_with_handler():
     next_frame = frames.peek(1)
 
     next_frame.pc = HANDLER.start_pc
-    instance = machine.class_loader.default_instance(EXCEPTION_NAME)
-    machine.act(ThrowObject(instance))
+    next_frame.op_stack.push(SOME_INT)
+    exception_instance = machine.class_loader.default_instance(EXCEPTION_NAME)
+    machine.act(ThrowObject(exception_instance))
 
-    assert frames.peek() is next_frame
-    assert frames.peek().pc == HANDLER.handler_pc
+    current_frame = frames.peek()
+    op_stack = current_frame.op_stack
+
+    assert current_frame is next_frame
+    assert current_frame.pc == HANDLER.handler_pc
+    assert op_stack.size() == 1
+    assert op_stack.peek().type.refers_to == EXCEPTION_NAME
 
 
 def test_create_and_throw():
