@@ -1,8 +1,10 @@
 from jawa.classloader import ClassLoader as JawaLoader
+from jawa.util.bytecode import Instruction
 
+from pyjvm.core.jvm_class import MethodKey, BytecodeMethod, Handlers
 from pyjvm.core.jvm_types import RootObjectType, ObjectReferenceType, JvmObject
 from pyjvm.utils.jawa_conversions import convert_class_file
-from pyjvm.utils.utils import path_to_std_lib_as_str
+from pyjvm.utils.utils import path_to_std_lib_as_str, named_tuple_replace
 
 
 class LoaderEntry:
@@ -193,6 +195,31 @@ class TraditionalLoader(ClassLoader):
         cf = self._jawa_loader[name]
         class_ = convert_class_file(cf)
         return class_
+
+    def resolve_method(self, class_name, method_key):
+        if self._is_stack_trace(class_name, method_key):
+            return self._stack_trace_implementation()
+        else:
+            return super().resolve_method(class_name, method_key)
+
+    def _is_stack_trace(self, class_name, method_key):
+        key = MethodKey('fillInStackTrace', '(Ljava/lang/Throwable;)Ljava/lang/VMThrowable;')
+        return class_name == 'java/lang/VMThrowable' and method_key == key
+
+    def _stack_trace_implementation(self):
+        return BytecodeMethod(
+            name='fillInStackTrace',
+            descriptor='(Ljava/lang/Throwable;)Ljava/lang/VMThrowable;',
+            instructions=[
+                named_tuple_replace(Instruction.create('aload_0'), pos=1),
+                named_tuple_replace(Instruction.create('areturn'), pos=2)
+            ],
+            max_locals=1,
+            max_stack=1,
+            args=[ObjectReferenceType('java/lang/Throwable')],
+            is_native=False,
+            exception_handlers=Handlers()
+        )
 
 
 def _name_and_default_value(pair):
